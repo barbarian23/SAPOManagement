@@ -8,7 +8,7 @@
 - **Webpack version 7**
 - **MongoDB for database**
 ```
-npm install
+npm install --force
 ```
 ## 2. For dev environment
 ```

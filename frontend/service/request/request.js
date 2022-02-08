@@ -8,8 +8,8 @@ export async function requestGet(url, param, onSuccess, onFailed) {
         .catch(onFailed)
 }
 
-export async function requestPost(url, param, onSuccess, onFailed) {
-    axios.post(url, param)
+export async function requestPost(url, body, onSuccess, onFailed) {
+    axios.post(url, body)
         .then(onSuccess)
         .catch(onFailed)
 }

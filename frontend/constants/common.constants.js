@@ -1,3 +1,3 @@
-export const CLIENT_LOGIN = "/";
-export const CLIENT_HOME = "/home";
+export const CLIENT_LOGIN = "/login";
+export const CLIENT_HOME = "/";
 export const NO_MATCH = "*";

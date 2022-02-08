@@ -1,9 +1,13 @@
 const http = require('http');
+const fs = require('fs');
 const server = http.createServer(app);
 import { PORT } from "./constants/backend.common.constant";
 import app from './app';
 
-process.on("uncaughtException", (err) => fs.appendFileSync('./logs/uncaught.log', `${new Date().toLocaleString()} --- ${err} --- ${__filename}\n`, 'utf8'));
+// process.on("uncaughtException", (err) => fs.writeFile('./logs/uncaught.log', `${new Date().toLocaleString()} --- ${err} --- ${__filename}\n`, { flag: 'wx' }, function (err) {
+//     if (err) throw err;
+// }));
+
 
 app.set('port', PORT);
 
