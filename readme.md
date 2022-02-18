@@ -24,3 +24,9 @@ https://localhost:3000/api/
 ```
 
 ## 3. Deploy for production
+
+
+## 4. Error Log
+
+### Developer
+ - **Go to ./dist/error.log**
