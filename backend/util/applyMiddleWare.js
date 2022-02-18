@@ -3,6 +3,7 @@ const path = require('path')
 import { responceJson } from "./resJson.util";
 
 /**
+ * router, post/get/put,  đường dẫn, controller
  * normally we use
  * router.get("/", middleWare, renderController);
  * currently we use this function 
