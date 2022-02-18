@@ -1,48 +1,69 @@
-import {Column, Table} from 'react-virtualized';
-import 'react-virtualized/styles.css'; 
+import React, { useState } from "react";
+// import styled from "styled-components";
+import { BillPopUp, BillTable } from "../../component";
 
-const sample = [
-  ["220115URHYF0AC", "20:54 15/01/2022", "Đã xử lý"],
-  ["2201160J18YDR4", "15:02 16/01/2022", "Đã xử lý"]
-];
-
-function createData(id, dessert, calories) {
-  return { id, dessert, calories };
-}
-
-const rows = [];
-
-for (let i = 0; i < 200; i += 1) {
-  const randomSelection = sample[Math.floor(Math.random() * sample.length)];
-  rows.push(createData(i, ...randomSelection));
-}
-
-const column = [
+const columns = [
   {
     width: 400,
-    label: "Mã đơn hàng",
-    dataKey: "dessert"
+    Header: "Mã đơn hàng",
+    accessor: "id",
+    defaultCanSort: true
   },
   {
     width: 500,
-    label: "Thời gian đã đặt hàng",
-    dataKey: "calories"
+    Header: "Thời gian đã đặt hàng",
+    accessor: "time"
   },
   {
     width: 400,
-    label: "Trạng thái",
-    dataKey: "fat"
+    Header: "Trạng thái",
+    accessor: "status",
+    Cell: ({ cell: { value } }) =>
+      value ? (
+        <p className="status-bag green">Đã xử lý</p>
+      ) : (
+        <p className="status-bag red">Chưa xử lý</p>
+      )
   }
 ];
 
-export default function Bill() {
+const sample = [
+  {
+    id: "220115URHYF0AC",
+    time: "20:54 15/01/2022",
+    status: 1
+  },
+  {
+    id: "2201160J18YDR4",
+    time: "15:02 16/01/2022",
+    status: 0
+  }
+];
+
+const data = [];
+for (let i = 0; i < 10; i += 1) {
+  let s = sample[Math.floor(Math.random() * sample.length)];
+  data.push(s);
+}
+
+export default function SapoBill() {
+  const [open, setOpen] = useState(false);
+  // const [popupData, setPopupData] = useState({});
+
+  const onRowClick = ({ rowData }) => {
+    setOpen(true);
+    // setPopupData(rowData);
+  };
+
+  const onBillModalClose = () => {
+    setOpen(false);
+  };
+
   return (
-    <Paper style={{ height: 1000, width: "100%" }}>
-      <MUIVirtualizedTable
-        rowCount={rows.length}
-        rowGetter={({ index }) => rows[index]}
-        columns={column}
-      />
-    </Paper>
+    <div style={{ height: 1000, width: "100%", marginTop: -77 }}>
+      <BillTable columns={columns} data={data} onRowClick={onRowClick} />
+
+      <BillPopUp open={open} onClose={onBillModalClose} />
+    </div>
   );
 }

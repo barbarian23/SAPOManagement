@@ -15,6 +15,11 @@ function timer(ms) {
 // do login
 export async function userLoginController(req, res) {
     try {
+
+        //query
+        //đ
+        const result = User.getInstance().getAll();
+
         responceJson(res,200, {message: "Hello from backend"});
     } catch (e) {
         console.log("Login Error", e);

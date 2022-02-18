@@ -1,5 +1,5 @@
-import Home from "./home/home.screen";
-import Login from "./login/login.screen";
+import Home from "./home/Home.screen";
+import Login from "./login/Login.screen";
 
 export {
   Login,

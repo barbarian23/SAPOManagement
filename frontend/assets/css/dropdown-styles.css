@@ -1,0 +1,116 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+a {
+  text-decoration: #545a6d;
+  text-transform: none;
+  color: inherit;
+}
+
+#header-menu {
+  padding: 8px 16px;
+  text-align: center;
+}
+
+.parent {
+  background-color: rgba(23, 162, 184, 0.05);
+  position: absolute;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.child-left {
+  height: 100%;
+  display: flex;
+  width: 250px;
+  position: fixed;
+}
+
+.child-left ul {
+  width: 100%;
+  padding-inline-start: 0px;
+}
+
+.child-left ul li {
+  display: block;
+  padding: 0.625rem 1.5rem;
+  color: #545a6d;
+  position: relative;
+  font-size: 13px;
+  transition: all 0.4s;
+  color: #a6b0cf;
+  width: 100%;
+  font-size: 18px;
+}
+
+.child-right {
+  background-color: rgba(196, 196, 196, 0.2);
+  padding: 30px 15px;
+  margin-top: 105px;
+  display: flex;
+  flex-grow: 1;
+  flex-wrap: wrap;
+  flex-direction: column;
+  margin-left: 250px;
+  --background: #f8f8fb;
+}
+
+.ReactVirtualized__Table__row :hover {
+  background: rgba(25, 118, 210, 0.08);
+}
+
+.ReactVirtualized__Table__headerColumn {
+  justify-content: flex-start;
+}
+
+.green {
+  background-color: #2ad38b;
+}
+
+.red {
+  background-color: #f64343;
+}
+
+.blue {
+  background-color: rgba(23, 162, 184, 0.75);
+}
+
+.right {
+  float: right;
+}
+
+.dropDownMachine {
+  border: none !important;
+  background: transparent;
+}
+
+.dropDownPopUpPositive {
+  border: none;
+  background-color: #2ad38b;
+  width: 80%;
+  border-radius: 5px;
+}
+
+.dropDownPopUpNegative {
+  border: none;
+  background-color: #f64343;
+  width: 80%;
+  border-radius: 5px;
+}
+
+.modal-btn-saved {
+  width: 100px;
+  border: none;
+  padding: 10px;
+  margin: 20px 5px;
+  border-radius: 5px;
+  font-weight: 700;
+  cursor: pointer;
+}

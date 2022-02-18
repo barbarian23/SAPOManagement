@@ -6,4 +6,9 @@ export default class User{
         }
         return this.instance;
     }
+
+    getAll(data){
+        
+        return "querry some thing";
+    }
 }

@@ -1,89 +1,85 @@
-import Paper from "@mui/material/Paper";
-import { MUIVirtualizedTable, PopUp} from "../../component";
-import { useState } from "react";
+import React, { useState } from "react";
+// import styled from "styled-components";
+import { PopUp, ProduceTable } from "../../component";
 
-const sample = [
-  [
-    "CH8-140x51-DEN",
-    "220115URHYF0AC",
-    "20:54 15/01/2022",
-    "Chưa xử lý",
-    "",
-    ""
-  ],
-  ["DCC16", "2201160J18YDR4", "15:02 16/01/2022", "Chưa xử lý", "", ""],
-  [
-    "PCB273-R.150cm x C.117cm",
-    "2201160J18YDR4",
-    "15:02 16/01/2022",
-    "Chưa xử lý",
-    "",
-    ""
-  ]
-];
-
-function createData(id, dessert, calories, fat, carbs, protein) {
-  return { id, dessert, calories, fat, carbs, protein };
-}
-
-const rows = [];
-
-for (let i = 0; i < 200; i += 1) {
-  const randomSelection = sample[Math.floor(Math.random() * sample.length)];
-  rows.push(createData(i, ...randomSelection));
-}
-
-const column = [
+const columns = [
   {
-    width: 400,
-    label: "Mã SKU",
-    dataKey: "sku"
+    Header: "Mã SKU",
+    accessor: "id",
+    defaultCanSort: true
   },
   {
-    width: 300,
-    label: "Mã đơn hàng",
-    dataKey: "billCode"
+    Header: "Mã đơn hàng",
+    accessor: "billID"
   },
   {
-    width: 400,
-    label: "Thời gian đặt hàng",
-    dataKey: "time"
+    Header: "Thời gian đặt hàng",
+    accessor: "time"
   },
   {
-    width: 200,
-    label: "Trạng thái",
-    dataKey: "status"
+    Header: "Trạng thái",
+    accessor: "status",
+    Cell: ({ cell: { value } }) =>
+      value ? (
+        <p className="status-bag green">Đã xử lý</p>
+      ) : (
+        <p className="status-bag red">Chưa xử lý</p>
+      )
   },
   {
-    width: 200,
-    label: "Máy sản xuất",
-    dataKey: "machine"
+    Header: "Máy SX",
+    accessor: "machine"
   },
   {
-    width: 200,
-    label: "TG xử lý",
-    dataKey: "timeWork"
+    Header: "TG xử lý",
+    accessor: "processingTime"
   }
 ];
 
-export default function Product() {
+const sample = [
+  {
+    id: "PCB273-R.150cm x C.117cm",
+    billID: "2201160J18YDR4",
+    time: "20:54 15/01/2022",
+    status: 1,
+    machine: "M1",
+    processingTime: "1 giờ"
+  },
+  {
+    id: "DCC16",
+    billID: "2201160J18YDR4",
+    time: "15:02 16/01/2022",
+    status: 0,
+    machine: "",
+    processingTime: ""
+  }
+];
+
+const data = [];
+for (let i = 0; i < 10; i += 1) {
+  let s = sample[Math.floor(Math.random() * sample.length)];
+  data.push(s);
+}
+
+export default function SapoProduct() {
   const [open, setOpen] = useState(false);
-  const [currentSKU, setCurrentSKU] = useState("");
+  // const [popupData, setPopupData] = useState({});
 
   const onRowClick = ({ rowData }) => {
+    console.log("open", open);
     setOpen(true);
-    setCurrentSKU(rowData.sku);
+    // setPopupData(rowData);
+  };
+
+  const onBillModalClose = () => {
+    setOpen(false);
   };
 
   return (
-    <Paper style={{ height: 1000, width: "100%" }}>
-      <VirtualizedTable
-        rowCount={rows.length}
-        rowGetter={({ index }) => rows[index]}
-        columns={column}
-        onRowClick={onRowClick}
-      />
-      <PopUp open={open} currentSKU={currentSKU} />
-    </Paper>
+    <div style={{ height: 1000, width: "100%", marginTop: -77 }}>
+      <ProduceTable columns={columns} data={data} onRowClick={onRowClick} />
+
+      <PopUp open={open} onClose={onBillModalClose} />
+    </div>
   );
 }

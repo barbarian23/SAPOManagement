@@ -28,10 +28,10 @@ const css = {
 };
 
 const file = {
-    test: /\.(png|jpg|gif|mp3)$/i,
+    test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
     use: [
         {
-            loader: 'url-loader',
+            loader: 'url-loader?limit=10000&mimetype=application/font-woff',
             options: {
                 name: "[name].[ext]"
             },
@@ -51,7 +51,8 @@ const serverConfig = {
         "index": path.resolve(__dirname, "backend/server.js"),
     },
     module: {
-        rules: [js, css, file],
+        rules: [js, css, { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader" },
+        { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader" }]
     },
     watchOptions: {
         poll: 1000, // Check for changes every second
@@ -78,7 +79,11 @@ const clientConfig = {
         ),
     },
     module: {
-        rules: [js, css, file],
+        rules: [js, css, { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader" },
+        { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader" },{
+            test: /\.(svg|eot|woff|woff2|ttf)$/,
+            type: 'asset/inline'
+        },],
     },
     watchOptions: {
         poll: 1000, // Check for changes every second
