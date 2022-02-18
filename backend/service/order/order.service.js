@@ -11,7 +11,7 @@ export default class OrderService {
   }
 
   insert(obj){  // {id: "123", lineitem: []}
-    Mongoose.getInstance().getOrder().insert(obj);
+    return Mongoose.getInstance().getOrder().insert(obj);
   }
 
   
