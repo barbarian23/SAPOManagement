@@ -13,12 +13,12 @@ import { responceJson } from "./resJson.util";
  * @param {*} controller 
  * @param {*} useMiddleWare 
  */
-export function applyMiddleware(router, method, url, controller, ...middleWare){
+export function applyMiddleware(router, method, url, controller, ...middleWare) {
     // apply 1 middle ware
-    let wrapper = async function (req, res, next){
-        try{
+    let wrapper = async function (req, res, next) {
+        try {
             await controller(req, res, next);
-        } catch(e) {
+        } catch (e) {
             addLog(req, e);
             return responceJson(res, 400, 'Invalid param');
         }
@@ -26,10 +26,10 @@ export function applyMiddleware(router, method, url, controller, ...middleWare){
 
     //router.get("/url", middleWare, controller);
     //router["get"](controller, ...middleWare, wrapper);
-    router[method](url, ...middleWare ,wrapper);
+    router[method](url, ...middleWare, wrapper);
 }
 
-function addLog(req, error){
+function addLog(req, error) {
     const url = req.originalUrl || req.url
     const errMsg = error.stack
     let errFileMsg = `
@@ -37,6 +37,23 @@ function addLog(req, error){
     URL: ${url}
     MSG: ${errMsg}
     `
-    if (req.method !== 'GET') errFileMsg += `BODY: ${JSON.stringify(req.body)}`
-    fs.appendFileSync(path.resolve(__dirname, '../logs/error.log'), errFileMsg + '\n\n', 'utf8')
+    if (req.method !== 'GET')
+        errFileMsg += `BODY: ${JSON.stringify(req.body)}`
+
+    console.log("an error occurs", errFileMsg);
+
+    fs.exists(path.resolve(__dirname, '../logs/error.log'), function (exists) {
+        // if (exists) {
+        //     console.log("exist");
+        // } else {
+        //     console.log("not exist");
+
+        // }
+        fs.writeFileSync(path.resolve(__dirname, 'error.log'), errFileMsg + '\n\n', { encoding: "utf8", flag: 'w' }, function (err, data) {
+            console.log("an error occurs, write to log", errFileMsg);
+        })
+    });
+
+
+    //fs.appendFileSync(path.resolve(__dirname, '../logs/error.log'), errFileMsg + '\n\n', 'utf8')
 }   
