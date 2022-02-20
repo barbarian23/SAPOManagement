@@ -46,8 +46,8 @@ const Order = function (mongoose) {
     fulfillment_status:      String,
     tags:                    String,
     contact_email:           String,
-    line_items:               [mongoose.Types.ObjectId],
-    fulfillments:             [mongoose.Types.ObjectId],
+    line_items:               [Schema.Types.ObjectId],
+    fulfillments:             [Schema.Types.ObjectId],
     status:                  String,
   });
 }
