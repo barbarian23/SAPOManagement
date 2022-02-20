@@ -1,8 +1,8 @@
-import LeftMenu from "./LeftMenu.component";
-import PopUp from "./Popup.component";
-import BillPopUp from "./BillPopup.component";
-import BillTable from "./BillTable.component";
-import ProduceTable from "./ProduceTable.component";
+import LeftMenu from "./leftMenu.component";
+import PopUp from "./productPopup.component";
+import BillPopUp from "./billPopup.component";
+import BillTable from "./billTable.component";
+import ProduceTable from "./produceTable.component";
 
 export {
   LeftMenu,
