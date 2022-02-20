@@ -23,7 +23,10 @@ const LineItem = function (mongoose) {
         fulfillment_status:           String,
         machine_id:                   Schema.Types.ObjectId,
         process_time:                 Date,
-        status:                       String,
+        status:                  {
+            type: String,
+            enum: ['NOT', 'DONE']
+        },
     });
   }
   export default LineItem;

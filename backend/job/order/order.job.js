@@ -1,0 +1,11 @@
+import { OrderService } from "../../service";
+
+const Order = function (schedule) {
+    var cronExpress = '*/10 * * * * * *';
+    var j = schedule.scheduleJob(cronExpress, function(fireDate){
+        console.log(fireDate);
+        let orderLast = await OrderService.getInstance().find().skip(0).limit(1).sort({created_on: -1}).exec();
+        let createdOnLast = orderLast.created_on;
+    });
+}
+export default Order;

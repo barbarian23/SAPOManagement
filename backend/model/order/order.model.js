@@ -48,7 +48,10 @@ const Order = function (mongoose) {
     contact_email:           String,
     line_items:               [Schema.Types.ObjectId],
     fulfillments:             [Schema.Types.ObjectId],
-    status:                  String,
+    status:                  {
+        type: String,
+        enum: ['NOT', 'DONE']
+    },
   });
 }
 export default Order;
