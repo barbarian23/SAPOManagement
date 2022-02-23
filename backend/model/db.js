@@ -5,6 +5,6 @@ const mongodb = mongoose.connect('mongodb://sapodb:xhbXHCckwFK7W5pLZhYtNRHRfCZEl
     console.log("Connect mongodb successfully")
   }).catch((err) => {
     console.log("Connect mongodb falure");
-  });
+  })
 
 export default mongodb;
