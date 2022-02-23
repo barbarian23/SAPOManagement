@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import Modal from "react-modal";
-import styled from "styled-components";
 import { useTable } from "react-table";
+import Dropdown from "react-dropdown";
+import { Box } from "./productPopup.style";
 
 function Table({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
@@ -28,147 +29,54 @@ function Table({ columns, data }) {
         ))}
       </thead>
       <tbody {...getTableBodyProps()}>
-        {rows.map((row, i) => {
+        {rows.map((row, iRow) => {
           prepareRow(row);
           return (
             <tr {...row.getRowProps()}>
-              {row.cells.map((cell) => {
-                return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
+              {row.cells.map((cell, iCell) => {
+                return <td {...cell.getCellProps()}>{cell.render("Cell", {iRow: iRow, iCell: iCell})}</td>;
               })}
             </tr>
           );
         })}
-        <tr className="total">
-          <td></td>
-          <td></td>
-          <td>
-            <b>Tổng cộng</b>
-          </td>
-          <td>
-            <b>10000đ</b>
-          </td>
-        </tr>
       </tbody>
     </table>
   );
 }
 
-const Box = styled.div`
-  font-family: "Roboto";
-  font-size: 14px;
-
-  .modal-title {
-    font-size: 14px;
-    font-weight: 700;
-    padding: 10px 0 0 10px;
-  }
-
-  table {
-    width: 100%;
-    background-color: #ffffff;
-    border-spacing: 0px 2px;
-    border: none;
-
-    th {
-      font-weight: 800;
-      font-size: 16px;
-      background-color: #ffffff;
-    }
-
-    tr {
-      background: rgba(23, 162, 184, 0.12);
-      :last-child {
-        td {
-          border-bottom: 0;
-        }
-      }
-    }
-
-    th,
-    td {
-      height: 43px;
-      margin: 0px;
-      text-align: center;
-      :last-child {
-        border-right: 0;
-      }
-    }
-
-    .total {
-      background-color: #ffffff;
-    }
-  }
-
-  .bill-info {
-    background-color: #ffffff;
-    border-spacing: 0;
-
-    tr {
-      background-color: #ffffff;
-    }
-
-    td {
-      text-align: left;
-
-      :first-child {
-        width: 150px;
-        padding-left: 10px;
-      }
-    }
-  }
-
-  .modal-btn {
-    width: 100px;
-    border: none;
-    padding: 10px;
-    margin: 20px 5px;
-    border-radius: 5px;
-    font-weight: 700;
-    cursor: pointer;
-  }
-`;
-
 const sample = [
   {
-    product: "Khung tranh",
-    quantity: 1,
-    price: 1000,
-    total: 1000
+    skuCode: "CH8-140x51-DEN",
+    orderID: "220115URHYF0AC",
+    status: 1,
+    machine: "M01",
+    processingTime: 1
   },
   {
-    product: "Tranh màu",
-    quantity: 1,
-    price: 5000,
-    total: 5000
+    skuCode: "CH8-140x51-DEN",
+    orderID: "220115URHYF0AC",
+    status: 0,
+    machine: "",
+    processingTime: 0
   }
 ];
 
 const data = [];
-for (let i = 0; i < 2; i += 1) {
+for (let i = 0; i < 3; i += 1) {
   let s = sample[Math.floor(Math.random() * sample.length)];
   data.push(s);
 }
 
-const columns = [
+const machines = ['M01', 'M02', 'M03'];
+
+const statuses = [
   {
-    width: 300,
-    Header: "Sản phẩm",
-    accessor: "product"
+    value: '0',
+    label: "Chưa xử lý",
   },
   {
-    width: 300,
-    Header: "Số lượng",
-    accessor: "quantity"
-  },
-  {
-    width: 300,
-    Header: "Đơn giá",
-    accessor: "price"
-  },
-  {
-    width: 300,
-    Header: "Thành tiền",
-    accessor: "total"
+    value: '1',
+    label: "Đã xử lý",
   }
 ];
 
@@ -181,11 +89,77 @@ const modalStyle = {
     marginRight: "-50%",
     transform: "translate(-50%, -50%)",
     width: 700,
-    height: "60%"
+    height: "auto"
   }
 };
 
 export default function BillPopUp({ open, onClose }) {
+  const [billData, setBillData] = useState(data);
+  const onSelectStatus = (e, iRow) => {
+    console.log(e, iRow);
+    setBillData(
+      billData.map((bill, index) => {
+        if(index == iRow){
+          return {
+            ...bill,
+            machine: e.value == 1 ? "M01" : "",
+            status: e.value,
+          };
+        }else{
+          return bill;
+        }
+      })
+    )
+    // billData[iRow].status = Number.parseInt(e.value);
+  };
+  const columns = [
+    {
+      Header: "Mã SKU",
+      accessor: "skuCode"
+    },
+    {
+      Header: "Mã đơn hàng",
+      accessor: "orderID"
+    },
+    {
+      Header: "Trạng thái",
+      accessor: "status",
+      Cell: ({ cell, iRow, iCell }) =>{
+        console.log(cell.value);
+        return <Dropdown
+          controlClassName={
+            cell.value == 1
+              ? "dropdown-status green"
+              : "dropdown-status red"
+          }
+          options={statuses}
+          onChange={(e) => onSelectStatus(e, iRow, iCell)}
+          value={statuses.find(
+            (i) => i.value == cell.value)}
+          // placeholder="Select an option"
+        />
+      }
+    },
+    {
+      Header: "Máy SX",
+      accessor: "machine",
+      Cell: ({ cell, iRow, iCell }) =>{
+        console.log(cell.value);
+        return cell.value ? <Dropdown
+          // controlClassName={}
+          options={machines}
+          // onChange={(e) => onSelectStatus(e, iRow, iCell)}
+          value={cell.value}
+          // placeholder="Select an option"
+        /> 
+        : null
+      }
+    },
+    {
+      Header: "TG xử lý",
+      accessor: "processingTime"
+    }
+  ];
   return (
     <Modal
       isOpen={open}
@@ -195,34 +169,11 @@ export default function BillPopUp({ open, onClose }) {
       ariaHideApp={false}
     >
       <Box>
-        <h4 className="modal-title">ĐƠN HÀNG</h4>
-
-        <table className="bill-info">
-          <tr>
-            <td>
-              <b>Mã đơn hàng</b>
-            </td>
-            <td>2201160J18YDR4</td>
-          </tr>
-          <tr>
-            <td>
-              <b>Thời gian đặt hàng</b>
-            </td>
-            <td>15:02 16/01/2022</td>
-          </tr>
-          <tr>
-            <td>
-              <b>Khách hàng</b>
-            </td>
-            <td>Sapo</td>
-          </tr>
-        </table>
-
-        <Table columns={columns} data={data}></Table>
+        <Table columns={columns} data={billData}></Table>
 
         <div className="right">
           <button className="modal-btn blue" onClick={onClose}>
-            IN
+            CẬP NHẬT
           </button>
           <button className="modal-btn" onClick={onClose}>
             THOÁT

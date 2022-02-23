@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 // import styled from "styled-components";
-import { PopUp, ProduceTable } from "../../component";
+import { ProductPopUp, ProduceTable } from "../../component";
 
 const columns = [
   {
@@ -25,14 +25,6 @@ const columns = [
       ) : (
         <p className="status-bag red">Chưa xử lý</p>
       )
-  },
-  {
-    Header: "Máy SX",
-    accessor: "machine"
-  },
-  {
-    Header: "TG xử lý",
-    accessor: "processingTime"
   }
 ];
 
@@ -71,7 +63,7 @@ export default function SapoProduct() {
     // setPopupData(rowData);
   };
 
-  const onBillModalClose = () => {
+  const onProductModalClose = () => {
     setOpen(false);
   };
 
@@ -79,7 +71,7 @@ export default function SapoProduct() {
     <div style={{ height: 1000, width: "100%", marginTop: -77 }}>
       <ProduceTable columns={columns} data={data} onRowClick={onRowClick} />
 
-      <PopUp open={open} onClose={onBillModalClose} />
+      <ProductPopUp open={open} onClose={onProductModalClose} />
     </div>
   );
 }
