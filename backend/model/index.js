@@ -1,36 +1,96 @@
-import Order from "./order/order.model";
+// import Order from "./order/order.model";
+// import {
+//   mydemo
+// } from "./dbconfig";
+// const ps = require('pg');
 
-const mongoose = require('mongoose');
+// export default class Postgres {
 
-export default class Mongoose {
+//   static getInstance() {
+//     if (!this.instance) {
+//       this.instance = new Postgres();
+//     }
+//     return this.instance;
+//   }
 
-  static instance = null;
+//   async dbconnect() {
+//     return new Promise((resolve, reject) => {
+//       let client = new ps.Client(mydemo)
+//       client.connect((err) => {
+//         if (err) {
+//           reject(err);
+//         } else {
+//           resolve(client);
+//         }
+//       })
+//     })
+//   }
 
-  static {
-    let db = mongoose.connect('mongodb://localhost:27017/admin');
-    mongoose.connection.on("open", function(ref) {
-      console.log("Connected to mongo server.");
-    });
-    
-    mongoose.connection.on("error", function(err) {
-      console.log("Could not connect to mongo server!");
-    });
+//   async execute(client, query) {
 
-    //tao mot danh sach cac model
-    Mongoose.Order = Order(mongoose);
-    
-  }
+//     return new Promise((resolve, reject) => {
+//       console.log("execute script")
+//       return client.query(query, (err, res) => {
+//         if (err) {
+//           console.error(err);
+//           return;
+//         }
+//         resolve(res.rows);
+//         client.end();
+//       });
+//     });
+//   }
 
-  static getInstance() {
-    if (!Mongoose.instance) {
-      Mongoose.instance = new Mongoose();
-    }
-    return Mongoose.instance;
-  }
+//   async getAll(tablename, engine) {
+//     // console.log()
+//     let sql = "select * from public." + tablename;
+//     console.log("sql " + sql);
+//     let result = await Postgres.getInstance().execute(engine, sql);
+//     return result;
+//   }
 
-  getOrder() {
-    return Mongoose.Order;
-  }
-  //Mongoose.getInstance().getOrder().save({someObj});
+// }
 
+const Sequelize = require('sequelize');
+import {
+  mydemo
+} from "./dbconfig";
+export function sequelize() {
+  var sequelize = new Sequelize(mydemo.database, mydemo.user, mydemo.password, {
+    host: mydemo.host,
+    dialect: 'postgres',
+    pool: {
+      max: 5,
+      min: 0,
+      idle: 10000
+    },
+  });
+
+  var Order = sequelize.define('Order', {
+    id: {
+      type: Sequelize.STRING,
+      primaryKey: true
+    },
+    id_product: Sequelize.STRING,
+    amount: Sequelize.INTEGER,
+    name_product: Sequelize.STRING,
+    status: Sequelize.STRING
+  }, {
+    tableName: 'order'
+  });
+
+  var Product = sequelize.define("Product", {
+    id: {
+      type: Sequelize.STRING,
+      primaryKey: true
+    },
+    name: Sequelize.STRING,
+    price: Sequelize.INTEGER,
+    notice: Sequelize.STRING
+  }, {
+    tableName: 'product'
+  })
+
+  var result = Order.findAll();
+  return result;
 }
