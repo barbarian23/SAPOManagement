@@ -1,18 +1,29 @@
-import Mongoose from "../../model";
+import Order from '../../model/order/order.model';
 
 export default class OrderService {
-
-  static instance = null;
-
   static getInstance(){
-    if(OrderService.instance == null){
-      OrderService.instance = new OrderService();
+    if(!this.instance){
+      this.instance = new OrderService();
     }
+    return this.instance
   }
 
-  insert(obj){  // {id: "123", lineitem: []}
-    return Mongoose.getInstance().getOrder().insert(obj);
+  async insert(obj){
+    return Order.insert(obj);
   }
 
-  
+  async getAllOrder(){
+    console.log("get all order");
+    await Order.find({id:450789469}).then(res=>{
+      console.log(res);
+      return res;
+    }).catch(err=>{
+      console.log(err);
+    });
+  }
+
+  async updateOrder(body){
+    
+  }
 }
+
