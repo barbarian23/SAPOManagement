@@ -58,6 +58,6 @@ const OrderSchema = mongoose.Schema({
     refunds: [String],
 });
 
-const Order = mongoose.model('Order', OrderSchema);
+const Order = mongoose.model('order', OrderSchema);
 
 export default Order;
