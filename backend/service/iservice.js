@@ -21,15 +21,6 @@ export default class IService {
         }
     }
 
-    async count(query = {}) {
-        try {
-            let total = await this.model.countDocuments(query);
-            return total;
-        } catch (errors) {
-            throw errors;
-        }
-    }
-
     async search(query = {}, skip, limit, sortBy) {
         let _skip = skip ? Number(skip) : 0;
         let _limit = limit ? Number(limit) : 10;
@@ -42,6 +33,15 @@ export default class IService {
                 .skip(_skip)
                 .limit(_limit);
             return items;
+        } catch (errors) {
+            throw errors;
+        }
+    }
+
+    async count(query = {}) {
+        try {
+            let total = await this.model.countDocuments(query);
+            return total;
         } catch (errors) {
             throw errors;
         }

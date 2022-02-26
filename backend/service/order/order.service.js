@@ -1,7 +1,7 @@
 import IService from '../iservice';
-import {Order} from '../../model';
+import { Order } from '../../model';
 
-class OrderService extends IService{
+class OrderService extends IService {
   constructor(model) {
     super(model);
   }
