@@ -1,10 +1,10 @@
 import IController from "../icontroller";
-import { OrderService } from "../../service";
+import { ProduceService } from "../../service";
 // import { responceJson } from '../../util';
 
-class OrderController extends IController {
+class ProduceController extends IController {
       constructor(service) {
             super(service);
       }
 }
-export default new OrderController(OrderService);
+export default new ProduceController(ProduceService);
