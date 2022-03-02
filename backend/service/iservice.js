@@ -21,17 +21,13 @@ export default class IService {
         }
     }
 
-    async search(query = {}, skip, limit, sortBy) {
-        let _skip = skip ? Number(skip) : 0;
-        let _limit = limit ? Number(limit) : 10;
-        let _sortBy = sortBy ? sortBy : { createdAt: -1 };
-
+    async search(query = {}, skip=0, limit=10, sortBy='_id') {
         try {
             let items = await this.model
                 .find(query)
-                .sort(_sortBy)
-                .skip(_skip)
-                .limit(_limit);
+                .sort(sortBy)
+                .skip(skip)
+                .limit(limit);
             return items;
         } catch (errors) {
             throw errors;
