@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-// import styled from "styled-components";
-import { ProductPopUp, ProduceTable } from "../../component";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import { GET_LIST_PRODUCTS, HIDE_PRODUCT_POPUP, HIDE_TIME_RANGE_POPUP, SHOW_PRODUCT_POPUP, SHOW_TIME_RANGE_POPUP } from "../../action/product/product.action";
+import { ProductPopUp, ProduceTable, TimeRangePopUp } from "../../component";
 
 const columns = [
   {
@@ -54,24 +55,38 @@ for (let i = 0; i < 10; i += 1) {
 }
 
 export default function SapoProduct() {
-  const [open, setOpen] = useState(false);
-  // const [popupData, setPopupData] = useState({});
+  let dispatch = useDispatch();
+  useEffect(() => dispatch({ type: GET_LIST_PRODUCTS}), []);
 
-  const onRowClick = ({ rowData }) => {
-    console.log("open", open);
-    setOpen(true);
-    // setPopupData(rowData);
+  let { isShowProductPopup, isShowTimeRangePopup, listProducts } = useSelector(state => state.product);
+
+  const onRowClicked = ({ rowData }) => {
+    dispatch({ type: SHOW_PRODUCT_POPUP})
   };
 
-  const onProductModalClose = () => {
-    setOpen(false);
+  const onProductPopupClosed = () => {
+    dispatch({ type: HIDE_PRODUCT_POPUP})
+  };
+
+  const onTimeRangeOptionClicked = () => {
+    dispatch({ type: SHOW_TIME_RANGE_POPUP})
+  };
+
+  const onTimeRangePopupClosed = () => {
+    dispatch({ type: HIDE_TIME_RANGE_POPUP})
+  };
+
+  const onTimeRangePopupConfirmed = (startDate, endDate) =>{
+    console.log(startDate, endDate);
+    dispatch({ type: HIDE_TIME_RANGE_POPUP});
   };
 
   return (
     <div style={{ height: 1000, width: "100%", marginTop: -77 }}>
-      <ProduceTable columns={columns} data={data} onRowClick={onRowClick} />
+      <ProduceTable columns={columns} data={data} onRowClick={onRowClicked} onTimeRangeClick={onTimeRangeOptionClicked} />
 
-      <ProductPopUp open={open} onClose={onProductModalClose} />
+      <ProductPopUp open={isShowProductPopup} onClose={onProductPopupClosed} />
+      <TimeRangePopUp open={isShowTimeRangePopup} onClose={onTimeRangePopupClosed} onOK={(startDate, endDate)=>{onTimeRangePopupConfirmed(startDate, endDate)}}/>
     </div>
   );
 }

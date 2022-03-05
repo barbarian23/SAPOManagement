@@ -169,6 +169,17 @@ export default function BillPopUp({ open, onClose }) {
       ariaHideApp={false}
     >
       <Box>
+        <div className="search-box">
+          <div className="search-label">
+            <p>
+              <b>SKU</b>
+            </p>
+          </div>
+          <div className="search-input">
+            <input type="text" placeholder="Tìm kiếm Mã đơn hàng" />
+          </div>
+        </div>
+
         <Table columns={columns} data={billData}></Table>
 
         <div className="right">

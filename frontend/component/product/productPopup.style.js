@@ -46,6 +46,42 @@ export const Box = styled.div`
     }
   }
 
+  .search-box {
+    height: 47px;
+    background-color: rgba(23, 162, 184, 0.12);
+    display: flex;
+    border-radius: 8px 8px 0 0px;
+  }
+  
+  .search-label {
+    width: 50px;
+    margin: 5px;
+    border-right: 2px solid black;
+  
+    p {
+      margin: 10px 0 10px 15px;
+    }
+  }
+  
+  .search-input {
+    margin: 5px;
+  
+    input[type="text"] {
+      background-color: rgba(23, 162, 184, 0.75);
+      height: 26px;
+      margin: 5px 0 10px 10px;
+      padding: 0 0 0 5px;
+      border-radius: 8px;
+      border: none;
+      font-size: 11px;
+      width: 300px;
+    }
+  
+    input[type="text"]:focus {
+      outline: none;
+    }
+  }
+
   .status-bag {
     padding: 5px;
     margin: 5px 0px;
@@ -54,6 +90,12 @@ export const Box = styled.div`
     color: #ffffff;
     width: 80px;
     display: inline-table;
+  }
+
+  .daterangepicker-box{
+    display: flex;
+    font-size: 14px;
+    font-weight: 700;
   }
 
   .modal-btn {
