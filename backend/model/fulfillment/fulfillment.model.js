@@ -43,7 +43,7 @@ const FulfillmentSchema = mongoose.Schema({
     tracking_url: String,
     tracking_urls: [String],
     receipt: Object,
-    line_items: [LineItemSchema]
+    line_items: [String]
 });
 
 const Fulfillment = mongoose.model('fulfillment', FulfillmentSchema);

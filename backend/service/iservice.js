@@ -3,6 +3,15 @@ export default class IService {
         this.model = model;
     }
 
+    async aggregate(pipeline) {
+        try {
+            let items = await this.model.aggregate(pipeline);
+            return items
+        } catch (errors) {
+            throw errors;
+        }
+    }
+
     async getAll() {
         try {
             let items = await this.model.find({});
