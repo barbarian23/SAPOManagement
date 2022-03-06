@@ -10,9 +10,12 @@ export default class OrderService {
     }
   }
 
-  insert(obj){  // {id: "123", lineitem: []}
+  static insert(obj){  // {id: "123", lineitem: []}
     return Mongoose.getInstance().getOrder().insert(obj);
   }
 
+  static find(obj){
+    return Mongoose.getInstance().getOrder().find(obj);
+  }
   
 }

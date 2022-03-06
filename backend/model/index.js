@@ -7,7 +7,7 @@ export default class Mongoose {
   static instance = null;
 
   static {
-    let db = mongoose.connect('mongodb://localhost:27017/admin');
+    let db = mongoose.connect('mongodb://localhost:27017/SapoManagement');
     mongoose.connection.on("open", function(ref) {
       console.log("Connected to mongo server.");
     });
@@ -18,7 +18,6 @@ export default class Mongoose {
 
     //tao mot danh sach cac model
     Mongoose.Order = Order(mongoose);
-    
   }
 
   static getInstance() {
