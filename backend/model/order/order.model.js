@@ -1,5 +1,5 @@
 const Order = function (mongoose) {
-  const { Schema } = mongoose,
+  const { Schema } = mongoose;
   return mongoose.model('Order', {
     billing_address:         Object,
     browser_ip:              String,
