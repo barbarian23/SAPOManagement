@@ -14,6 +14,10 @@ export default class OrderService {
     return Mongoose.getInstance().getOrder().insert(obj);
   }
 
+  static insertMany(objs){ 
+    return Mongoose.getInstance().getOrder().insertMany(objs);
+  }
+
   static find(obj){
     return Mongoose.getInstance().getOrder().find(obj);
   }

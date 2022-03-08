@@ -3,6 +3,7 @@ const fs = require('fs');
 const server = http.createServer(app);
 import { PORT } from "./constants/backend.common.constant";
 import app from './app';
+import Schedule from './job';
 
 // process.on("uncaughtException", (err) => fs.writeFile('./logs/uncaught.log', `${new Date().toLocaleString()} --- ${err} --- ${__filename}\n`, { flag: 'wx' }, function (err) {
 //     if (err) throw err;
@@ -12,6 +13,8 @@ import app from './app';
 app.set('port', PORT);
 
 server.listen(app.get('port'), () => console.log("######## app running on port " + PORT + " ########"));
+
+Schedule.getInstance();
 
 server.on('error', onError)
 

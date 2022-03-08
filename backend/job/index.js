@@ -1,4 +1,4 @@
-import Order from "./order/order.job";
+import OrderJob from "./order/order.job";
 
 const schedule = require('node-schedule');
 
@@ -7,7 +7,7 @@ export default class Schedule{
   static instance = null;
 
   static {
-    Schedule.Order = Order(schedule);
+    Schedule.Order = OrderJob(schedule);
   }
 
   static getInstance() {
@@ -17,7 +17,7 @@ export default class Schedule{
     return Schedule.instance;
   }
 
-  getOrderJob() {
+  static getOrderJob() {
     return Schedule.Order;
   }
 }
