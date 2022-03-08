@@ -1,10 +1,12 @@
 import axiosSerivce from './axiosService';
 
-export function getListProducts(page = 1, pageSize = 10, keyword='', sortByTime='', status='' ){
-    return axiosSerivce.get(`product/getAll`
+export function getListProducts(page = 1, pageSize = 10, keyword = '', sortBy = '', startDate = '', endDate = '', status = '') {
+    return axiosSerivce.get(`api/order/searchLineItems`
         + `?page=${page}`
         + `&pageSize=${pageSize}`
         + `&keyword=${keyword}`
-        + `&sortByTime=${sortByTime}`
-        + `&sortByStatus=${status}`);
+        + `&sortBy=${sortBy}`
+        + `&startDate=${startDate}`
+        + `&endDate=${endDate}`
+        + `&status=${status}`);
 }

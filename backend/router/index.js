@@ -1,12 +1,8 @@
 export function router(app){
-
     app.use("/api/user", require('./user/user.router').default);
-
-    app.use("/api/product", require('./product/product.router').default);
 
     app.use("/api/order", require('./order/order.router').default);
     app.use("/api/machine", require('./machine/machine.router').default);
-    app.use("/api/produce", require('./produce/produce.router').default);
     app.use("/api/fulfillment", require('./fulfillment/fulfillment.router').default);
 
     app.all("/*", require('./render/render.router').default);

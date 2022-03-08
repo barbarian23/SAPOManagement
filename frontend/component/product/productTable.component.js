@@ -1,4 +1,6 @@
-import * as React from "react";
+import React from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import { KEYWORD_CHANGE, PAGE_CHANGE, PAGE_SIZE_CHANGE, SHOW_PRODUCT_POPUP, SHOW_TIME_RANGE_POPUP, STATUS_CHANGE } from "../../action/product/product.action";
 import { useTable } from "react-table";
 import { TableBox } from "./productTable.style";
 //import "../assets/css/font-awesome.min.css";
@@ -20,6 +22,9 @@ function Table({ columns, data, onRowClick, onTimeRangeClick }) {
     data
   });
 
+  let { status } = useSelector(state => state.product);
+  let dispatch = useDispatch();
+  
   const timebook = [
     "Thời gian đặt hàng",
     "Tăng dần",
@@ -28,47 +33,25 @@ function Table({ columns, data, onRowClick, onTimeRangeClick }) {
   ];
   const defaulttimebook = timebook[0];
 
-  const status = ["Trạng thái", "Chưa xử lý", "Đã xử lý"];
-  const defaultstatus = status[0];
-
-  const machinesx = ["Máy SX", "M1", "M2", "M3"];
-  const defaultMachinesx = machinesx[0];
-
-  const timehandle = [
-    "TG xử lý",
-    "Tăng dần",
-    "Giảm dần",
-    "Tìm kiếm theo khoảng thời gian"
-  ];
-  const defaulttimehandle = timehandle[0];
-
-  const popupstatus = [
-    {
-      value: "0",
-      label: "Chưa xử lý",
-      className: "dropDownPopUpNegative"
-    },
-    { value: "1", label: "Đã xử lý", className: "dropDownPopUpPositive" }
-  ];
-
-  const popupmachine = [
-    { value: "0", label: "M1" },
-    { value: "1", label: "M2" },
-    { value: "2", label: "M3" }
-  ];
-
-  const onSelectStatus = (e, iRow, iCell) => {
-    console.log(rows[iRow].cells[iCell]);
-    rows[iRow].cells[iCell].value = Number.parseInt(e.value);
-    console.log(rows[iRow].cells[iCell]);
-  };
+  const _status = [
+    { value: '', label: "Trạng thái" },
+    { value: 'NOT', label: "Chưa xử lý" },
+    { value: 'DONE', label: "Đã xử lý" }];
 
   const onSelectMachine = (e, i, index) => {
     console.log(e, i, index);
-    if (e.value == 'Tìm kiếm theo khoảng thời gian'){
-      onTimeRangeClick();
+    if (e.value == 'Tìm kiếm theo khoảng thời gian') {
+      dispatch({ type: SHOW_TIME_RANGE_POPUP });
     }
   };
+
+  const onRowClicked = ({ rowData }) => {
+    dispatch({ type: SHOW_PRODUCT_POPUP })
+  };
+
+  const onStatusSelected = (e) => {
+    dispatch({ type: STATUS_CHANGE, value: e.value });
+  }
 
   return (
     <table {...getTableProps()}>
@@ -88,25 +71,9 @@ function Table({ columns, data, onRowClick, onTimeRangeClick }) {
                 ) : index == 3 ? (
                   <Dropdown
                     controlClassName="dropDownMachine"
-                    options={status}
-                    onChange={onSelectMachine}
-                    value={defaultstatus}
-                    placeholder="Select an option"
-                  />
-                ) : index == 4 ? (
-                  <Dropdown
-                    controlClassName="dropDownMachine"
-                    options={machinesx}
-                    onChange={onSelectMachine}
-                    value={defaultMachinesx}
-                    placeholder="Select an option"
-                  />
-                ) : index == 5 ? (
-                  <Dropdown
-                    controlClassName="dropDownMachine"
-                    options={timehandle}
-                    onChange={onSelectMachine}
-                    value={defaulttimehandle}
+                    options={_status}
+                    onChange={onStatusSelected}
+                    value={_status.find((i) => i.value == status)}
                     placeholder="Select an option"
                   />
                 ) : (
@@ -121,7 +88,7 @@ function Table({ columns, data, onRowClick, onTimeRangeClick }) {
         {rows.map((row, i) => {
           prepareRow(row);
           return (
-            <tr {...row.getRowProps()} onClick={() => onRowClick(row)}>
+            <tr {...row.getRowProps()} onClick={onRowClicked}>
               {row.cells.map((cell) => {
                 return (
                   <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
@@ -136,6 +103,22 @@ function Table({ columns, data, onRowClick, onTimeRangeClick }) {
 }
 
 export default function ProduceTable({ columns, data, onRowClick, onTimeRangeClick }) {
+  let { keyword, page, pageSize } = useSelector(state => state.product);
+  let dispatch = useDispatch();
+
+  const onKeywordChanged = (e) => {
+    console.log(e.target.value);
+    dispatch({ type: KEYWORD_CHANGE, value: e.target.value });
+  }
+
+  const onPageChanged = (e) => {
+    dispatch({ type: PAGE_CHANGE, value: e.target.value });
+  }
+
+  const onPageSizeChanged = (e) => {
+    dispatch({ type: PAGE_SIZE_CHANGE, value: e.target.value });
+  }
+
   return (
     <TableBox>
       <div className="search-box">
@@ -145,22 +128,28 @@ export default function ProduceTable({ columns, data, onRowClick, onTimeRangeCli
           </p>
         </div>
         <div className="search-input">
-          <input type="text" placeholder="Tìm kiếm Mã SKU / Mã đơn hàng" />
+          <input type="text"
+            placeholder="Tìm kiếm Mã SKU / Mã đơn hàng"
+            value={keyword}
+            onChange={onKeywordChanged}
+          />
         </div>
       </div>
 
       <Table
-          columns={columns}
-          data={data}
-          onRowClick={onRowClick}
-          onTimeRangeClick={onTimeRangeClick}
-        ></Table>
+        columns={columns}
+        data={data}
+        onRowClick={onRowClick}
+        onTimeRangeClick={onTimeRangeClick}
+      ></Table>
 
       <div className="pagging-box">
         <div className="right">
           <div className="pagging-label">
             <span>Số lượng mỗi trang</span>
-            <input type="number" defaultValue={10} />
+            <input type="number" 
+              value={pageSize}
+              onChange={onPageSizeChanged}/>
             <span>1 - 10 trên 20</span>
 
             <span>

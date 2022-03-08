@@ -5,6 +5,6 @@ const MachineSchema = mongoose.Schema({
     name: String
 });
 
-const Machine = mongoose.model('machine', MachineSchema);
+const Machine = mongoose.model('Machine', MachineSchema);
 
 export default Machine;

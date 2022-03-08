@@ -15,7 +15,7 @@ export default class IService {
     async getAll() {
         try {
             let items = await this.model.find({});
-            return items
+            return items;
         } catch (errors) {
             throw errors;
         }
@@ -52,11 +52,11 @@ export default class IService {
         }
     }
 
-    async get(id) {
+    async getByID(id) {
         try {
             let item = await this.model.findById(id);
             if (!item) {
-                throw error;
+                return null;
             }
             return item;
         } catch (errors) {
