@@ -32,6 +32,7 @@ const LineItem = function (mongoose) {
         ma_cost_amount:       Number,
         actual_price:         Number,
         process_time:         Date,
+        order_id:             Number,
         machine_id:           Schema.Types.ObjectId,
         status:               {
             type: String,

@@ -1,4 +1,6 @@
 import Order from "./order/order.model";
+import LineItem from "./lineItem/lineItem.model";
+import Fulfillment from "./fulfillment/fulfillment.model";
 
 const mongoose = require('mongoose');
 
@@ -18,6 +20,8 @@ export default class Mongoose {
 
     //tao mot danh sach cac model
     Mongoose.Order = Order(mongoose);
+    Mongoose.LineItem = LineItem(mongoose);
+    Mongoose.Fulfillment = Fulfillment(mongoose);
   }
 
   static getInstance() {
@@ -27,8 +31,16 @@ export default class Mongoose {
     return Mongoose.instance;
   }
 
-  getOrder() {
+  static getOrder() {
     return Mongoose.Order;
+  }
+
+  static getLineItem() {
+    return Mongoose.LineItem;
+  }
+
+  static getFulfillment() {
+    return Mongoose.Fulfillment;
   }
   //Mongoose.getInstance().getOrder().save({someObj});
 
