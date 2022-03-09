@@ -1,6 +1,11 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { GET_LIST_PRODUCTS, HIDE_PRODUCT_POPUP, HIDE_TIME_RANGE_POPUP, SHOW_PRODUCT_POPUP, SHOW_TIME_RANGE_POPUP } from "../../action/product/product.action";
+import {
+  GET_LIST_PRODUCTS,
+  HIDE_PRODUCT_POPUP,
+  HIDE_TIME_RANGE_POPUP,
+  DATE_RANGE_CHANGE
+} from "../../action/product/product.action";
 import { ProductPopUp, ProduceTable, TimeRangePopUp } from "../../component";
 
 export default function SapoProduct() {
@@ -16,7 +21,8 @@ export default function SapoProduct() {
     },
     {
       Header: "Thời gian đặt hàng",
-      accessor: "created_at"
+      accessor: "created_at",
+      // Cell: ({ cell: { value } }) => Date(value)
     },
     {
       Header: "Trạng thái",
@@ -44,7 +50,8 @@ export default function SapoProduct() {
   };
 
   const onTimeRangePopupConfirmed = (startDate, endDate) => {
-    console.log(startDate, endDate);
+    console.log(startDate.getTime(), endDate.getTime());
+    dispatch({ type: DATE_RANGE_CHANGE, value: { startDate: startDate.getTime(), endDate: endDate.getTime()} });
     dispatch({ type: HIDE_TIME_RANGE_POPUP });
   };
 

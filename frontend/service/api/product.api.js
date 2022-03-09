@@ -10,3 +10,9 @@ export function getListProducts(page = 1, pageSize = 10, keyword = '', sortBy = 
         + `&endDate=${endDate}`
         + `&status=${status}`);
 }
+
+export function getLineItemsBySKU(sku='', keyword='') {
+    return axiosSerivce.get(`api/order/searchLineItemsBySKU`
+        + `?sku=${sku}`
+        + `&keyword=${keyword}`);
+}

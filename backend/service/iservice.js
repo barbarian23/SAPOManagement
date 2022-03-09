@@ -12,6 +12,20 @@ export default class IService {
         }
     }
 
+    async aggregateCount(pipeline) {
+        try {
+            let items = await this.model.aggregate(pipeline);
+            if(items){
+                return items.length;
+            }else{
+                return 0;
+            }
+        } catch (errors) {
+            throw errors;
+        }
+    }
+
+
     async getAll() {
         try {
             let items = await this.model.find({});
@@ -55,10 +69,10 @@ export default class IService {
     async getByID(id) {
         try {
             let item = await this.model.findById(id);
-            if (!item) {
-                return null;
+            if (item) {
+                return item;
             }
-            return item;
+            return null;
         } catch (errors) {
             throw errors;
         }

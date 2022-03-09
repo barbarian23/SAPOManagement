@@ -14,7 +14,7 @@ const modalStyle = {
     transform: "translate(-50%, -50%)",
     width: 400,
     height: "auto",
-    minHeight: 300
+    overflow: "visible",
   }
 };
 
