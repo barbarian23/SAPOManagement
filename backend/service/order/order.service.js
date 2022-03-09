@@ -10,16 +10,27 @@ export default class OrderService {
     }
   }
 
-  static insert(obj){  // {id: "123", lineitem: []}
-    return Mongoose.getInstance().getOrder().insert(obj);
+  static insert(obj){ 
+    return Mongoose.getOrder().insert(obj);
   }
 
   static insertMany(objs){ 
-    return Mongoose.getInstance().getOrder().insertMany(objs);
+    return Mongoose.getOrder().insertMany(objs);
+  }
+
+  static update(filter, update, upsert = false){ 
+    return Mongoose.getOrder().findOneAndUpdate(filter, update, {
+      new: true,
+      upsert: upsert
+    });
+  }
+
+  static deleteMany(obj){
+    return Mongoose.getLineItem().deleteMany(obj);
   }
 
   static find(obj){
-    return Mongoose.getInstance().getOrder().find(obj);
+    return Mongoose.getOrder().find(obj);
   }
   
 }

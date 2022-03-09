@@ -10,16 +10,27 @@ export default class FulfillmentService {
     }
   }
 
-  static insert(obj){  // {id: "123", lineitem: []}
-    return Mongoose.getInstance().getFulfillment().insert(obj);
+  static insert(obj){ 
+    return Mongoose.getFulfillment().insert(obj);
   }
 
   static insertMany(objs){ 
-    return Mongoose.getInstance().getFulfillment().insertMany(objs);
+    return Mongoose.getFulfillment().insertMany(objs);
+  }
+
+  static update(filter, update, upsert = false){ 
+    return Mongoose.getFulfillment().findOneAndUpdate(filter, update, {
+      new: true,
+      upsert: upsert
+    });
+  }
+
+  static deleteMany(obj){
+    return Mongoose.getLineItem().deleteMany(obj);
   }
 
   static find(obj){
-    return Mongoose.getInstance().getFulfillment().find(obj);
+    return Mongoose.getFulfillment().find(obj);
   }
   
 }

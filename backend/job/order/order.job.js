@@ -26,6 +26,8 @@ const Order = function (schedule) {
         if(data.orders && data.orders.length > 0){
             data.orders.forEach(order => {
                 let orderResult = await OrderService.insert(order);
+
+                order.line_items.order_id = order.id;
                 let lineItemResult = await LineItemService.insertMany(order.line_items);
                 let fulfillmentResult = await FulfillmentService.insertMany(order.fulfillments);
             });
@@ -38,6 +40,32 @@ const Order = function (schedule) {
         response = await fetch(urlGetOrder, { method: 'GET', headers: headers });
         data = await response.json();
 
+        if(data.orders && data.orders.length > 0){
+            data.orders.forEach(order => {
+                let orderResult = await OrderService.update({id: order.id}, order, true);
+                
+                if(order.line_items && order.line_items.length > 0){
+                    let lineItemResult = await LineItemService.deleteMany({
+                        id: { "$nin": order.line_items.map(x => x.id) },
+                        order_id: order.id
+                    });
+                    order.line_items.forEach(line_item => {
+                        line_item.order_id = order.id;
+                        lineItemResult = await LineItemService.update({id: line_item.id}, line_item, true);
+                    });
+                }
+                
+                if(order.fulfillments && order.fulfillments.length > 0){
+                    let fulfillmentResult = await FulfillmentService.deleteMany({
+                        id: { "$nin": order.fulfillments.map(x => x.id) },
+                        order_id: order.id
+                    });
+                    order.fulfillments.forEach(fulfillment => {
+                        fulfillmentResult = await FulfillmentService.update({id: fulfillment.id}, fulfillment, true);
+                    });
+                }
+            });
+        }
 
     });
 }
