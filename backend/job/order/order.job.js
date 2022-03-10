@@ -5,10 +5,10 @@ const Order = function (schedule) {
     var cronExpress = '*/10 * * * * * *';
     var j = schedule.scheduleJob(cronExpress, function(fireDate){
         console.log(fireDate);
-        let orderCreatedLast = await OrderService.getInstance().find().sort({created_at: -1}).skip(0).limit(1).exec();
+        let orderCreatedLast = OrderService.find().sort({created_at: -1}).skip(0).limit(1).exec();
         let createdLast = orderCreatedLast.created_at;
 
-        let orderUpdatedLast = await OrderService.getInstance().find().sort({updated_at: -1}).skip(0).limit(1).exec();
+        let orderUpdatedLast = OrderService.find().sort({updated_at: -1}).skip(0).limit(1).exec();
         let updatedLast = orderUpdatedLast.updated_at;
 
         let headers = {
@@ -20,16 +20,16 @@ const Order = function (schedule) {
         let params = { created_at_min: createdLast };
         urlGetOrder.search = new URLSearchParams(params).toString();
 
-        let response = await fetch(urlGetOrder, { method: 'GET', headers: headers });
-        let data = await response.json();
+        let response = fetch(urlGetOrder, { method: 'GET', headers: headers });
+        let data = response.json();
 
         if(data.orders && data.orders.length > 0){
             data.orders.forEach(order => {
-                let orderResult = await OrderService.insert(order);
+                let orderResult = OrderService.insert(order);
 
                 order.line_items.order_id = order.id;
-                let lineItemResult = await LineItemService.insertMany(order.line_items);
-                let fulfillmentResult = await FulfillmentService.insertMany(order.fulfillments);
+                let lineItemResult = LineItemService.insertMany(order.line_items);
+                let fulfillmentResult = FulfillmentService.insertMany(order.fulfillments);
             });
         }
 
@@ -37,31 +37,31 @@ const Order = function (schedule) {
         params = { updated_at_min: updatedLast };
         urlGetOrder.search = new URLSearchParams(params).toString();
 
-        response = await fetch(urlGetOrder, { method: 'GET', headers: headers });
-        data = await response.json();
+        response = fetch(urlGetOrder, { method: 'GET', headers: headers });
+        data = response.json();
 
         if(data.orders && data.orders.length > 0){
             data.orders.forEach(order => {
-                let orderResult = await OrderService.update({id: order.id}, order, true);
+                let orderResult = OrderService.update({id: order.id}, order, true);
                 
                 if(order.line_items && order.line_items.length > 0){
-                    let lineItemResult = await LineItemService.deleteMany({
+                    let lineItemResult = LineItemService.deleteMany({
                         id: { "$nin": order.line_items.map(x => x.id) },
                         order_id: order.id
                     });
                     order.line_items.forEach(line_item => {
                         line_item.order_id = order.id;
-                        lineItemResult = await LineItemService.update({id: line_item.id}, line_item, true);
+                        lineItemResult = LineItemService.update({id: line_item.id}, line_item, true);
                     });
                 }
                 
                 if(order.fulfillments && order.fulfillments.length > 0){
-                    let fulfillmentResult = await FulfillmentService.deleteMany({
+                    let fulfillmentResult = FulfillmentService.deleteMany({
                         id: { "$nin": order.fulfillments.map(x => x.id) },
                         order_id: order.id
                     });
                     order.fulfillments.forEach(fulfillment => {
-                        fulfillmentResult = await FulfillmentService.update({id: fulfillment.id}, fulfillment, true);
+                        fulfillmentResult = FulfillmentService.update({id: fulfillment.id}, fulfillment, true);
                     });
                 }
             });
