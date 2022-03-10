@@ -6,6 +6,7 @@ import {
   HIDE_TIME_RANGE_POPUP,
   DATE_RANGE_CHANGE
 } from "../../action/product/product.action";
+import {date2dtstr} from "../../service/util/utils.client";
 import { ProductPopUp, ProduceTable, TimeRangePopUp } from "../../component";
 
 export default function SapoProduct() {
@@ -22,7 +23,9 @@ export default function SapoProduct() {
     {
       Header: "Thời gian đặt hàng",
       accessor: "created_at",
-      // Cell: ({ cell: { value } }) => Date(value)
+      Cell: ({cell}) =>{
+        return <>{date2dtstr(new Date(cell.value))}</>
+      }
     },
     {
       Header: "Trạng thái",

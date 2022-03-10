@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { 
+import {
+  HIDE_PRODUCT_POPUP,
   POPUP_KEYWORD_CHANGE,
   POPUP_MACHINE_CHANGE,
   POPUP_STATUS_CHANGE,
@@ -10,6 +11,7 @@ import Modal from "react-modal";
 import { useTable } from "react-table";
 import Dropdown from "react-dropdown";
 import { Box } from "./productPopup.style";
+import {date2dtstr} from "../../service/util/utils.client";
 
 function Table({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
@@ -41,7 +43,7 @@ function Table({ columns, data }) {
           return (
             <tr {...row.getRowProps()}>
               {row.cells.map((cell, iCell) => {
-                return <td {...cell.getCellProps()}>{cell.render("Cell", {iRow: iRow, iCell: iCell})}</td>;
+                return <td {...cell.getCellProps()}>{cell.render("Cell", { iRow: iRow, iCell: iCell })}</td>;
               })}
             </tr>
           );
@@ -54,7 +56,7 @@ function Table({ columns, data }) {
 export default function ProductPopUp({ open, onClose }) {
   let { lineItems, machines, popupKeyword } = useSelector(state => state.product);
   let dispatch = useDispatch();
-  let _machines = machines.map((machine)=>{
+  let _machines = machines.map((machine) => {
     return {
       value: machine._id,
       label: machine.code
@@ -62,39 +64,41 @@ export default function ProductPopUp({ open, onClose }) {
   });
 
   const onKeywordChanged = (e) => {
-    dispatch({type: POPUP_KEYWORD_CHANGE, value: e.target.value})
+    dispatch({ type: POPUP_KEYWORD_CHANGE, value: e.target.value })
   }
 
   const onSelectStatus = (e, iRow) => {
     // console.log(e, iRow);
-    dispatch({ 
-      type: POPUP_STATUS_CHANGE, 
-      value: {status: e.value, index: iRow}
+    dispatch({
+      type: POPUP_STATUS_CHANGE,
+      value: { status: e.value, index: iRow }
     });
   };
 
   const onSelectMachine = (e, iRow) => {
     // console.log(e, iRow);
-    dispatch({ 
-      type: POPUP_MACHINE_CHANGE, 
-      value: {machine_id: e.value, index: iRow}
+    dispatch({
+      type: POPUP_MACHINE_CHANGE,
+      value: { machine_id: e.value, index: iRow }
     });
   }
 
   const onUpdateBtnClick = () => {
     lineItems.forEach(item => {
-      if(item.isEdited){
+      if (item.isEdited) {
         console.log(item);
         dispatch({
           type: UPDATE_LINE_ITEM_STATUS,
           value: {
-            id: item._id,
+            id: item.id,
             status: item.status,
             machine_id: item.machine_id
           }
         })
       }
     });
+
+    dispatch({ type: HIDE_PRODUCT_POPUP });
   }
 
   const statuses = [
@@ -107,7 +111,7 @@ export default function ProductPopUp({ open, onClose }) {
       label: "Đã xử lý",
     }
   ];
-  
+
   const columns = [
     {
       Header: "Mã SKU",
@@ -120,7 +124,7 @@ export default function ProductPopUp({ open, onClose }) {
     {
       Header: "Trạng thái",
       accessor: "status",
-      Cell: ({ cell, iRow, iCell }) =>{
+      Cell: ({ cell, iRow, iCell }) => {
         // console.log(cell.value);
         return <Dropdown
           controlClassName={
@@ -131,14 +135,14 @@ export default function ProductPopUp({ open, onClose }) {
           options={statuses}
           onChange={(e) => onSelectStatus(e, iRow, iCell)}
           value={statuses.find((i) => i.value == cell.value)}
-          // placeholder="Select an option"
+        // placeholder="Select an option"
         />
       }
     },
     {
       Header: "Máy SX",
       accessor: "machine_id",
-      Cell: ({ cell, iRow, iCell }) =>{
+      Cell: ({ cell, iRow, iCell }) => {
         return <Dropdown
           options={_machines}
           onChange={(e) => onSelectMachine(e, iRow, iCell)}
@@ -150,6 +154,9 @@ export default function ProductPopUp({ open, onClose }) {
     {
       Header: "TG xử lý",
       accessor: "process_time",
+      Cell: ({cell}) =>{
+        return <>{date2dtstr(new Date(cell.value))}</>
+      }
     }
   ];
 
@@ -183,11 +190,11 @@ export default function ProductPopUp({ open, onClose }) {
             </p>
           </div>
           <div className="search-input">
-            <input 
-              type="text" 
-              placeholder="Tìm kiếm Mã đơn hàng" 
+            <input
+              type="text"
+              placeholder="Tìm kiếm Mã đơn hàng"
               value={popupKeyword}
-              onChange={onKeywordChanged}/>
+              onChange={onKeywordChanged} />
           </div>
         </div>
 

@@ -1,3 +1,4 @@
+import {Types} from "mongoose";
 import IController from "../icontroller";
 import { LineItemService } from "../../service";
 import { responceJson } from '../../util';
@@ -17,15 +18,25 @@ class LineItemController extends IController {
 
             if (_id == '' || _status == '' || _machineID == '') {
                 console.log(_id, _status, _machineID);
-                responceJson(res, 400, []);
+                responceJson(res, 400, {});
             } else {
                 let lineItem = await this.service.getByID(_id);
-                responceJson(res, 200, {
-                    item: lineItem
-                });
+                if(lineItem){
+                    lineItem.status = status;
+                    lineItem.machine_id = Types.ObjectId(_machineID);
+
+                    let result = lineItem.save()
+                    responceJson(res, 200, {
+                        id: result._id
+                    });
+                }else{
+                    responceJson(res, 400, {
+                        error: 'Cant find lineItem'
+                    });
+                }
             }
         } catch (e) {
-            responceJson(res, 400, []);
+            responceJson(res, 400, {error: e});
             next(e);
         }
     }

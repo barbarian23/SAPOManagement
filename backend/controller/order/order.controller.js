@@ -33,6 +33,7 @@ class OrderController extends IController {
                         { $unwind : "$items" },
                         { $project: { 
                               _id: 0, 
+                              id: "$items._id",
                               order_id: {$toString: "$id"}, 
                               created_at: 1, 
                               sku: "$items.sku",
@@ -114,6 +115,7 @@ class OrderController extends IController {
                         },
                         { $unwind : "$machine" },
                         { $project: { 
+                              _id: 0,
                               order_id: {$toString: "$id"}, 
                               sku: "$items.sku",
                               machine_id: "$items.machine_id",
@@ -121,6 +123,7 @@ class OrderController extends IController {
                               machine_name: "$machine.name",
                               process_time: "$items.process_time",
                               status: "$items.status",
+                              id: "$items._id",
                         }},
                         { $match: {sku: _sku}},
                   ];

@@ -176,4 +176,5 @@ export const productSaga = function* () {
     yield takeLatest(GET_MACHINES, getMachinesSaga);
     yield takeLatest(SKU_SELECT, getLineItemsSaga);
     yield takeLatest(UPDATE_LINE_ITEM_STATUS, updateLineItemStatusSaga);
+    yield takeLatest(UPDATE_LINE_ITEM_STATUS_SUCCESS, getListProductsSaga);
 }
