@@ -7,6 +7,76 @@ class OrderController extends IController {
             super(service);
       }
 
+      async search(req, res, next) {
+            try {
+                  const { page, pageSize, keyword, sortBy, startDate, endDate, status } = req.query;
+                  let _skip = page > 0 ? (Number(page) - 1) * Number(pageSize) : 0;
+                  let _limit = pageSize ? Number(pageSize) : 10;
+                  let _sortBy = sortBy ? sortBy : 'created_at';
+                  
+                  let _keyword = keyword ? keyword : null;
+                  let _startDate = startDate ? Number(startDate) : 0;
+                  let _endDate = endDate ? Number(endDate) : 0;
+                  let _status = status ? status : null;
+                  let orQueries = [];
+                  let andQueries = [];
+                  
+                  let pipeline = [
+                        { $project: { 
+                              _id: 0, 
+                              id: {$toString: "$id"},
+                              created_at: 1, 
+                              status: 1,
+                        }},
+                  ];
+                  
+                  if(_keyword){
+                        orQueries.push({id: {$regex: `.*${_keyword}.*`}});
+                  }
+                  if(_status){
+                        orQueries.push({status: _status});
+                  }
+                  
+                  if(orQueries.length > 0){
+                        pipeline.push({$match: {$or: orQueries}});
+                  }
+
+                  if(_startDate > 0 && _endDate > 0){
+                        let start = new Date(_startDate);
+                        let end = new Date(_endDate);
+                        andQueries.push({ created_at: {$gte: start.toISOString()} });
+                        andQueries.push({ created_at: {$lte: end.toISOString()} });
+                  }
+
+                  if(andQueries.length > 0){
+                        pipeline.push({$match: {$and: andQueries}});
+                  }
+
+                  if(_startDate == 0 || _endDate == 0){
+                        if(_sortBy == 'created_at'){
+                              pipeline.push({ $sort: {created_at: 1} });
+                        }else if (_sortBy == '-created_at'){
+                              pipeline.push({ $sort: {created_at: -1} });
+                        }
+                  }
+                  
+                  const total = await this.service.aggregateCount(pipeline);
+                  pipeline = [
+                        ...pipeline,
+                        { $skip: _skip},
+                        { $limit: _limit }
+                  ];
+                  const orders = await this.service.aggregate(pipeline);
+                  responceJson(res, 200, {
+                        items: orders,
+                        total: total
+                  });
+            } catch (e) {
+                  responceJson(res, 400, {error: e});
+                  next(e);
+            }
+      }
+
       async searchLineItems(req, res, next) {
             try {
                   const { page, pageSize, keyword, sortBy, startDate, endDate, status } = req.query;

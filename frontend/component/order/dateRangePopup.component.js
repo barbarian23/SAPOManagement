@@ -18,7 +18,7 @@ const modalStyle = {
   }
 };
 
-export default function TimeRangePopUp({ open, onClose, onOK }) {
+export default function DateRangePopUp({ open, onClose, onOK }) {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
@@ -27,7 +27,7 @@ export default function TimeRangePopUp({ open, onClose, onOK }) {
       isOpen={open}
       onRequestClose={onClose}
       style={modalStyle}
-      contentLabel="Time range Modal"
+      contentLabel="Date range Modal"
       ariaHideApp={false}
     >
       <Box>

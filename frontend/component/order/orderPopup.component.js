@@ -1,7 +1,7 @@
 import React from "react";
 import Modal from "react-modal";
 import { useTable } from "react-table";
-import {Box} from './billPopup.style';
+import {Box} from './orderPopup.style';
 
 function Table({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI

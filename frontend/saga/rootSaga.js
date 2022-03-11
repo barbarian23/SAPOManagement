@@ -2,8 +2,9 @@ import { select, take, all } from 'redux-saga/effects';
 import { watchLogin } from "./login/login.saga";
 import { watchHome } from "./home/home.saga";
 import { productSaga } from "./product/product.saga";
+import { orderSaga } from "./order/order.saga";
 
-//quan sát toàn bộ các âction
+//quan sát toàn bộ các action
 const watchAndLog = function* () {
     while (true) {
         const action = yield take('*');
@@ -19,6 +20,7 @@ const rootSaga = function* () {
         watchLogin(),
         watchHome(),
         productSaga(),
+        orderSaga(),
     ])
 }
 
