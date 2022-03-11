@@ -8,8 +8,7 @@ import FulfillmentService from "./fulfillment/fulfillment.service";
 
 export {
     Render,
-    User,
-    
+    User,   
     OrderService,
     MachineService,
     LineItemService,
