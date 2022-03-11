@@ -91,6 +91,19 @@ export default class IService {
         }
     }
 
+    async insertMany(datas) {
+        try {
+            let items = await this.model.insertMany(datas);
+            if (items) {
+                return items;
+            } else {
+                throw new Error('Something wrong happened');
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async update(id, data) {
         try {
             let item = await this.model.findByIdAndUpdate(id, data, { new: true });
@@ -109,6 +122,23 @@ export default class IService {
             } else {
                 return {
                     item: item,
+                    deleted: true
+                };
+            }
+        } catch (errors) {
+            throw errors;
+        }
+    }
+
+    async deleteMany(obj) {
+        try {
+            let items = await this.model.deleteMany(obj);
+            if (!items) {
+                let error = new Error('Item not found');
+                throw error;
+            } else {
+                return {
+                    items: items,
                     deleted: true
                 };
             }

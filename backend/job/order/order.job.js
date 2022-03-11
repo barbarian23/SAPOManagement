@@ -28,7 +28,7 @@ const Order = function () {
         console.log(data.orders.length, "Create orders length");
         if(data.orders && data.orders.length > 0){
             data.orders.forEach(async order => {
-                let orderResult = await OrderService.insertMany([order]);
+                let orderResult = await OrderService.insert(order);
 
                 order.line_items.order_id = order.id;
                 let lineItemResult = await LineItemService.insertMany(order.line_items);
@@ -55,7 +55,7 @@ const Order = function () {
                     });
                     order.line_items.forEach(async line_item => {
                         line_item.order_id = order.id;
-                        lineItemResult = await LineItemService.update({id: line_item.id}, line_item, true);
+                        lineItemResult = await LineItemService.update({id: line_item.id}, line_item);
                     });
                 }
                 
@@ -65,7 +65,7 @@ const Order = function () {
                         order_id: order.id
                     });
                     order.fulfillments.forEach(async fulfillment => {
-                        fulfillmentResult = await FulfillmentService.update({id: fulfillment.id}, fulfillment, true);
+                        fulfillmentResult = await FulfillmentService.update({id: fulfillment.id}, fulfillment);
                     });
                 }
             });
