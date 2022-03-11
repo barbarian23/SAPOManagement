@@ -3,14 +3,15 @@ import fetch from 'node-fetch';
 const schedule = require('node-schedule');
 
 const Order = function () {
-    var cronExpress = '10 * * * * *';
+    var cronExpress = '5 * * * * *';
     var j = schedule.scheduleJob(cronExpress, async function(fireDate){
-        console.log("hehe");
         console.log(fireDate);
-        let orderCreatedLast = await OrderService.find().sort({created_at: -1}).skip(0).limit(1).exec();
+        let orderCreatedLast = await OrderService.search(null, 0, 1);
+        // let orderCreatedLast = await OrderService.search(null, 0, 1, '-created_at');
         let createdLast = orderCreatedLast.created_at;
 
-        let orderUpdatedLast = await OrderService.find().sort({updated_at: -1}).skip(0).limit(1).exec();
+        let orderUpdatedLast = await OrderService.search(null, 0, 1);
+        // let orderUpdatedLast = await OrderService.search(null, 0, 1, '-updated_at');
         let updatedLast = orderUpdatedLast.updated_at;
 
         let headers = {
