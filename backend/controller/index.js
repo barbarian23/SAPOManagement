@@ -1,11 +1,17 @@
 import { renderController } from "./render/render.controller";
 import { userLoginController } from "./user/login.controller";
-import { userProductFind } from "./product/product.controller";
-import { getOrders } from "./order/order.controller";
+
+import OrderController from "./order/order.controller";
+import MachineController from "./machine/machine.controller";
+import FulfillmentController from "./fulfillment/fulfillment.controller";
+import LineItemController from "./lineItem/lineItem.controler";
 
 export {
     renderController,
     userLoginController,
-    userProductFind,
-    getOrders
+
+    OrderController,
+    MachineController,
+    FulfillmentController,
+    LineItemController,
 }

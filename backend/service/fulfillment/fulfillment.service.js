@@ -1,36 +1,10 @@
-import Mongoose from "../../model";
+import IService from '../iservice';
+import {Fulfillment} from '../../model';
 
-export default class FulfillmentService {
-
-  static instance = null;
-
-  static getInstance(){
-    if(FulfillmentService.instance == null){
-      FulfillmentService.instance = new FulfillmentService();
-    }
+class FulfillmentService extends IService{
+  constructor(model) {
+    super(model);
   }
-
-  static insert(obj){ 
-    return Mongoose.getFulfillment().insert(obj);
-  }
-
-  static insertMany(objs){ 
-    return Mongoose.getFulfillment().insertMany(objs);
-  }
-
-  static update(filter, update, upsert = false){ 
-    return Mongoose.getFulfillment().findOneAndUpdate(filter, update, {
-      new: true,
-      upsert: upsert
-    });
-  }
-
-  static deleteMany(obj){
-    return Mongoose.getLineItem().deleteMany(obj);
-  }
-
-  static find(obj){
-    return Mongoose.getFulfillment().find(obj);
-  }
-  
 }
+
+export default new FulfillmentService(Fulfillment);

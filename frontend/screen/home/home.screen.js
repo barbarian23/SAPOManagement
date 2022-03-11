@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import Product from "./Products.screen";
-import Bill from "./Bills.screen";
+import Product from "./products.screen";
+import Bill from "./bills.screen";
 import { LeftMenu } from "../../component";
 import { Route } from "react-router-dom";
 

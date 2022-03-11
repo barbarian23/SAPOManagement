@@ -1,13 +1,15 @@
-import LeftMenu from "./LeftMenu.component";
-import PopUp from "./Popup.component";
-import BillPopUp from "./BillPopup.component";
-import BillTable from "./BillTable.component";
-import ProduceTable from "./ProduceTable.component";
+import LeftMenu from "./leftMenu.component";
+import ProductPopUp from "./product/productPopup.component";
+import TimeRangePopUp from "./product/timeRangePopup.component";
+import ProduceTable from "./product/productTable.component";
+import BillPopUp from "./bill/billPopup.component";
+import BillTable from "./bill/billTable.component";
 
 export {
   LeftMenu,
-  PopUp,
   BillPopUp,
   BillTable,
-  ProduceTable
+  ProduceTable,
+  ProductPopUp,
+  TimeRangePopUp,
 }

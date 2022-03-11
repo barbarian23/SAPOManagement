@@ -1,8 +1,10 @@
-const Machine = function (mongoose) {
-    const { Schema } = mongoose;
-    return mongoose.model('Machine', {
-        code: String,
-        name: String,
-    });
-  }
-  export default Machine;
+import mongoose from "mongoose";
+
+const MachineSchema = mongoose.Schema({
+    code: String,
+    name: String
+});
+
+const Machine = mongoose.model('Machine', MachineSchema);
+
+export default Machine;

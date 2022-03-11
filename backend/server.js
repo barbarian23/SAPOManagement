@@ -5,6 +5,15 @@ import { PORT } from "./constants/backend.common.constant";
 import app from './app';
 import Schedule from './job';
 
+import mongoose from "mongoose";
+
+const mongodb = mongoose.connect(
+  'mongodb://sapodb:xhbXHCckwFK7W5pLZhYtNRHRfCZElLXm3KLERpGxbFntArb7BfbW4VcIKWCAXxFHYavsLJWIVzHewDfdIKIlVg==@sapodb.mongo.cosmos.azure.com:10255/sapomanager?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000'
+  ).then((res) => {
+    console.log("Connect mongodb successfully")
+  }).catch((err) => {
+    console.log("Connect mongodb falure");
+  })
 // process.on("uncaughtException", (err) => fs.writeFile('./logs/uncaught.log', `${new Date().toLocaleString()} --- ${err} --- ${__filename}\n`, { flag: 'wx' }, function (err) {
 //     if (err) throw err;
 // }));

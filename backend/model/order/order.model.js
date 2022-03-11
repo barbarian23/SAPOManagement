@@ -1,6 +1,6 @@
-const Order = function (mongoose) {
-  const { Schema } = mongoose;
-  return mongoose.model('Order', {
+import mongoose, {Schema} from "mongoose";
+
+const OrderSchema = mongoose.Schema({
     billing_address:         Object,
     browser_ip:              String,
     buyer_accepts_marketing: Boolean,
@@ -69,12 +69,14 @@ const Order = function (mongoose) {
     prev_order_number:       String,
     prev_order_date:         String,
     redeem_model:            String,
-    line_items:               [Schema.Types.ObjectId],
-    fulfillments:             [Schema.Types.ObjectId],
+    line_items:              [Schema.Types.ObjectId],
+    fulfillments:            [Schema.Types.ObjectId],
     status:                  {
         type: String,
         enum: ['NOT', 'DONE']
     },
-  });
-}
-export default Order
+});
+
+const Order = mongoose.model('Order', OrderSchema);
+
+export default Order;
