@@ -28,7 +28,7 @@ const Order = function () {
         console.log(data.orders.length, "Create orders length");
         if(data.orders && data.orders.length > 0){
             data.orders.forEach(async order => {
-                let orderResult = await OrderService.insert(order);
+                let orderResult = await OrderService.insertMany([order]);
 
                 order.line_items.order_id = order.id;
                 let lineItemResult = await LineItemService.insertMany(order.line_items);
