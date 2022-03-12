@@ -107,7 +107,7 @@ function Table({ columns, data }) {
                     className="btn blue"
                     onClick={() => onRowClicked(row)}
                   >
-                    In đơn hàng
+                    Đi đến trang giao hàng
                   </button>
                 ) : null}
               </td>
