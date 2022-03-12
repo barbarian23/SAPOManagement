@@ -3,7 +3,9 @@ import {
     GET_LIST_ORDERS, 
     GET_LIST_ORDERS_FAIL, 
     GET_LIST_ORDERS_SUCCESS, 
-    KEYWORD_CHANGE, 
+    START_LOADING_TABLE_DATA,
+    STOP_LOADING_TABLE_DATA,
+    SEARCH_BUTTON_CLICK, 
     PAGE_CHANGE, 
     PAGE_SIZE_CHANGE, 
     SORT_BY_CHANGE, 
@@ -15,6 +17,7 @@ import { getListOrders } from '../../service/api/order.api';
 function* getListOrdersSaga({ value }) {
     const state = yield select((state) => state.order);
     const { keyword, page, pageSize, sortBy, startDate, endDate, status } = state;
+    yield put({type: START_LOADING_TABLE_DATA});
     try {
         const response = yield call(getListOrders, page, pageSize, keyword, sortBy, startDate, endDate, status);
         if (response.status === 200) {
@@ -46,6 +49,7 @@ function* getListOrdersSaga({ value }) {
             value: error
         });
     }
+    yield put({type: STOP_LOADING_TABLE_DATA});
 }
 
 export const orderSaga = function* () {
@@ -53,7 +57,10 @@ export const orderSaga = function* () {
     yield takeLatest(STATUS_CHANGE, getListOrdersSaga);
     yield takeLatest(PAGE_CHANGE, getListOrdersSaga);
     yield takeLatest(PAGE_SIZE_CHANGE, getListOrdersSaga);
-    yield takeLatest(KEYWORD_CHANGE, getListOrdersSaga);
     yield takeLatest(SORT_BY_CHANGE, getListOrdersSaga);
     yield takeLatest(DATE_RANGE_CHANGE, getListOrdersSaga);
+    
+    yield takeLatest(SEARCH_BUTTON_CLICK, getListOrdersSaga);
+    // yield takeLatest(KEYWORD_CHANGE, getListOrdersSaga);
+
 }

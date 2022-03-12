@@ -8,6 +8,7 @@ export default class IService {
             let items = await this.model.aggregate(pipeline);
             return items
         } catch (errors) {
+            console.log(errors);
             throw errors;
         }
     }

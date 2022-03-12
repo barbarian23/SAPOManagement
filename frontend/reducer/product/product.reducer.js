@@ -1,4 +1,6 @@
 import {
+    START_LOADING_TABLE_DATA,
+    STOP_LOADING_TABLE_DATA,
     GET_LIST_PRODUCTS_SUCCESS,
     GET_LIST_PRODUCTS_FAIL,
     PAGE_CHANGE,
@@ -23,6 +25,7 @@ import {
 } from '../../action/product/product.action';
 
 const initialState = {
+    isTableLoading: false,
     listProducts: [],
     total: 0,
     page: 1,
@@ -47,17 +50,30 @@ const initialState = {
 
 export default function homeReducer(state = initialState, action) {
     switch (action.type) {
+        case START_LOADING_TABLE_DATA:
+            return {
+                ...state,
+                isTableLoading: true,
+                listProducts: [],
+            }
+        case STOP_LOADING_TABLE_DATA:
+            return {
+                ...state,
+                isTableLoading: false,
+            }
         case GET_LIST_PRODUCTS_SUCCESS:
             return {
                 ...state,
                 listProducts: [...action.value.items],
                 total: action.value.total,
+                isTableLoading: false,
             }
         case GET_LIST_PRODUCTS_FAIL:
             return {
                 ...state,
                 listProducts: [],
-                total: 0
+                total: 0,
+                isTableLoading: false,
             }
         case PAGE_CHANGE:
             return {
@@ -150,6 +166,8 @@ export default function homeReducer(state = initialState, action) {
                         return {
                             ...item,
                             status: action.value.status,
+                            machine_id: action.value.status == "NOT" ? "" : item.machine_id,
+                            process_time: action.value.status == "NOT" ? "" : item.process_time,
                             isEdited: true,
                         };
                     } else {

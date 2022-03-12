@@ -1,4 +1,6 @@
 import {
+    START_LOADING_TABLE_DATA,
+    STOP_LOADING_TABLE_DATA,
     GET_LIST_ORDERS_SUCCESS,
     GET_LIST_ORDERS_FAIL,
     PAGE_CHANGE,
@@ -12,6 +14,7 @@ import {
 } from '../../action/order/order.action';
 
 const initialState = {
+    isTableLoading: false,
     listOrders: [],
     total: 0,
     page: 1,
@@ -27,6 +30,17 @@ const initialState = {
 
 export default function homeReducer(state = initialState, action) {
     switch (action.type) {
+        case START_LOADING_TABLE_DATA:
+            return {
+                ...state,
+                isTableLoading: true,
+                listOrders: [],
+            }
+        case STOP_LOADING_TABLE_DATA:
+            return {
+                ...state,
+                isTableLoading: false,
+            }
         case GET_LIST_ORDERS_SUCCESS:
             return {
                 ...state,

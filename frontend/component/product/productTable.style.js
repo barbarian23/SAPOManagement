@@ -17,7 +17,6 @@ table {
   }
 
   tr {
-    cursor: pointer;
     :last-child {
       td {
         border-bottom: 0;
@@ -37,6 +36,14 @@ table {
 
   tr:nth-child(odd) {
     background: rgba(23, 162, 184, 0.12);
+  }
+
+  .sku-cell{
+    cursor: pointer;
+    text-decoration: underline;
+    :hover{
+      background-color: rgba(23, 162, 184, 0.75);
+    }
   }
 }
 
@@ -73,6 +80,24 @@ table {
 
   input[type="text"]:focus {
     outline: none;
+  }
+}
+
+.search-btn{
+  height: 27px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 5px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.loading-box{
+  height: 450px;
+
+  .loading-center{
+    margin: 100px auto; 
   }
 }
 
