@@ -73,7 +73,8 @@ const OrderSchema = mongoose.Schema({
     fulfillments:            [Schema.Types.ObjectId],
     status:                  {
         type: String,
-        enum: ['NOT', 'DONE']
+        enum: ['NOT', 'DONE'],
+        default: 'NOT'
     },
 });
 
