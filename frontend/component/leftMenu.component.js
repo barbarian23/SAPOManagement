@@ -36,7 +36,7 @@ export default function LeftMenu() {
             <ListItemText primary="Sản xuất" />
           </ListItemButton>
         </Link>
-        <Link to="/bill">
+        <Link to="/order">
           <ListItemButton
             selected={selectedIndex === 1}
             onClick={(event) => handleListItemClick(event, 1)}

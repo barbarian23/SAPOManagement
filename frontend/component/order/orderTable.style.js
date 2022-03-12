@@ -100,8 +100,10 @@ table {
 .pagging-label {
   margin-top: 13px;
 
-  span {
+  .page-btn {
     margin: 0px 15px;
+    cursor: pointer;
+    
   }
 }
 `;
