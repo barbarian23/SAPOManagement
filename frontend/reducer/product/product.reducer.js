@@ -9,8 +9,8 @@ import {
     DATE_RANGE_CHANGE,
     SHOW_PRODUCT_POPUP,
     HIDE_PRODUCT_POPUP,
-    SHOW_TIME_RANGE_POPUP,
-    HIDE_TIME_RANGE_POPUP,
+    SHOW_DATE_RANGE_POPUP,
+    HIDE_DATE_RANGE_POPUP,
     SKU_SELECT,
     POPUP_KEYWORD_CHANGE,
     GET_LINE_ITEMS_BY_SKU_SUCCESS,
@@ -31,7 +31,7 @@ const initialState = {
     sortBy: "",
     status: "",
 
-    isShowTimeRangePopup: false,
+    isShowDateRangePopup: false,
     startDate: 0,
     endDate: 0,
 
@@ -100,15 +100,15 @@ export default function homeReducer(state = initialState, action) {
                 ...state,
                 isShowProductPopup: false
             }
-        case SHOW_TIME_RANGE_POPUP:
+        case SHOW_DATE_RANGE_POPUP:
             return {
                 ...state,
-                isShowTimeRangePopup: true
+                isShowDateRangePopup: true
             }
-        case HIDE_TIME_RANGE_POPUP:
+        case HIDE_DATE_RANGE_POPUP:
             return {
                 ...state,
-                isShowTimeRangePopup: false
+                isShowDateRangePopup: false
             }
 
         //POPUP

@@ -1,20 +1,16 @@
 import React from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { 
-  KEYWORD_CHANGE, 
-  PAGE_CHANGE, 
-  PAGE_SIZE_CHANGE, 
-  SHOW_PRODUCT_POPUP, 
-  SHOW_DATE_RANGE_POPUP, 
-  SORT_BY_CHANGE, 
-  STATUS_CHANGE, 
+import {
+  KEYWORD_CHANGE,
+  PAGE_CHANGE,
+  PAGE_SIZE_CHANGE,
+  SHOW_DATE_RANGE_POPUP,
+  SORT_BY_CHANGE,
+  STATUS_CHANGE,
   DATE_RANGE_CHANGE,
-  SKU_SELECT,
-  GET_MACHINES
-} from "../../action/product/product.action";
+} from "../../action/order/order.action";
 import { useTable } from "react-table";
-import { TableBox } from "./productTable.style";
-
+import { TableBox } from './orderTable.style';
 import Dropdown from "react-dropdown";
 import "../../assets/css/react-dropdown-style.css";
 import "../../assets/css/dropdown-styles.css";
@@ -32,7 +28,7 @@ function Table({ columns, data }) {
     data
   });
 
-  let { status, sortBy } = useSelector(state => state.product);
+  let { status, sortBy } = useSelector(state => state.order);
   let dispatch = useDispatch();
 
   const timebook = [
@@ -52,14 +48,13 @@ function Table({ columns, data }) {
       dispatch({ type: SHOW_DATE_RANGE_POPUP });
     } else {
       dispatch({ type: SORT_BY_CHANGE, value: e.value });
-      dispatch({ type: DATE_RANGE_CHANGE, value: { startDate: 0, endDate: 0} });
+      dispatch({ type: DATE_RANGE_CHANGE, value: { startDate: 0, endDate: 0 } });
     }
   };
 
   const onRowClicked = (row) => {
-    dispatch({ type: SKU_SELECT, value: row.cells[0].value });
-    dispatch({ type: GET_MACHINES });
-    dispatch({ type: SHOW_PRODUCT_POPUP });
+    let id = row.cells[0].value;
+    window.open(`https://epeben-1.myharavan.com/admin/orders/${id}`, "_blank");
   };
 
   const onStatusSelected = (e) => {
@@ -71,9 +66,9 @@ function Table({ columns, data }) {
       <thead>
         {headerGroups.map((headerGroup) => (
           <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map((column, index) => (
+            {headerGroup.headers.map((column, iCol) => (
               <th {...column.getHeaderProps()}>
-                {index == 2 ? (
+                {iCol == 1 ? (
                   <Dropdown
                     controlClassName="dropDownMachine"
                     options={timebook}
@@ -81,7 +76,7 @@ function Table({ columns, data }) {
                     value={timebook.find((i) => i.value == sortBy)}
                     placeholder="Select an option"
                   />
-                ) : index == 3 ? (
+                ) : iCol == 2 ? (
                   <Dropdown
                     controlClassName="dropDownMachine"
                     options={_status}
@@ -94,6 +89,7 @@ function Table({ columns, data }) {
                 )}
               </th>
             ))}
+            <th>Thêm thao tác</th>
           </tr>
         ))}
       </thead>
@@ -101,12 +97,20 @@ function Table({ columns, data }) {
         {rows.map((row, i) => {
           prepareRow(row);
           return (
-            <tr {...row.getRowProps()} onClick={() => onRowClicked(row)}>
+            <tr {...row.getRowProps()}>
               {row.cells.map((cell) => {
-                return (
-                  <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                );
+                return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
               })}
+              <td>
+                {row.cells[2].value == "DONE" ? (
+                  <button
+                    className="btn blue"
+                    onClick={() => onRowClicked(row)}
+                  >
+                    Đi đến trang giao hàng
+                  </button>
+                ) : null}
+              </td>
             </tr>
           );
         })}
@@ -115,10 +119,10 @@ function Table({ columns, data }) {
   );
 }
 
-export default function ProduceTable({ columns, data }) {
-  let { keyword, page, pageSize, total } = useSelector(state => state.product);
+export default function OrderTable({ columns, data }) {
+  let { keyword, page, pageSize, total } = useSelector(state => state.order);
   let dispatch = useDispatch();
-  let totalPage = (total/pageSize) > parseInt(total/pageSize) ? parseInt(total/pageSize) + 1: parseInt(total/pageSize);
+  let totalPage = (total / pageSize) > parseInt(total / pageSize) ? parseInt(total / pageSize) + 1 : parseInt(total / pageSize);
 
   const onKeywordChanged = (e) => {
     dispatch({ type: KEYWORD_CHANGE, value: e.target.value });
@@ -131,7 +135,7 @@ export default function ProduceTable({ columns, data }) {
   }
 
   const onIncreasePageClicked = () => {
-    if(page < totalPage){
+    if (page < totalPage) {
       dispatch({ type: PAGE_CHANGE, value: page + 1 });
     }
   }
@@ -145,12 +149,13 @@ export default function ProduceTable({ columns, data }) {
       <div className="search-box">
         <div className="search-label">
           <p>
-            <b>SKU</b>
+            <b>Đơn hàng</b>
           </p>
         </div>
         <div className="search-input">
-          <input type="text"
-            placeholder="Tìm kiếm Mã SKU / Mã đơn hàng"
+          <input
+            type="text"
+            placeholder="Tìm kiếm mã đơn hàng"
             value={keyword}
             onChange={onKeywordChanged}
           />
@@ -159,8 +164,8 @@ export default function ProduceTable({ columns, data }) {
 
       <Table
         columns={columns}
-        data={data}
-      ></Table>
+        data={data}>
+      </Table>
 
       <div className="pagging-box">
         <div className="right">
@@ -169,7 +174,7 @@ export default function ProduceTable({ columns, data }) {
             <input type="number"
               value={pageSize}
               onChange={onPageSizeChanged} />
-            <span> {(page-1)*pageSize + 1} - {((page)*pageSize + 1) > total ? total : (page)*pageSize + 1} trên {total}</span>
+            <span> {(page - 1) * pageSize + 1} - {((page) * pageSize + 1) > total ? total : (page) * pageSize + 1} trên {total}</span>
 
             <button className="page-btn"
               onClick={onDecreasePageClicked}>

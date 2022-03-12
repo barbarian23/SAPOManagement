@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Product from "./products.screen";
-import Bill from "./bills.screen";
+import Order from "./orders.screen";
 import { LeftMenu } from "../../component";
 import { Route } from "react-router-dom";
 
@@ -16,8 +16,8 @@ export default function Home() {
                 <Route path="/product">
                     <Product />
                 </Route>
-                <Route path="/bill">
-                    <Bill />
+                <Route path="/order">
+                    <Order />
                 </Route>
             </div>
         </div>

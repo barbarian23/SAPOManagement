@@ -1,6 +1,5 @@
 import { takeLatest, take, put, call, select } from 'redux-saga/effects';
 import { 
-    DATE_RANGE_CHANGE,
     GET_LINE_ITEMS_BY_SKU_FAIL,
     GET_LINE_ITEMS_BY_SKU_SUCCESS,
     GET_MACHINES,
@@ -15,9 +14,11 @@ import {
     SKU_SELECT, 
     SORT_BY_CHANGE, 
     STATUS_CHANGE,
+    DATE_RANGE_CHANGE,
     UPDATE_LINE_ITEM_STATUS,
     UPDATE_LINE_ITEM_STATUS_FAIL,
     UPDATE_LINE_ITEM_STATUS_SUCCESS,
+    POPUP_KEYWORD_CHANGE,
 } from "../../action/product/product.action";
 import { getListProducts, getLineItemsBySKU } from '../../service/api/product.api';
 import { getMachines } from '../../service/api/machine.api';
@@ -173,8 +174,11 @@ export const productSaga = function* () {
     yield takeLatest(KEYWORD_CHANGE, getListProductsSaga);
     yield takeLatest(SORT_BY_CHANGE, getListProductsSaga);
     yield takeLatest(DATE_RANGE_CHANGE, getListProductsSaga);
+
     yield takeLatest(GET_MACHINES, getMachinesSaga);
     yield takeLatest(SKU_SELECT, getLineItemsSaga);
+    yield takeLatest(POPUP_KEYWORD_CHANGE, getLineItemsSaga);
+    
     yield takeLatest(UPDATE_LINE_ITEM_STATUS, updateLineItemStatusSaga);
     yield takeLatest(UPDATE_LINE_ITEM_STATUS_SUCCESS, getListProductsSaga);
 }
