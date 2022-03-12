@@ -27,7 +27,7 @@ const LineItemSchema = mongoose.Schema({
     properties:           String,
     applied_discounts:    [String],
     total_discount:       Number,
-    image:                String,
+    image:                Object,
     not_allow_promotion:  Boolean,
     ma_cost_amount:       Number,
     actual_price:         Number,

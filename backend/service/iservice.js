@@ -25,7 +25,6 @@ export default class IService {
         }
     }
 
-
     async getAll() {
         try {
             let items = await this.model.find({});
@@ -39,6 +38,16 @@ export default class IService {
         try {
             let total = await this.model.countDocuments({});
             return total;
+        } catch (errors) {
+            throw errors;
+        }
+    }
+
+    async searchAll(query = {}) {
+        try {
+            let items = await this.model
+                .find(query);
+            return items;
         } catch (errors) {
             throw errors;
         }
@@ -107,6 +116,15 @@ export default class IService {
     async update(id, data) {
         try {
             let item = await this.model.findByIdAndUpdate(id, data, { new: true });
+            return item;
+        } catch (errors) {
+            throw errors;
+        }
+    }
+
+    async updateByField(filter, data) {
+        try {
+            let item = await this.model.findOneAndUpdate(filter, data, { new: true });
             return item;
         } catch (errors) {
             throw errors;

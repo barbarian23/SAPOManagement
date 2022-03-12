@@ -13,7 +13,7 @@ const OrderSchema = mongoose.Schema({
     created_at:              Date,
     currency:                String,
     customer:                Object,
-    discount_codes:          [String],
+    discount_codes:          [Object],
     email:                   String,
     financial_status:        String,
     fulfillment_status:      String,
