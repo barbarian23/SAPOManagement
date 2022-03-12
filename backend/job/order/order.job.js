@@ -29,11 +29,13 @@ const Order = function () {
         console.log(data.orders.length, "Create orders length");
         if(data.orders && data.orders.length > 0){
             data.orders.forEach(async order => {
-                let orderResult = await OrderService.insert(order);
-
                 order.line_items.order_id = order.id;
                 let lineItemResult = await LineItemService.insertMany(order.line_items);
                 let fulfillmentResult = await FulfillmentService.insertMany(order.fulfillments);
+                
+                let line_items = await LineItemService.searchAll({order_id : order.id});
+                let fulfillments = await FulfillmentService.searchAll({order_id : order.id});
+                let orderResult = await OrderService.insert(order);
             });
         }
 

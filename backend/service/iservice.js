@@ -44,6 +44,16 @@ export default class IService {
         }
     }
 
+    async searchAll(query = {}) {
+        try {
+            let items = await this.model
+                .find(query);
+            return items;
+        } catch (errors) {
+            throw errors;
+        }
+    }
+
     async search(query = {}, skip=0, limit=10, sortBy='_id') {
         try {
             let items = await this.model
