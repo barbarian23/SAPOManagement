@@ -31,12 +31,13 @@ const LineItemSchema = mongoose.Schema({
     not_allow_promotion:  Boolean,
     ma_cost_amount:       Number,
     actual_price:         Number,
-    process_time:         Date,
+    process_time:         { type: Date, default: null },
     order_id:             Number,
-    machine_id:           Schema.Types.ObjectId,
+    machine_id:           { type: Schema.Types.ObjectId, default: null },
     status:               {
         type: String,
-        enum: ['NOT', 'DONE']
+        enum: ['NOT', 'DONE'],
+        default: 'NOT'
     },
 });
 
