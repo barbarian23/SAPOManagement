@@ -77,7 +77,7 @@ const OrderSchema = mongoose.Schema({
         default: 'NOT'
     },
 });
-
+OrderSchema.index({ created_at: 1, updated_at: 1 });
 const Order = mongoose.model('Order', OrderSchema);
 
 export default Order;
