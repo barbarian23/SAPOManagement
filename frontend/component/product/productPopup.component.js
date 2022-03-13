@@ -4,12 +4,14 @@ import {
   HIDE_PRODUCT_POPUP,
   POPUP_KEYWORD_CHANGE,
   POPUP_MACHINE_CHANGE,
+  POPUP_SEARCH_BUTTON_CLICK,
   POPUP_STATUS_CHANGE,
   UPDATE_LINE_ITEM_STATUS,
 } from "../../action/product/product.action";
 import Modal from "react-modal";
 import { useTable } from "react-table";
 import Dropdown from "react-dropdown";
+import ReactLoading from 'react-loading';
 import { Box } from "./productPopup.style";
 import { date2dtstr } from "../../service/util/utils.client";
 
@@ -54,7 +56,7 @@ function Table({ columns, data }) {
 }
 
 export default function ProductPopUp({ open, onClose }) {
-  let { lineItems, machines, popupKeyword } = useSelector(state => state.product);
+  let { lineItems, machines, popupKeyword, isPopupTableLoading } = useSelector(state => state.product);
   let dispatch = useDispatch();
   let _machines = machines.map((machine) => {
     return {
@@ -65,6 +67,10 @@ export default function ProductPopUp({ open, onClose }) {
 
   const onKeywordChanged = (e) => {
     dispatch({ type: POPUP_KEYWORD_CHANGE, value: e.target.value })
+  }
+
+  const onSearchBtnClicked = () => {
+    dispatch({ type: POPUP_SEARCH_BUTTON_CLICK });
   }
 
   const onSelectStatus = (e, iRow) => {
@@ -199,9 +205,24 @@ export default function ProductPopUp({ open, onClose }) {
               value={popupKeyword}
               onChange={onKeywordChanged} />
           </div>
+          <button
+            className="search-btn blue"
+            onClick={onSearchBtnClicked}>
+            Tìm kiếm
+          </button>
         </div>
 
         <Table columns={columns} data={lineItems}></Table>
+
+        {isPopupTableLoading
+          ? <div className="loading-box">
+            <ReactLoading
+              type="spinningBubbles"
+              color="#357edd"
+              className="loading-center"
+              height={50}
+              width={50} />
+          </div> : null}
 
         <div className="right">
           <button className="modal-btn blue" onClick={onUpdateBtnClick}>

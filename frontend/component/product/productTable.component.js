@@ -192,7 +192,7 @@ export default function ProduceTable({ columns, data }) {
               <input type="number"
                 value={pageSize}
                 onChange={onPageSizeChanged} />
-              <span> {(page - 1) * pageSize + 1} - {((page) * pageSize + 1) > total ? total : (page) * pageSize + 1} trên {total}</span>
+              <span> {(page - 1) * pageSize + 1} - {((page) * pageSize) > total ? total : ((page) * pageSize)} trên {total}</span>
 
               <button className="page-btn"
                 onClick={onDecreasePageClicked}>

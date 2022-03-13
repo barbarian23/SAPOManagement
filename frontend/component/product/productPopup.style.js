@@ -82,6 +82,24 @@ export const Box = styled.div`
     }
   }
 
+  .search-btn{
+    height: 27px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  
+  .loading-box{
+    height: 200px;
+  
+    .loading-center{
+      margin: 100px auto; 
+    }
+  }
+
   .status-bag {
     padding: 5px;
     margin: 5px 0px;

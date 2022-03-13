@@ -22,6 +22,8 @@ import {
     POPUP_STATUS_CHANGE,
     POPUP_MACHINE_CHANGE,
     POPUP_PROCESS_TIME_CHANGE,
+    START_LOADING_POPUP_TABLE_DATA,
+    STOP_LOADING_POPUP_TABLE_DATA,
 } from '../../action/product/product.action';
 
 const initialState = {
@@ -41,10 +43,11 @@ const initialState = {
     isShowProductPopup: false,
 
     //product popup
+    isPopupTableLoading: false,
+    lineItems: [],
     machines: [],
     selectedSKU: "",
     popupKeyword: "",
-    lineItems: [],
 
 };
 
@@ -128,6 +131,17 @@ export default function homeReducer(state = initialState, action) {
             }
 
         //POPUP
+        case START_LOADING_POPUP_TABLE_DATA:
+            return {
+                ...state,
+                isPopupTableLoading: true,
+                lineItems: [],
+            }
+        case STOP_LOADING_POPUP_TABLE_DATA:
+            return {
+                ...state,
+                isPopupTableLoading: false,
+            }
         case SKU_SELECT:
             return {
                 ...state,

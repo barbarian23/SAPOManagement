@@ -22,6 +22,9 @@ import {
     START_LOADING_TABLE_DATA,
     STOP_LOADING_TABLE_DATA,
     SEARCH_BUTTON_CLICK,
+    START_LOADING_POPUP_TABLE_DATA,
+    STOP_LOADING_POPUP_TABLE_DATA,
+    POPUP_SEARCH_BUTTON_CLICK,
 } from "../../action/product/product.action";
 import { getListProducts, getLineItemsBySKU } from '../../service/api/product.api';
 import { getMachines } from '../../service/api/machine.api';
@@ -70,6 +73,7 @@ function* getListProductsSaga({ value }) {
 function* getLineItemsSaga({ value }) {
     const state = yield select((state) => state.product);
     const { selectedSKU, popupKeyword } = state;
+    yield put({type: START_LOADING_POPUP_TABLE_DATA});
     try {
         const response = yield call(getLineItemsBySKU, selectedSKU, popupKeyword);
         if (response.status === 200) {
@@ -101,6 +105,8 @@ function* getLineItemsSaga({ value }) {
             value: error
         });
     }
+
+    yield put({type: STOP_LOADING_POPUP_TABLE_DATA});
 }
 
 function* getMachinesSaga({ value }) {
@@ -185,7 +191,8 @@ export const productSaga = function* () {
 
     yield takeLatest(GET_MACHINES, getMachinesSaga);
     yield takeLatest(SKU_SELECT, getLineItemsSaga);
-    yield takeLatest(POPUP_KEYWORD_CHANGE, getLineItemsSaga);
+    yield takeLatest(POPUP_SEARCH_BUTTON_CLICK, getLineItemsSaga);
+    // yield takeLatest(POPUP_KEYWORD_CHANGE, getLineItemsSaga);
     
     yield takeLatest(UPDATE_LINE_ITEM_STATUS, updateLineItemStatusSaga);
     yield takeLatest(UPDATE_LINE_ITEM_STATUS_SUCCESS, getListProductsSaga);
