@@ -11,7 +11,7 @@ import Modal from "react-modal";
 import { useTable } from "react-table";
 import Dropdown from "react-dropdown";
 import { Box } from "./productPopup.style";
-import {date2dtstr} from "../../service/util/utils.client";
+import { date2dtstr } from "../../service/util/utils.client";
 
 function Table({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
@@ -86,7 +86,7 @@ export default function ProductPopUp({ open, onClose }) {
   const onUpdateBtnClick = () => {
     lineItems.forEach(item => {
       if (item.isEdited) {
-        console.log(item);
+        // console.log(item);
         dispatch({
           type: UPDATE_LINE_ITEM_STATUS,
           value: {
@@ -119,13 +119,12 @@ export default function ProductPopUp({ open, onClose }) {
     },
     {
       Header: "Mã đơn hàng",
-      accessor: "order_id"
+      accessor: "order_number"
     },
     {
       Header: "Trạng thái",
       accessor: "status",
       Cell: ({ cell, iRow, iCell }) => {
-        // console.log(cell.value);
         return <Dropdown
           controlClassName={
             cell.value == 'DONE'
@@ -135,7 +134,6 @@ export default function ProductPopUp({ open, onClose }) {
           options={statuses}
           onChange={(e) => onSelectStatus(e, iRow, iCell)}
           value={statuses.find((i) => i.value == cell.value)}
-        // placeholder="Select an option"
         />
       }
     },
@@ -143,19 +141,24 @@ export default function ProductPopUp({ open, onClose }) {
       Header: "Máy SX",
       accessor: "machine_id",
       Cell: ({ cell, iRow, iCell }) => {
-        return <Dropdown
-          options={_machines}
-          onChange={(e) => onSelectMachine(e, iRow, iCell)}
-          value={_machines.find((i) => i.value == cell.value)}
-          placeholder="Select machine"
-        />
+        return <>
+          {cell.row.values.status == "DONE"
+            ? <Dropdown
+              options={_machines}
+              onChange={(e) => onSelectMachine(e, iRow, iCell)}
+              value={_machines.find((i) => i.value == cell.value)}
+              placeholder="Select machine"
+            />
+            : null
+          }
+        </>
       }
     },
     {
       Header: "TG xử lý",
       accessor: "process_time",
-      Cell: ({cell}) =>{
-        return <>{date2dtstr(new Date(cell.value))}</>
+      Cell: ({ cell }) => {
+        return <>{cell.value ? date2dtstr(new Date(cell.value)) : ""}</>
       }
     }
   ];
