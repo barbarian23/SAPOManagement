@@ -7,14 +7,15 @@ const Sleep = function (ms) {
 }
 
 const Order = function () {
-    var cronExpress = '2 * * * * *';
+    var cronExpress = '3 * * * * *';
     var isRun = false;
     var j = schedule.scheduleJob(cronExpress, async function(fireDate){
         if(isRun){
-            await Sleep(5000);
+            return;
         }
         isRun = true;
-        console.log(fireDate);
+        console.log("============================");
+        console.log(fireDate, "Started");
 
         let headers = {
             Authorization: 'Bearer D9CBEEF3950683AB7BF852A3BED03E35AD68C117825CEBA2F54CCF8F60786212'
@@ -35,97 +36,127 @@ const Order = function () {
         let countResponse = await fetch(urlCountOrder, { method: 'GET', headers: headers });
         let countPages = parseInt(parseInt((await countResponse.json()).count) / 50) + 1;
 
-        console.log(countPages, "Orders pages");
-        for (let index = countPages; index > 0; index--){
+        console.log(countPages, "Total orders pages");
 
-            console.log(index, "Startindex");
-            params.page = index;
-            params.limit = 50;
-            urlGetOrder.search = new URLSearchParams(params).toString();
-            let response = await fetch(urlGetOrder, { method: 'GET', headers: headers });
-            let data = await response.json();
-    
-            data.orders = data.orders.filter(obj => {
-                return new Date(obj.created_at) > new Date(createdLast);
-            });
-    
-            console.log(data.orders.length, "Create orders length");
-            if(data.orders && data.orders.length > 0){
-                data.orders.forEach(async order => {
-                    order.line_items.forEach(async line_item => {
-                        line_item.order_id = order.id;
-                    });
-                    let lineItemResults = await LineItemService.insertMany(order.line_items);
-                    
-                    order.fulfillments.forEach(async fulfillment => {
-                        let result = lineItemResults.filter(async obj => {
-                            return fulfillment.line_items.map(x => x.id).includes(obj.id);
-                        });
-                        fulfillment.line_items = result.map(x => x._id);
-                    });
-                    let fulfillmentResults = await FulfillmentService.insertMany(order.fulfillments);
-    
-                    order.line_items = lineItemResults.map(x => x._id);
-                    order.fulfillments = fulfillmentResults.map(x => x._id);
-                    let orderResult = await OrderService.insert(order);
-                });
+        const LIMIT = countPages;
+        const asyncIterable = {
+            [Symbol.asyncIterator]() {
+                let i = LIMIT;
+                return {
+                next() {
+                    const done = i === 0;
+                    const value = done ? undefined : i--;
+                    return Promise.resolve({ value, done });
+                },
+                return() {
+                    // This will be reached if the consumer called 'break' or 'return' early in the loop.
+                    return { done: true };
+                }
+                };
             }
-    
-            /* Update Order */
-    
-            let orderUpdatedLast = await OrderService.search(null, 0, 1, '-updated_at');
-            let updatedLast = null
-            if(orderUpdatedLast && orderUpdatedLast.length > 0)
-                updatedLast = await orderUpdatedLast[0].updated_at;
-            
-            if(updatedLast){
-                let params = { updated_at_min: updatedLast.toISOString() };
+        };
+
+        for await (const index of asyncIterable) {
+            try {
+                console.log("------------------------");
+                console.log(index, "Start.index");
+                params.page = index;
+                params.limit = 50;
                 urlGetOrder.search = new URLSearchParams(params).toString();
-        
                 let response = await fetch(urlGetOrder, { method: 'GET', headers: headers });
                 let data = await response.json();
         
                 data.orders = data.orders.filter(obj => {
-                    return new Date(obj.updated_at) > new Date(updatedLast);
+                    return new Date(obj.created_at) > new Date(createdLast);
                 });
-    
-                console.log(data.orders.length, "Update orders length");
+        
+                console.log(data.orders.length, "Create orders length of index " + index);
                 if(data.orders && data.orders.length > 0){
                     data.orders.forEach(async order => {
+                        order.line_items.forEach(async line_item => {
+                            line_item.order_id = order.id;
+                        });
+                        let lineItemResults = await LineItemService.insertMany(order.line_items);
                         
-                        let lineItemResults = [];
-                        if(order.line_items && order.line_items.length > 0){
-                            let lineItemDeletes = await LineItemService.deleteMany({
-                                id: { "$nin": order.line_items.map(x => x.id) },
-                                order_id: order.id
+                        order.fulfillments.forEach (async fulfillment => {
+                            let result = lineItemResults.filter(async obj => {
+                                return fulfillment.line_items.map(x => x.id).includes(obj.id);
                             });
-                            order.line_items.forEach(async line_item => {
-                                line_item.order_id = order.id;
-                                lineItemResults.push(await LineItemService.updateByField({id: line_item.id}, line_item));
-                            });
-                        }
-    
+                            fulfillment.line_items = result.map(x => x._id);
+                        });
+                        let fulfillmentResults = await FulfillmentService.insertMany(order.fulfillments);
+        
                         order.line_items = lineItemResults.map(x => x._id);
-                        
-                        let fulfillmentResults = await FulfillmentService.searchAll({ order_id: order.id });
                         order.fulfillments = fulfillmentResults.map(x => x._id);
-                        let orderResult = await OrderService.updateByField({id: order.id}, order, true);
-                        
-                        // if(order.fulfillments && order.fulfillments.length > 0){
-                        //     let fulfillmentResult = await FulfillmentService.deleteMany({
-                        //         id: { "$nin": order.fulfillments.map(x => x.id) },
-                        //         order_id: order.id
-                        //     });
-                        //     order.fulfillments.forEach(async fulfillment => {
-                        //         fulfillmentResult = await FulfillmentService.update({id: fulfillment.id}, fulfillment);
-                        //     });
-                        // }
+                        let orderResult = await OrderService.insert(order);
                     });
                 }
+                console.log(index, "End.index");
             }
-            console.log(index, "Endindex");
+            catch(exe) {
+                console.log(index,"Error.index");
+                console.log(exe,"Error.show");
+            }
+            console.log("------------------------");
+        }
+        
+        /* Update Order */
+
+        let orderUpdatedLast = await OrderService.search(null, 0, 1, '-updated_at');
+        let updatedLast = null
+        if(orderUpdatedLast && orderUpdatedLast.length > 0)
+            updatedLast = await orderUpdatedLast[0].updated_at;
+        
+        if(updatedLast){
+            let params = { updated_at_min: updatedLast.toISOString() };
+            urlGetOrder.search = new URLSearchParams(params).toString();
+    
+            let response = await fetch(urlGetOrder, { method: 'GET', headers: headers });
+            let data = await response.json();
+    
+            data.orders = data.orders.filter(obj => {
+                return new Date(obj.updated_at) > new Date(updatedLast);
+            });
+
+            console.log(data.orders.length, "Update orders length");
+            if(data.orders && data.orders.length > 0){
+                data.orders.forEach(async order => {
+                    
+                    let lineItemResults = [];
+                    if(order.line_items && order.line_items.length > 0){
+                        let lineItemDeletes = await LineItemService.deleteMany({
+                            id: { "$nin": order.line_items.map(x => x.id) },
+                            order_id: order.id
+                        });
+                        order.line_items.forEach(async line_item => {
+                            line_item.order_id = order.id;
+                            let lineItemResult = await LineItemService.updateByField({id: line_item.id}, line_item);
+                            if(lineItemResult)
+                                lineItemResults.push(lineItemResult);
+                        });
+                    }
+                    // if(lineItemResults && lineItemResults.length > 0)
+                    order.line_items = lineItemResults.map(x => x._id);
+                    
+                    let fulfillmentResults = await FulfillmentService.searchAll({ order_id: order.id });
+                    // if(fulfillmentResults && fulfillmentResults.length > 0)
+                    order.fulfillments = fulfillmentResults.map(x => x._id);
+                    let orderResult = await OrderService.updateByField({id: order.id}, order, true);
+                    
+                    // if(order.fulfillments && order.fulfillments.length > 0){
+                    //     let fulfillmentResult = await FulfillmentService.deleteMany({
+                    //         id: { "$nin": order.fulfillments.map(x => x.id) },
+                    //         order_id: order.id
+                    //     });
+                    //     order.fulfillments.forEach(async fulfillment => {
+                    //         fulfillmentResult = await FulfillmentService.update({id: fulfillment.id}, fulfillment);
+                    //     });
+                    // }
+                });
+            }
         }
 
+        console.log("============================");
         isRun = false;
     });
 }
