@@ -49,7 +49,8 @@ class OrderService extends IService {
       if (startDate == 0 || endDate == 0) {
         if (sortBy == 'created_at') {
           pipeline.push({ $sort: { created_at: 1 } });
-        } else if (sortBy == '-created_at') {
+        } else //if (sortBy == '-created_at') 
+        {
           pipeline.push({ $sort: { created_at: -1 } });
         }
       }
@@ -137,6 +138,7 @@ class OrderService extends IService {
             order_number: 1,
             created_at: 1,
             sku: "$items.sku",
+            name: "$items.name",
             status: "$items.status",
           }
         },
@@ -168,7 +170,8 @@ class OrderService extends IService {
       if (startDate == 0 || endDate == 0) {
         if (sortBy == 'created_at') {
           pipeline.push({ $sort: { created_at: 1 } });
-        } else if (sortBy == '-created_at') {
+        } else //if (sortBy == '-created_at') 
+        {
           pipeline.push({ $sort: { created_at: -1 } });
         }
       }
@@ -279,6 +282,58 @@ class OrderService extends IService {
           }
         },
         { $match: { sku: sku } },
+      ];
+
+      if (keyword) {
+        pipeline.push({
+          $match: {
+            order_number: { $regex: `.*${keyword}.*`, $options: 'i' }
+          }
+        });
+      }
+      const lineItems = await this.aggregate(pipeline);
+      return lineItems;
+    } catch (errors) {
+      console.log(errors);
+      throw errors;
+    }
+  }
+
+  async getLineItemsByID(id, keyword) {
+    try {
+      let pipeline = [
+        {
+          $lookup: {
+            from: 'lineitems',
+            localField: 'line_items',
+            foreignField: '_id',
+            as: 'items'
+          }
+        },
+        { $unwind: "$items" },
+        {
+          $lookup: {
+            from: 'machines',
+            localField: 'items.machine_id',
+            foreignField: '_id',
+            as: 'machine'
+          }
+        },
+        { $unwind: { path: "$machine", preserveNullAndEmptyArrays: true } },
+        {
+          $project: {
+            _id: 0,
+            order_number: 1,
+            sku: "$items.sku",
+            machine_id: { $ifNull: ["$items.machine_id", ""] },
+            machine_code: { $ifNull: ["$items.code", ""] },
+            machine_name: { $ifNull: ["$items.name", ""] },
+            process_time: { $ifNull: ["$items.process_time", null] },
+            status: { $ifNull: ["$items.status", "NOT"] },
+            id: "$items._id",
+          }
+        },
+        { $match: { id: id } },
       ];
 
       if (keyword) {

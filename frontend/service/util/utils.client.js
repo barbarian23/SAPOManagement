@@ -3,9 +3,9 @@ export const validatePhonenumber = number => {
     return regex.test(String(number));
 }
 
-export const date2dtstr = date =>{
+export const date2dtstr = date => {
     let year = String(date.getFullYear()).padStart(4, '0');
-    let month = String(date.getMonth()).padStart(2, '0');
+    let month = String(date.getMonth() + 1).padStart(2, '0');
     let _date = String(date.getDate()).padStart(2, '0');
     let hour = String(date.getHours()).padStart(2, '0');
     let min = String(date.getMinutes()).padStart(2, '0');

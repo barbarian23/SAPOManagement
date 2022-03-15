@@ -32,6 +32,13 @@ export default function SapoProduct() {
     {
       Header: "Mã SKU",
       accessor: "sku",
+      Cell: ({ cell }) => {
+        if(cell.value){
+          return <>{cell.value}</>
+        }else{
+          return <>{cell.row.original.name}</>
+        }
+      }
     },
     {
       Header: "Mã đơn hàng",

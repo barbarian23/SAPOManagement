@@ -35,7 +35,7 @@ class OrderController extends IController {
                   const { page, pageSize, keyword, sortBy, startDate, endDate, status } = req.query;
                   let _page = page ? Number(page) : 0;
                   let _pageSize = pageSize ? Number(pageSize) : 10;
-                  let _sortBy = sortBy ? sortBy : 'created_at';
+                  let _sortBy = sortBy ? sortBy : '-created_at';
                   let _keyword = keyword ? keyword : null;
                   let _startDate = startDate ? Number(startDate) : 0;
                   let _endDate = endDate ? Number(endDate) : 0;
