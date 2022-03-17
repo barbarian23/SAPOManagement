@@ -3,7 +3,7 @@ const fs = require('fs');
 const server = http.createServer(app);
 import { PORT } from "./constants/backend.common.constant";
 import app from './app';
-// import Schedule from './job';
+import Schedule from './job';
 
 import mongoose from "mongoose";
 
@@ -24,7 +24,7 @@ app.set('port', PORT);
 
 server.listen(app.get('port'), () => console.log("######## app running on port " + PORT + " ########"));
 
-// Schedule.getInstance();
+Schedule.getInstance();
 
 server.on('error', onError)
 

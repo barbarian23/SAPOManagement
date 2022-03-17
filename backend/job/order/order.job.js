@@ -59,7 +59,7 @@ const Order = function () {
         for await (const index of asyncIterable) {
             try {
                 console.log("------------------------");
-                console.log(index, "Start.index");
+                console.log(index, "Start page index");
                 params.page = index;
                 params.limit = 50;
                 urlGetOrder.search = new URLSearchParams(params).toString();
@@ -67,10 +67,10 @@ const Order = function () {
                 let data = await response.json();
         
                 data.orders = data.orders.filter(obj => {
-                    return new Date(obj.created_at) > new Date(createdLast);
+                    return new Date(obj.created_at) > new Date(createdLast) && obj.confirmed_at != null;
                 });
         
-                console.log(data.orders.length, "Create orders length of index " + index);
+                console.log(data.orders.length, "Create orders count of index " + index);
                 if(data.orders && data.orders.length > 0){
                     data.orders.forEach(async order => {
                         order.line_items.forEach(async line_item => {
@@ -91,11 +91,11 @@ const Order = function () {
                         let orderResult = await OrderService.insert(order);
                     });
                 }
-                console.log(index, "End.index");
+                console.log(index, "End page index");
             }
             catch(exe) {
-                console.log(index,"Error.index");
-                console.log(exe,"Error.show");
+                console.log(index,"Error page index");
+                console.log(exe,"Error show");
             }
             console.log("------------------------");
         }
@@ -115,10 +115,10 @@ const Order = function () {
             let data = await response.json();
     
             data.orders = data.orders.filter(obj => {
-                return new Date(obj.updated_at) > new Date(updatedLast);
+                return new Date(obj.updated_at) > new Date(updatedLast) && obj.confirmed_at != null;
             });
 
-            console.log(data.orders.length, "Update orders length");
+            console.log(data.orders.length, "Update orders count");
             if(data.orders && data.orders.length > 0){
                 data.orders.forEach(async order => {
                     
@@ -135,23 +135,28 @@ const Order = function () {
                                 lineItemResults.push(lineItemResult);
                         });
                     }
-                    // if(lineItemResults && lineItemResults.length > 0)
+
                     order.line_items = lineItemResults.map(x => x._id);
                     
-                    let fulfillmentResults = await FulfillmentService.searchAll({ order_id: order.id });
-                    // if(fulfillmentResults && fulfillmentResults.length > 0)
+                    // let fulfillmentResults = await FulfillmentService.searchAll({ order_id: order.id });
+
+                    let fulfillmentResults = [];
+                    if(order.fulfillments && order.fulfillments.length > 0){
+                        let fulfillmentResult = await FulfillmentService.deleteMany({
+                            id: { "$nin": order.fulfillments.map(x => x.id) },
+                            order_id: order.id
+                        });
+                        order.fulfillments.forEach(async fulfillment => {
+                            let result = lineItemResults.filter(async obj => {
+                                return fulfillment.line_items.map(x => x.id).includes(obj.id);
+                            });
+                            fulfillment.line_items = result.map(x => x._id);
+                            fulfillmentResult = await FulfillmentService.updateByField({id: fulfillment.id}, fulfillment);
+                        });
+                    }
                     order.fulfillments = fulfillmentResults.map(x => x._id);
+
                     let orderResult = await OrderService.updateByField({id: order.id}, order, true);
-                    
-                    // if(order.fulfillments && order.fulfillments.length > 0){
-                    //     let fulfillmentResult = await FulfillmentService.deleteMany({
-                    //         id: { "$nin": order.fulfillments.map(x => x.id) },
-                    //         order_id: order.id
-                    //     });
-                    //     order.fulfillments.forEach(async fulfillment => {
-                    //         fulfillmentResult = await FulfillmentService.update({id: fulfillment.id}, fulfillment);
-                    //     });
-                    // }
                 });
             }
         }
