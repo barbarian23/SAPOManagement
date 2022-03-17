@@ -9,9 +9,9 @@ import {
   SORT_BY_CHANGE,
   STATUS_CHANGE,
   DATE_RANGE_CHANGE,
-  SKU_SELECT,
   GET_MACHINES,
-  SEARCH_BUTTON_CLICK
+  SEARCH_BUTTON_CLICK,
+  LINE_ITEM_SELECT
 } from "../../action/product/product.action";
 import { useTable } from "react-table";
 import { TableBox } from "./productTable.style";
@@ -19,6 +19,7 @@ import Dropdown from "react-dropdown";
 import "../../assets/css/react-dropdown-style.css";
 import "../../assets/css/dropdown-styles.css";
 import ReactLoading from 'react-loading';
+import { date2dtstr } from "../../service/util/utils.client";
 
 function Table({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
@@ -33,36 +34,9 @@ function Table({ columns, data }) {
     data
   });
 
-  let { status, sortBy } = useSelector(state => state.product);
   let dispatch = useDispatch();
-
-  const timebook = [
-    { value: "", label: "Thời gian đặt hàng" },
-    { value: "created_at", label: "Tăng dần" },
-    { value: "-created_at", label: "Giảm dần" },
-    { value: "daterange", label: "Tìm kiếm theo khoảng thời gian" },
-  ];
-
-  const _status = [
-    { value: '', label: "Trạng thái" },
-    { value: 'NOT', label: "Chưa xử lý" },
-    { value: 'DONE', label: "Đã xử lý" }];
-
-  const onSelectTimeBook = (e, i, index) => {
-    if (e.value == 'daterange') {
-      dispatch({ type: SHOW_DATE_RANGE_POPUP });
-    } else {
-      dispatch({ type: SORT_BY_CHANGE, value: e.value });
-      dispatch({ type: DATE_RANGE_CHANGE, value: { startDate: 0, endDate: 0 } });
-    }
-  };
-
-  const onStatusSelected = (e) => {
-    dispatch({ type: STATUS_CHANGE, value: e.value });
-  }
-
   const onCellClicked = (cell) => {
-    dispatch({ type: SKU_SELECT, value: cell.value });
+    dispatch({ type: LINE_ITEM_SELECT, value: cell.row.original.id });
     dispatch({ type: GET_MACHINES });
     dispatch({ type: SHOW_PRODUCT_POPUP });
   };
@@ -74,25 +48,7 @@ function Table({ columns, data }) {
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column, index) => (
               <th {...column.getHeaderProps()}>
-                {index == 2 ? (
-                  <Dropdown
-                    controlClassName="dropDownMachine"
-                    options={timebook}
-                    onChange={onSelectTimeBook}
-                    value={timebook.find((i) => i.value == sortBy)}
-                    placeholder="Select an option"
-                  />
-                ) : index == 3 ? (
-                  <Dropdown
-                    controlClassName="dropDownMachine"
-                    options={_status}
-                    onChange={onStatusSelected}
-                    value={_status.find((i) => i.value == status)}
-                    placeholder="Select an option"
-                  />
-                ) : (
-                  column.render("Header")
-                )}
+                {column.render("Header")}
               </th>
             ))}
           </tr>
@@ -120,8 +76,8 @@ function Table({ columns, data }) {
   );
 }
 
-export default function ProduceTable({ columns, data }) {
-  let { keyword, page, pageSize, total, isTableLoading } = useSelector(state => state.product);
+export default function ProduceTable({ data }) {
+  let { keyword, page, pageSize, total, isTableLoading, status, sortBy } = useSelector(state => state.product);
   let dispatch = useDispatch();
   let totalPage = (total / pageSize) > parseInt(total / pageSize) ? parseInt(total / pageSize) + 1 : parseInt(total / pageSize);
 
@@ -149,6 +105,91 @@ export default function ProduceTable({ columns, data }) {
     dispatch({ type: PAGE_SIZE_CHANGE, value: e.target.value });
   }
 
+  const _status = [
+    { value: '', label: "Trạng thái" },
+    { value: 'NOT', label: "Chưa xử lý" },
+    { value: 'DONE', label: "Đã xử lý" }];
+
+  const onStatusSelected = (e) => {
+    dispatch({ type: STATUS_CHANGE, value: e.value });
+  }
+
+  const timebook = [
+    { value: "", label: "Thời gian đặt hàng" },
+    { value: "confirmed_at", label: "Tăng dần" },
+    { value: "-confirmed_at", label: "Giảm dần" },
+    { value: "daterange", label: "Tìm kiếm theo khoảng thời gian" },
+  ];
+
+  const onSelectTimeBook = (e, i, index) => {
+    if (e.value == 'daterange') {
+      dispatch({ type: SHOW_DATE_RANGE_POPUP });
+    } else {
+      dispatch({ type: SORT_BY_CHANGE, value: e.value });
+      dispatch({ type: DATE_RANGE_CHANGE, value: { startDate: 0, endDate: 0 } });
+    }
+  };
+
+  const columns = [
+    {
+      Header: "Mã SKU",
+      accessor: "sku",
+      Cell: ({ cell }) => {
+        if (cell.value) {
+          return <>{cell.value}</>
+        } else {
+          return <>{cell.row.original.name}</>
+        }
+      }
+    },
+    {
+      Header: "Mã đơn hàng",
+      accessor: "order_number"
+    },
+    {
+      Header: () => {
+        return <Dropdown
+          controlClassName="dropDownMachine"
+          options={timebook}
+          onChange={onSelectTimeBook}
+          value={timebook.find((i) => i.value == sortBy)}
+          placeholder="Select an option"
+        />
+      },
+      accessor: "confirmed_at",
+      Cell: ({ cell }) => {
+        return <>{date2dtstr(new Date(cell.value))}</>
+      }
+    },
+    {
+      Header: "Thời hạn xử lý",
+      accessor: "deadline",
+      Cell: ({ cell }) => {
+        let deadLine = new Date();
+        deadLine.setDate(new Date(cell.row.original.confirmed_at).getDate() + 2);
+        return <>{date2dtstr(deadLine)}</>
+      }
+    },
+    {
+      Header: () => {
+        return <Dropdown
+          controlClassName="dropDownMachine"
+          options={_status}
+          onChange={onStatusSelected}
+          value={_status.find((i) => i.value == status)}
+          placeholder="Select an option"
+        />
+      },
+      accessor: "status",
+      Cell: ({ cell: { value } }) =>
+        value == "DONE" ? (
+          <p className="status-bag green">Đã xử lý</p>
+        ) : (
+          <p className="status-bag red">Chưa xử lý</p>
+        )
+    }
+  ];
+
   return (
     <TableBox>
       <div className="search-box">
@@ -164,7 +205,7 @@ export default function ProduceTable({ columns, data }) {
             onChange={onKeywordChanged}
           />
         </div>
-        <button 
+        <button
           className="search-btn blue"
           onClick={onSearchBtnClicked}>
           Tìm kiếm

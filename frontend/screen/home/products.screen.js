@@ -6,7 +6,6 @@ import {
   HIDE_DATE_RANGE_POPUP,
   DATE_RANGE_CHANGE,
 } from "../../action/product/product.action";
-import { date2dtstr } from "../../service/util/utils.client";
 import { ProductPopUp, ProduceTable, ProductDateRangePopUp } from "../../component";
 
 export default function SapoProduct() {
@@ -28,45 +27,9 @@ export default function SapoProduct() {
     dispatch({ type: HIDE_DATE_RANGE_POPUP });
   };
 
-  const columns = [
-    {
-      Header: "Mã SKU",
-      accessor: "sku",
-      Cell: ({ cell }) => {
-        if(cell.value){
-          return <>{cell.value}</>
-        }else{
-          return <>{cell.row.original.name}</>
-        }
-      }
-    },
-    {
-      Header: "Mã đơn hàng",
-      accessor: "order_number"
-    },
-    {
-      Header: "Thời gian đặt hàng",
-      accessor: "created_at",
-      Cell: ({ cell }) => {
-        return <>{date2dtstr(new Date(cell.value))}</>
-      }
-    },
-    {
-      Header: "Trạng thái",
-      accessor: "status",
-      Cell: ({ cell: { value } }) =>
-        value == "DONE" ? (
-          <p className="status-bag green">Đã xử lý</p>
-        ) : (
-          <p className="status-bag red">Chưa xử lý</p>
-        )
-    }
-  ];
-
   return (
     <div style={{ height: 1000, width: "100%", marginTop: -77 }}>
       <ProduceTable 
-        columns={columns} 
         data={listProducts} />
 
       <ProductPopUp

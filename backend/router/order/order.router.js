@@ -8,7 +8,8 @@ applyMiddleware(router, "get", "/getAll", (...agrs) => OrderController.getAll(..
 applyMiddleware(router, "get", "/getByID", (...agrs) => OrderController.getByID(...agrs));
 applyMiddleware(router, "get", "/search", (...agrs) => OrderController.search(...agrs));
 applyMiddleware(router, "get", "/searchLineItems", (...agrs) => OrderController.searchLineItems(...agrs));
-applyMiddleware(router, "get", "/searchLineItemsBySKU", (...agrs) => OrderController.searchLineItemsBySKU(...agrs));
+applyMiddleware(router, "get", "/getLineItemsBySKU", (...agrs) => OrderController.getLineItemsBySKU(...agrs));
+applyMiddleware(router, "get", "/getLineItemsByID", (...agrs) => OrderController.getLineItemsByID(...agrs));
 // applyMiddleware(router, "post", "/set/:id",)
 
 export default router;

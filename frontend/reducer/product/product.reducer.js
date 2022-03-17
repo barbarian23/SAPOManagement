@@ -24,6 +24,7 @@ import {
     POPUP_PROCESS_TIME_CHANGE,
     START_LOADING_POPUP_TABLE_DATA,
     STOP_LOADING_POPUP_TABLE_DATA,
+    LINE_ITEM_SELECT,
 } from '../../action/product/product.action';
 
 const initialState = {
@@ -47,6 +48,7 @@ const initialState = {
     lineItems: [],
     machines: [],
     selectedSKU: "",
+    selectedLineItemID: "",
     popupKeyword: "",
 
 };
@@ -146,6 +148,11 @@ export default function homeReducer(state = initialState, action) {
             return {
                 ...state,
                 selectedSKU: action.value
+            }
+        case LINE_ITEM_SELECT:
+            return {
+                ...state,
+                selectedLineItemID: action.value
             }
         case POPUP_KEYWORD_CHANGE:
             return {

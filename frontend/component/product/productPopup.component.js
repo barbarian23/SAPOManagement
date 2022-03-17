@@ -121,7 +121,14 @@ export default function ProductPopUp({ open, onClose }) {
   const columns = [
     {
       Header: "Mã SKU",
-      accessor: "sku"
+      accessor: "sku",
+      Cell: ({ cell }) => {
+        if(cell.value){
+          return <>{cell.value}</>
+        }else{
+          return <>{cell.row.original.name}</>
+        }
+      }
     },
     {
       Header: "Mã đơn hàng",

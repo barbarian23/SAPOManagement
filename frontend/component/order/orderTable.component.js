@@ -17,6 +17,7 @@ import Dropdown from "react-dropdown";
 import "../../assets/css/react-dropdown-style.css";
 import "../../assets/css/dropdown-styles.css";
 import ReactLoading from 'react-loading';
+import { date2dtstr } from "../../service/util/utils.client";
 
 function Table({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
@@ -36,8 +37,8 @@ function Table({ columns, data }) {
 
   const timebook = [
     { value: "", label: "Thời gian đặt hàng" },
-    { value: "created_at", label: "Tăng dần" },
-    { value: "-created_at", label: "Giảm dần" },
+    { value: "confirmed_at", label: "Tăng dần" },
+    { value: "-confirmed_at", label: "Giảm dần" },
     { value: "daterange", label: "Tìm kiếm theo khoảng thời gian" },
   ];
 
@@ -122,7 +123,7 @@ function Table({ columns, data }) {
   );
 }
 
-export default function OrderTable({ columns, data }) {
+export default function OrderTable({ data }) {
   let { keyword, page, pageSize, total, isTableLoading } = useSelector(state => state.order);
   let dispatch = useDispatch();
   let totalPage = (total / pageSize) > parseInt(total / pageSize) ? parseInt(total / pageSize) + 1 : parseInt(total / pageSize);
@@ -150,6 +151,31 @@ export default function OrderTable({ columns, data }) {
   const onPageSizeChanged = (e) => {
     dispatch({ type: PAGE_SIZE_CHANGE, value: e.target.value });
   }
+
+  const columns = [
+    {
+      Header: "Mã đơn hàng",
+      accessor: "id",
+      defaultCanSort: true
+    },
+    {
+      Header: "Thời gian đã đặt hàng",
+      accessor: "confirmed_at",
+      Cell: ({ cell }) => {
+        return <>{date2dtstr(new Date(cell.value))}</>
+      }
+    },
+    {
+      Header: "Trạng thái",
+      accessor: "status",
+      Cell: ({ cell: { value } }) =>
+        value == 'DONE' ? (
+          <p className="status-bag green">Đã xử lý</p>
+        ) : (
+          <p className="status-bag red">Chưa xử lý</p>
+        )
+    }
+  ];
 
   return (
     <TableBox>

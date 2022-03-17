@@ -8,7 +8,7 @@ import {
     GET_LIST_PRODUCTS, 
     GET_LIST_PRODUCTS_FAIL, 
     GET_LIST_PRODUCTS_SUCCESS, 
-    KEYWORD_CHANGE, 
+    // KEYWORD_CHANGE, 
     PAGE_CHANGE, 
     PAGE_SIZE_CHANGE, 
     SKU_SELECT, 
@@ -18,15 +18,16 @@ import {
     UPDATE_LINE_ITEM_STATUS,
     UPDATE_LINE_ITEM_STATUS_FAIL,
     UPDATE_LINE_ITEM_STATUS_SUCCESS,
-    POPUP_KEYWORD_CHANGE,
+    // POPUP_KEYWORD_CHANGE,
     START_LOADING_TABLE_DATA,
     STOP_LOADING_TABLE_DATA,
     SEARCH_BUTTON_CLICK,
     START_LOADING_POPUP_TABLE_DATA,
     STOP_LOADING_POPUP_TABLE_DATA,
     POPUP_SEARCH_BUTTON_CLICK,
+    LINE_ITEM_SELECT,
 } from "../../action/product/product.action";
-import { getListProducts, getLineItemsBySKU } from '../../service/api/product.api';
+import { searchLineItems, getLineItemsByID, getLineItemsBySKU } from '../../service/api/order.api';
 import { getMachines } from '../../service/api/machine.api';
 import { updateStatus } from '../../service/api/lineItem.api';
 
@@ -36,7 +37,7 @@ function* getListProductsSaga({ value }) {
 
     yield put({type: START_LOADING_TABLE_DATA});
     try {
-        const response = yield call(getListProducts, page, pageSize, keyword, sortBy, startDate, endDate, status);
+        const response = yield call(searchLineItems, page, pageSize, keyword, sortBy, startDate, endDate, status);
         if (response.status === 200) {
             const { code, message, data } =  response.data;
             if (code==200) {
@@ -72,10 +73,10 @@ function* getListProductsSaga({ value }) {
 
 function* getLineItemsSaga({ value }) {
     const state = yield select((state) => state.product);
-    const { selectedSKU, popupKeyword } = state;
+    const { selectedLineItemID, popupKeyword } = state;
     yield put({type: START_LOADING_POPUP_TABLE_DATA});
     try {
-        const response = yield call(getLineItemsBySKU, selectedSKU, popupKeyword);
+        const response = yield call(getLineItemsByID, selectedLineItemID, popupKeyword);
         if (response.status === 200) {
             const { code, message, data } =  response.data;
             if (code==200) {
@@ -190,7 +191,7 @@ export const productSaga = function* () {
     // yield takeLatest(KEYWORD_CHANGE, getListProductsSaga);
 
     yield takeLatest(GET_MACHINES, getMachinesSaga);
-    yield takeLatest(SKU_SELECT, getLineItemsSaga);
+    yield takeLatest(LINE_ITEM_SELECT, getLineItemsSaga);
     yield takeLatest(POPUP_SEARCH_BUTTON_CLICK, getLineItemsSaga);
     // yield takeLatest(POPUP_KEYWORD_CHANGE, getLineItemsSaga);
     

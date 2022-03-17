@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import IService from '../iservice';
 import { Order } from '../../model';
 
@@ -18,9 +19,14 @@ class OrderService extends IService {
           $project: {
             _id: 0,
             id: { $toString: "$order_number" },
-            created_at: 1,
+            confirmed_at: 1,
             status: 1,
           }
+        },
+        {
+          $match: {
+            confirmed_at: { $ne: null },
+          },
         },
       ];
 
@@ -38,8 +44,8 @@ class OrderService extends IService {
       if (startDate > 0 && endDate > 0) {
         let start = new Date(startDate);
         let end = new Date(endDate);
-        andQueries.push({ created_at: { $gte: start.toISOString() } });
-        andQueries.push({ created_at: { $lte: end.toISOString() } });
+        andQueries.push({ confirmed_at: { $gte: start.toISOString() } });
+        andQueries.push({ confirmed_at: { $lte: end.toISOString() } });
       }
 
       if (andQueries.length > 0) {
@@ -47,11 +53,11 @@ class OrderService extends IService {
       }
 
       if (startDate == 0 || endDate == 0) {
-        if (sortBy == 'created_at') {
-          pipeline.push({ $sort: { created_at: 1 } });
-        } else //if (sortBy == '-created_at') 
+        if (sortBy == 'confirmed_at') {
+          pipeline.push({ $sort: { confirmed_at: 1 } });
+        } else //if (sortBy == '-confirmed_at') 
         {
-          pipeline.push({ $sort: { created_at: -1 } });
+          pipeline.push({ $sort: { confirmed_at: -1 } });
         }
       }
 
@@ -78,9 +84,14 @@ class OrderService extends IService {
           $project: {
             _id: 0,
             id: { $toString: "$order_number" },
-            created_at: 1,
+            confirmed_at: 1,
             status: 1,
           }
+        },
+        {
+          $match: {
+            confirmed_at: { $ne: null },
+          },
         },
       ];
 
@@ -98,8 +109,8 @@ class OrderService extends IService {
       if (startDate > 0 && endDate > 0) {
         let start = new Date(startDate);
         let end = new Date(endDate);
-        andQueries.push({ created_at: { $gte: start.toISOString() } });
-        andQueries.push({ created_at: { $lte: end.toISOString() } });
+        andQueries.push({ confirmed_at: { $gte: start.toISOString() } });
+        andQueries.push({ confirmed_at: { $lte: end.toISOString() } });
       }
 
       if (andQueries.length > 0) {
@@ -136,11 +147,16 @@ class OrderService extends IService {
             _id: 0,
             id: "$items._id",
             order_number: 1,
-            created_at: 1,
+            confirmed_at: 1,
             sku: "$items.sku",
             name: "$items.name",
             status: "$items.status",
-          }
+          },
+        },
+        {
+          $match: {
+            confirmed_at: { $ne: null },
+          },
         },
       ];
 
@@ -159,8 +175,8 @@ class OrderService extends IService {
       if (startDate > 0 && endDate > 0) {
         let start = new Date(startDate);
         let end = new Date(endDate);
-        andQueries.push({ created_at: { $gte: start.toISOString() } });
-        andQueries.push({ created_at: { $lte: end.toISOString() } });
+        andQueries.push({ confirmed_at: { $gte: start.toISOString() } });
+        andQueries.push({ confirmed_at: { $lte: end.toISOString() } });
       }
 
       if (andQueries.length > 0) {
@@ -168,11 +184,11 @@ class OrderService extends IService {
       }
 
       if (startDate == 0 || endDate == 0) {
-        if (sortBy == 'created_at') {
-          pipeline.push({ $sort: { created_at: 1 } });
-        } else //if (sortBy == '-created_at') 
+        if (sortBy == 'confirmed_at') {
+          pipeline.push({ $sort: { confirmed_at: 1 } });
+        } else //if (sortBy == '-confirmed_at') 
         {
-          pipeline.push({ $sort: { created_at: -1 } });
+          pipeline.push({ $sort: { confirmed_at: -1 } });
         }
       }
 
@@ -209,10 +225,15 @@ class OrderService extends IService {
             _id: 0,
             id: "$items._id",
             order_number: 1,
-            created_at: 1,
+            confirmed_at: 1,
             sku: "$items.sku",
             status: "$items.status",
           }
+        },
+        {
+          $match: {
+            confirmed_at: { $ne: null },
+          },
         },
       ];
 
@@ -231,8 +252,8 @@ class OrderService extends IService {
       if (startDate > 0 && endDate > 0) {
         let start = new Date(startDate);
         let end = new Date(endDate);
-        andQueries.push({ created_at: { $gte: start.toISOString() } });
-        andQueries.push({ created_at: { $lte: end.toISOString() } });
+        andQueries.push({ confirmed_at: { $gte: start.toISOString() } });
+        andQueries.push({ confirmed_at: { $lte: end.toISOString() } });
       }
 
       if (andQueries.length > 0) {
@@ -273,6 +294,7 @@ class OrderService extends IService {
             _id: 0,
             order_number: 1,
             sku: "$items.sku",
+            name: "$items.name",
             machine_id: { $ifNull: ["$items.machine_id", ""] },
             machine_code: { $ifNull: ["$items.code", ""] },
             machine_name: { $ifNull: ["$items.name", ""] },
@@ -325,6 +347,7 @@ class OrderService extends IService {
             _id: 0,
             order_number: 1,
             sku: "$items.sku",
+            name: "$items.name",
             machine_id: { $ifNull: ["$items.machine_id", ""] },
             machine_code: { $ifNull: ["$items.code", ""] },
             machine_name: { $ifNull: ["$items.name", ""] },
@@ -333,7 +356,7 @@ class OrderService extends IService {
             id: "$items._id",
           }
         },
-        { $match: { id: id } },
+        { $match: { id: Types.ObjectId(id) } },
       ];
 
       if (keyword) {

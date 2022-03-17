@@ -53,12 +53,26 @@ class OrderController extends IController {
             }
       }
 
-      async searchLineItemsBySKU(req, res, next) {
+      async getLineItemsBySKU(req, res, next) {
             try {
                   const { sku, keyword } = req.query;
                   let _sku = sku ? sku : null;
                   let _keyword = keyword ? keyword : null;
                   const lineItems = await this.service.getLineItemsBySKU(_sku, _keyword);
+                  responceJson(res, 200, lineItems);
+            } catch (e) {
+                  console.log(e);
+                  responceJson(res, 400, {error: e});
+                  next(e);
+            }
+      }
+
+      async getLineItemsByID(req, res, next) {
+            try {
+                  const { id, keyword } = req.query;
+                  let _id = id ? id : null;
+                  let _keyword = keyword ? keyword : null;
+                  const lineItems = await this.service.getLineItemsByID(_id, _keyword);
                   responceJson(res, 200, lineItems);
             } catch (e) {
                   console.log(e);
