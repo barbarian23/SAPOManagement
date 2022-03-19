@@ -167,7 +167,11 @@ export default function ProduceTable({ data }) {
       Cell: ({ cell }) => {
         let deadLine = new Date();
         deadLine.setDate(new Date(cell.row.original.confirmed_at).getDate() + 2);
-        return <>{date2dtstr(deadLine)}</>
+        if(deadLine < Date.now()){
+          return <p style={{fontWeight: 700, color: "#f64343"}}>{date2dtstr(deadLine)}</p>
+        }else{
+          return <p style={{fontWeight: 700, color: "#2ad38b"}}>{date2dtstr(deadLine)}</p>
+        }
       }
     },
     {
