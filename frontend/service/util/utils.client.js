@@ -12,3 +12,22 @@ export const date2dtstr = date => {
     let sec = String(date.getSeconds()).padStart(2, '0');
     return `${_date}/${month}/${year} ${hour}:${min}:${sec}`
 }
+
+export const ts2daystr = timestamp => {
+    let ts = Math.floor(timestamp/1000);
+    console.log(ts)
+    let day = Math.floor(ts / (24 * 3600));
+    let hour = (Math.floor(ts / 3600)) % 24;
+    let min = Math.floor(ts / 60) % 60;
+    let sec = ts % 60;
+    console.log(day, hour, min, sec)
+    if(day){
+        return `${day} ngày ${hour} giờ ${min} phút`;
+    }else if(hour){
+        return `${hour} giờ ${min} phút`;
+    }else if(min){
+        return `${min} phút`;
+    }else if(sec){
+        return `${sec} giây`;
+    }
+}

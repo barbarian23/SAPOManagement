@@ -19,7 +19,7 @@ import Dropdown from "react-dropdown";
 import "../../assets/css/react-dropdown-style.css";
 import "../../assets/css/dropdown-styles.css";
 import ReactLoading from 'react-loading';
-import { date2dtstr } from "../../service/util/utils.client";
+import { date2dtstr, ts2daystr } from "../../service/util/utils.client";
 
 function Table({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
@@ -135,7 +135,6 @@ export default function ProduceTable({ data }) {
       Header: "Mã SKU",
       accessor: "sku",
       Cell: ({ cell }) => {
-        console.log(cell.value)
         if (cell.value) {
           return <>{cell.value}</>
         } else {
@@ -167,16 +166,13 @@ export default function ProduceTable({ data }) {
       accessor: "deadline",
       Cell: ({ cell }) => {
         let confirmedAt = new Date(cell.row.original.confirmed_at);
-        let deadLine = new Date();
-        deadLine = deadLine.setDate(confirmedAt.getDate() + 2);
+        confirmedAt.setDate(confirmedAt.getDate() + 2);
         let now = Date.now();
-        let diff = Math.abs(now - deadLine);
-        console.log(diff);
-        return null;
-        if(deadLine < now){
-          return <p style={{fontWeight: 700, color: "#f64343"}}>{date2dtstr(deadLine)}</p>
+        let diff = now - confirmedAt.getTime();
+        if(diff > 0){
+          return <p style={{fontWeight: 700, color: "#f64343"}}>Quá hạn {ts2daystr(Math.abs(diff))}</p>
         }else{
-          return <p style={{fontWeight: 700, color: "#2ad38b"}}>{date2dtstr(deadLine)}</p>
+          return <p style={{fontWeight: 700, color: "#2ad38b"}}>Còn {ts2daystr(Math.abs(diff))}</p>
         }
       }
     },
