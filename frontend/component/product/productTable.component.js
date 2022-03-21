@@ -135,6 +135,7 @@ export default function ProduceTable({ data }) {
       Header: "Mã SKU",
       accessor: "sku",
       Cell: ({ cell }) => {
+        console.log(cell.value)
         if (cell.value) {
           return <>{cell.value}</>
         } else {
@@ -165,9 +166,14 @@ export default function ProduceTable({ data }) {
       Header: "Thời hạn xử lý",
       accessor: "deadline",
       Cell: ({ cell }) => {
+        let confirmedAt = new Date(cell.row.original.confirmed_at);
         let deadLine = new Date();
-        deadLine.setDate(new Date(cell.row.original.confirmed_at).getDate() + 2);
-        if(deadLine < Date.now()){
+        deadLine = deadLine.setDate(confirmedAt.getDate() + 2);
+        let now = Date.now();
+        let diff = Math.abs(now - deadLine);
+        console.log(diff);
+        return null;
+        if(deadLine < now){
           return <p style={{fontWeight: 700, color: "#f64343"}}>{date2dtstr(deadLine)}</p>
         }else{
           return <p style={{fontWeight: 700, color: "#2ad38b"}}>{date2dtstr(deadLine)}</p>
