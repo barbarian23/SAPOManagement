@@ -119,9 +119,13 @@ table {
   margin-top: 13px;
 
   .page-btn {
-    margin: 0px 15px;
+    margin: 0px 5px;
     cursor: pointer;
-    
+  }
+
+  .current-page{
+    font-weight: 700;
+    margin: 0 15px;
   }
 }
 `;

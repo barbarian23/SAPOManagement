@@ -1,10 +1,23 @@
 import { Types } from 'mongoose';
 import IService from '../iservice';
 import { Order } from '../../model';
+import e from 'cors';
 
 class OrderService extends IService {
   constructor(model) {
     super(model);
+  }
+
+  async getByOrderNumber(orderNumber) {
+    try {
+      let item = await this.model.findOne({order_number: orderNumber});
+      if (item) {
+        return item;
+      }
+      return null;
+    } catch (errors) {
+      throw errors;
+    }
   }
 
   async searchPagingOrders(page, pageSize, keyword, sortBy, startDate, endDate, status) {
@@ -119,6 +132,41 @@ class OrderService extends IService {
 
       const count = await this.aggregateCount(pipeline);
       return count;
+    } catch (errors) {
+      console.log(errors);
+      throw errors;
+    }
+  }
+
+  async getOrdersByLineItemID(lineItemID) {
+    try {
+      let pipeline = [
+        {
+          $lookup: {
+            from: 'lineitems',
+            localField: 'line_items',
+            foreignField: '_id',
+            as: 'items'
+          }
+        },
+        { $unwind: "$items" },
+        {
+          $project: {
+            _id: 0,
+            lineitem_id: "$items._id",
+            order_number: 1,
+            status: 1,
+          },
+        },
+        {
+          $match: {
+            lineitem_id: lineItemID,
+          },
+        },
+      ];
+
+      const orders = await this.aggregate(pipeline);
+      return orders;
     } catch (errors) {
       console.log(errors);
       throw errors;
@@ -368,6 +416,78 @@ class OrderService extends IService {
       }
       const lineItems = await this.aggregate(pipeline);
       return lineItems;
+    } catch (errors) {
+      console.log(errors);
+      throw errors;
+    }
+  }
+
+  async isAllLineItemsDone(orderNumber) {
+    let pipeline = [
+      {
+        $lookup: {
+          from: 'lineitems',
+          localField: 'line_items',
+          foreignField: '_id',
+          as: 'items'
+        }
+      },
+      { $unwind: "$items" },
+      {
+        $project: {
+          _id: 0,
+          id: "$items._id",
+          order_number: 1,
+          confirmed_at: 1,
+          sku: "$items.sku",
+          status: "$items.status",
+        }
+      },
+      {
+        $match: {
+          $and: [
+            { order_number: orderNumber },
+            { status: "DONE" }
+          ]
+        }
+      },
+    ];
+
+    const count = await this.aggregateCount(pipeline);
+    if (count > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  async setStatusDone(orderNumber) {
+    try {
+      let order = await this.getByOrderNumber(orderNumber);
+      if (order) {
+        order.status = 'DONE';
+        let result = order.save();
+        return result;
+      } else {
+        // no order
+        return null;
+      }
+    } catch (errors) {
+      console.log(errors);
+      throw errors;
+    }
+  }
+
+  async setStatusNot(orderNumber) {
+    try {
+      let order = await this.getByOrderNumber(orderNumber);
+      if (order) {
+        order.status = 'NOT';
+        let result = order.save();
+        return result; j
+      }
+      // no order
+      return null;
     } catch (errors) {
       console.log(errors);
       throw errors;

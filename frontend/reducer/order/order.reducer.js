@@ -6,6 +6,7 @@ import {
     PAGE_CHANGE,
     PAGE_SIZE_CHANGE,
     KEYWORD_CHANGE,
+    SEARCH_BUTTON_CLICK,
     STATUS_CHANGE,
     SORT_BY_CHANGE,
     DATE_RANGE_CHANGE,
@@ -67,6 +68,11 @@ export default function homeReducer(state = initialState, action) {
             return {
                 ...state,
                 keyword: action.value
+            }
+        case SEARCH_BUTTON_CLICK:
+            return {
+                ...state,
+                page: 1
             }
         case STATUS_CHANGE:
             return {

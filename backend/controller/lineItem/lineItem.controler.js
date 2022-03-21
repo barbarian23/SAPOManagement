@@ -1,7 +1,7 @@
-import {Types} from "mongoose";
 import IController from "../icontroller";
-import { LineItemService } from "../../service";
+import { LineItemService, OrderService } from "../../service";
 import { responceJson } from '../../util';
+import { Order } from "../../model";
 
 class LineItemController extends IController {
     constructor(service) {
@@ -16,32 +16,31 @@ class LineItemController extends IController {
             let _machineID = machine_id ? machine_id : '';
 
             if (_id == '' || _status == '' || (_status == 'DONE' && _machineID == '')) {
-                // console.log(_id, _status, _machineID);
-                responceJson(res, 400, {error: "Bad params"});
+                responceJson(res, 400, { error: "Bad params" });
             } else {
-                let lineItem = await this.service.getByID(_id);
-                if(lineItem){
-                    if(lineItem.status != _status || lineItem.machine_id != _machineID){
-                        if(_status == "DONE"){
-                            lineItem.status = _status;
-                            lineItem.machine_id = Types.ObjectId(_machineID);
-                            lineItem.process_time = Date.now();
-                        }else{
-                            lineItem.status = _status;
-                            lineItem.machine_id = null;
-                            lineItem.process_time = null;
-                        }
-                        let result = lineItem.save()
-                        responceJson(res, 200, {id: result._id});
-                    }else{
-                        responceJson(res, 200, {id: lineItem._id});                
-                    }
-                }else{
-                    responceJson(res, 400, {error: 'Cant find lineItem'});
+                let result = null;
+                if (_status == "DONE") {
+                    result = await this.service.setStatusDone(_id, _machineID);
+                } else {
+                    result = await this.service.setStatusNot(_id);
                 }
+                //check order
+                let orders = await OrderService.getLineItemsByID(_id);
+                console.log(orders)
+                orders.forEach(order => {
+                    let status = OrderService.isAllLineItemsDone(order.order_number);
+                    if (order.status != status) {
+                        if (status) {
+                            OrderService.setStatusDone(order.order_number);
+                        } else {
+                            OrderService.setStatusDone(order.order_number);
+                        }
+                    }
+                });
+                responceJson(res, 200, { result: result });
             }
         } catch (e) {
-            responceJson(res, 400, {error: e});
+            responceJson(res, 400, { error: e });
             next(e);
         }
     }

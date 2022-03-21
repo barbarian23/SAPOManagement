@@ -101,6 +101,10 @@ export default function ProduceTable({ data }) {
     }
   }
 
+  const onPageClicked = (_page) => {
+    dispatch({ type: PAGE_CHANGE, value: _page });
+  }
+
   const onPageSizeChanged = (e) => {
     dispatch({ type: PAGE_SIZE_CHANGE, value: e.target.value });
   }
@@ -169,10 +173,10 @@ export default function ProduceTable({ data }) {
         confirmedAt.setDate(confirmedAt.getDate() + 2);
         let now = Date.now();
         let diff = now - confirmedAt.getTime();
-        if(diff > 0){
-          return <p style={{fontWeight: 700, color: "#f64343"}}>Quá hạn {ts2daystr(Math.abs(diff))}</p>
-        }else{
-          return <p style={{fontWeight: 700, color: "#2ad38b"}}>Còn {ts2daystr(Math.abs(diff))}</p>
+        if (diff > 0) {
+          return <p style={{ fontWeight: 700, color: "#f64343" }}>Quá hạn {ts2daystr(Math.abs(diff))}</p>
+        } else {
+          return <p style={{ fontWeight: 700, color: "#2ad38b" }}>Còn {ts2daystr(Math.abs(diff))}</p>
         }
       }
     },
@@ -241,15 +245,34 @@ export default function ProduceTable({ data }) {
                 onChange={onPageSizeChanged} />
               <span> {(page - 1) * pageSize + 1} - {((page) * pageSize) > total ? total : ((page) * pageSize)} trên {total}</span>
 
-              <button className="page-btn"
-                onClick={onDecreasePageClicked}>
-                <i className="fa fa-chevron-left" aria-hidden="true"></i>
-              </button>
-              <span>{page}</span>
-              <button className="page-btn"
-                onClick={onIncreasePageClicked}>
-                <i className="fa fa-chevron-right" aria-hidden="true"></i>
-              </button>
+              {/* paging */}
+              {page > 1 ? <button className="page-btn"
+                onClick={() => onPageClicked(1)}>
+                <i className="fa fa-angle-double-left" aria-hidden="true"></i>
+              </button> : null}
+              {page - 2 >= 1 ? <button className="page-btn"
+                onClick={() => onPageClicked(page - 2)}>
+                {page - 2}
+              </button> : null}
+              {page - 1 >= 1 ? <button className="page-btn"
+                onClick={() => onPageClicked(page - 1)}>
+                {page - 1}
+              </button> : null}
+
+              <span className="current-page">{page}</span>
+
+              {page + 1 <= totalPage ? <button className="page-btn"
+                onClick={() => onPageClicked(page + 1)}>
+                {page + 1}
+              </button> : null}
+              {page + 2 <= totalPage ? <button className="page-btn"
+                onClick={() => onPageClicked(page + 2)}>
+                {page + 2}
+              </button> : null}
+              {page < totalPage ? <button className="page-btn"
+                onClick={() => onPageClicked(totalPage)}>
+                <i className="fa fa-angle-double-right" aria-hidden="true"></i>
+              </button> : null}
             </div>
           </div>
         </div>

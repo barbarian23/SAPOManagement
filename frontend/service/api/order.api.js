@@ -4,7 +4,7 @@ export function getListOrders(page = 1, pageSize = 10, keyword = '', sortBy = ''
     return axiosSerivce.get(`api/order/search`
         + `?page=${page}`
         + `&pageSize=${pageSize}`
-        + `&keyword=${keyword}`
+        + `&keyword=${encodeURIComponent(keyword)}`
         + `&sortBy=${sortBy}`
         + `&startDate=${startDate}`
         + `&endDate=${endDate}`
@@ -15,7 +15,7 @@ export function searchLineItems(page = 1, pageSize = 10, keyword = '', sortBy = 
     return axiosSerivce.get(`api/order/searchLineItems`
         + `?page=${page}`
         + `&pageSize=${pageSize}`
-        + `&keyword=${keyword}`
+        + `&keyword=${encodeURIComponent(keyword)}`
         + `&sortBy=${sortBy}`
         + `&startDate=${startDate}`
         + `&endDate=${endDate}`
@@ -26,11 +26,11 @@ export function searchLineItems(page = 1, pageSize = 10, keyword = '', sortBy = 
 export function getLineItemsBySKU(sku='', keyword='') {
     return axiosSerivce.get(`api/order/getLineItemsBySKU`
         + `?sku=${sku}`
-        + `&keyword=${keyword}`);
+        + `&keyword=${encodeURIComponent(keyword)}`);
 }
 
 export function getLineItemsByID(id='', keyword='') {
     return axiosSerivce.get(`api/order/getLineItemsByID`
         + `?id=${id}`
-        + `&keyword=${keyword}`);
+        + `&keyword=${encodeURIComponent(keyword)}`);
 }
