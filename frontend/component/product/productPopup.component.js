@@ -104,7 +104,9 @@ export default function ProductPopUp({ open, onClose }) {
       }
     });
 
+
     dispatch({ type: HIDE_PRODUCT_POPUP });
+
   }
 
   const statuses = [

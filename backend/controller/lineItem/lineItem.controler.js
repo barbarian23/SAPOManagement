@@ -1,7 +1,6 @@
 import IController from "../icontroller";
 import { LineItemService, OrderService } from "../../service";
 import { responceJson } from '../../util';
-import { Order } from "../../model";
 
 class LineItemController extends IController {
     constructor(service) {
@@ -27,16 +26,15 @@ class LineItemController extends IController {
                 //check order
                 let orders = await OrderService.getLineItemsByID(_id);
                 console.log(orders)
-                orders.forEach(order => {
-                    let status = OrderService.isAllLineItemsDone(order.order_number);
-                    if (order.status != status) {
-                        if (status) {
-                            OrderService.setStatusDone(order.order_number);
-                        } else {
-                            OrderService.setStatusDone(order.order_number);
-                        }
+                for(var i = 0; i< orders.length; i++){
+                    let status = await OrderService.isAllLineItemsDone(orders[i].order_number);
+                    console.log(status)
+                    if (status) {
+                        await OrderService.setStatusDone(orders[i].order_number);
+                    } else {
+                        await OrderService.setStatusNot(orders[i].order_number);
                     }
-                });
+                }
                 responceJson(res, 200, { result: result });
             }
         } catch (e) {

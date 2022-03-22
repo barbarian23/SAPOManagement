@@ -1,6 +1,7 @@
 import {
     START_LOADING_TABLE_DATA,
     STOP_LOADING_TABLE_DATA,
+    LOADING_TABLE_DATA,
     GET_LIST_PRODUCTS_SUCCESS,
     GET_LIST_PRODUCTS_FAIL,
     PAGE_CHANGE,
@@ -99,7 +100,7 @@ export default function homeReducer(state = initialState, action) {
         case SEARCH_BUTTON_CLICK:
             return {
                 ...state,
-                page: 1
+                page: 1,
             }
         case STATUS_CHANGE:
             return {

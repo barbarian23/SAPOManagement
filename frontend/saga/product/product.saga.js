@@ -21,6 +21,7 @@ import {
     // POPUP_KEYWORD_CHANGE,
     START_LOADING_TABLE_DATA,
     STOP_LOADING_TABLE_DATA,
+    LOADING_TABLE_DATA,
     SEARCH_BUTTON_CLICK,
     START_LOADING_POPUP_TABLE_DATA,
     STOP_LOADING_POPUP_TABLE_DATA,
@@ -145,6 +146,8 @@ function* getMachinesSaga({ value }) {
 }
 
 function* updateLineItemStatusSaga({ value }) {
+    yield put({type: START_LOADING_TABLE_DATA});
+    
     try {
         console.log(value)
         let {id, status, machine_id} = value;
@@ -178,6 +181,7 @@ function* updateLineItemStatusSaga({ value }) {
             value: error
         });
     }
+
 }
 
 export const productSaga = function* () {
@@ -197,4 +201,5 @@ export const productSaga = function* () {
     
     yield takeLatest(UPDATE_LINE_ITEM_STATUS, updateLineItemStatusSaga);
     yield takeLatest(UPDATE_LINE_ITEM_STATUS_SUCCESS, getListProductsSaga);
+    yield takeLatest(UPDATE_LINE_ITEM_STATUS_FAIL, getListProductsSaga);
 }
