@@ -447,7 +447,7 @@ class OrderService extends IService {
         $match: {
           $and: [
             { order_number: orderNumber },
-            { status: "DONE" }
+            { status: "NOT" }
           ]
         }
       },
@@ -455,9 +455,9 @@ class OrderService extends IService {
 
     const count = await this.aggregateCount(pipeline);
     if (count > 0) {
-      return true;
-    } else {
       return false;
+    } else {
+      return true;
     }
   }
 
@@ -484,7 +484,7 @@ class OrderService extends IService {
       if (order) {
         order.status = 'NOT';
         let result = order.save();
-        return result; j
+        return result;
       }
       // no order
       return null;
