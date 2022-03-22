@@ -223,9 +223,17 @@ export default function OrderTable({ data }) {
           <div className="right">
             <div className="pagging-label">
               <span>Số lượng mỗi trang</span>
-              <input type="number"
+              {/* <input type="number"
                 value={pageSize}
-                onChange={onPageSizeChanged} />
+                onChange={onPageSizeChanged} /> */}
+              <select name="pageSize"
+                value={pageSize}
+                onChange={onPageSizeChanged} >
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
               <span> {(page - 1) * pageSize + 1} - {((page) * pageSize) > total ? total : ((page) * pageSize)} trên {total}</span>
 
               {/* paging */}
