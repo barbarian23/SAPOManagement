@@ -32,39 +32,6 @@ function Table({ columns, data }) {
     data
   });
 
-  let { status, sortBy } = useSelector(state => state.order);
-  let dispatch = useDispatch();
-
-  const timebook = [
-    { value: "", label: "Thời gian đặt hàng" },
-    { value: "confirmed_at", label: "Tăng dần" },
-    { value: "-confirmed_at", label: "Giảm dần" },
-    { value: "daterange", label: "Tìm kiếm theo khoảng thời gian" },
-  ];
-
-  const _status = [
-    { value: '', label: "Trạng thái" },
-    { value: 'NOT', label: "Chưa xử lý" },
-    { value: 'DONE', label: "Đã xử lý" }];
-
-  const onSelectTimeBook = (e, i, index) => {
-    if (e.value == 'daterange') {
-      dispatch({ type: SHOW_DATE_RANGE_POPUP });
-    } else {
-      dispatch({ type: SORT_BY_CHANGE, value: e.value });
-      dispatch({ type: DATE_RANGE_CHANGE, value: { startDate: 0, endDate: 0 } });
-    }
-  };
-
-  const onRowClicked = (row) => {
-    let id = row.cells[0].value;
-    window.open(`https://epeben-1.myharavan.com/admin/orders/${id}`, "_blank");
-  };
-
-  const onStatusSelected = (e) => {
-    dispatch({ type: STATUS_CHANGE, value: e.value });
-  }
-
   return (
     <table {...getTableProps()}>
       <thead>
@@ -72,28 +39,9 @@ function Table({ columns, data }) {
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column, iCol) => (
               <th {...column.getHeaderProps()}>
-                {iCol == 1 ? (
-                  <Dropdown
-                    controlClassName="dropDownMachine"
-                    options={timebook}
-                    onChange={onSelectTimeBook}
-                    value={timebook.find((i) => i.value == sortBy)}
-                    placeholder="Select an option"
-                  />
-                ) : iCol == 2 ? (
-                  <Dropdown
-                    controlClassName="dropDownMachine"
-                    options={_status}
-                    onChange={onStatusSelected}
-                    value={_status.find((i) => i.value == status)}
-                    placeholder="Select an option"
-                  />
-                ) : (
-                  column.render("Header")
-                )}
+                {column.render("Header")}
               </th>
             ))}
-            <th>Thêm thao tác</th>
           </tr>
         ))}
       </thead>
@@ -105,16 +53,6 @@ function Table({ columns, data }) {
               {row.cells.map((cell) => {
                 return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
               })}
-              <td>
-                {row.cells[2].value == "DONE" ? (
-                  <button
-                    className="btn blue"
-                    onClick={() => onRowClicked(row)}
-                  >
-                    Đi đến trang giao hàng
-                  </button>
-                ) : null}
-              </td>
             </tr>
           );
         })}
@@ -124,9 +62,40 @@ function Table({ columns, data }) {
 }
 
 export default function OrderTable({ data }) {
-  let { keyword, page, pageSize, total, isTableLoading } = useSelector(state => state.order);
+  let { status, sortBy, keyword, page, pageSize, total, isTableLoading } = useSelector(state => state.order);
   let dispatch = useDispatch();
   let totalPage = (total / pageSize) > parseInt(total / pageSize) ? parseInt(total / pageSize) + 1 : parseInt(total / pageSize);
+
+  const _status = [
+    { value: '', label: "Trạng thái" },
+    { value: 'NOT', label: "Chưa xử lý" },
+    { value: 'DONE', label: "Đã xử lý" }
+  ];
+
+  const onStatusSelected = (e) => {
+    dispatch({ type: STATUS_CHANGE, value: e.value });
+  }
+
+  const timebook = [
+    { value: "", label: "Thời gian đặt hàng" },
+    { value: "confirmed_at", label: "Tăng dần" },
+    { value: "-confirmed_at", label: "Giảm dần" },
+    { value: "daterange", label: "Tìm kiếm theo khoảng thời gian" },
+  ];
+
+  const onSelectTimeBook = (e, i, index) => {
+    if (e.value == 'daterange') {
+      dispatch({ type: SHOW_DATE_RANGE_POPUP });
+    } else {
+      dispatch({ type: SORT_BY_CHANGE, value: e.value });
+      dispatch({ type: DATE_RANGE_CHANGE, value: { startDate: 0, endDate: 0 } });
+    }
+  };
+
+  const onRowClicked = (order) => {
+    let id = order.id;
+    window.open(`https://epeben-1.myharavan.com/admin/orders/${id}`, "_blank");
+  };
 
   const onKeywordChanged = (e) => {
     dispatch({ type: KEYWORD_CHANGE, value: e.target.value });
@@ -159,18 +128,34 @@ export default function OrderTable({ data }) {
   const columns = [
     {
       Header: "Mã đơn hàng",
-      accessor: "id",
+      accessor: "order_number",
       defaultCanSort: true
     },
     {
-      Header: "Thời gian đã đặt hàng",
+      Header: () => {
+        return <Dropdown
+          controlClassName="dropDownMachine"
+          options={timebook}
+          onChange={onSelectTimeBook}
+          value={timebook.find((i) => i.value == sortBy)}
+          placeholder="Select an option"
+        />
+      },
       accessor: "confirmed_at",
       Cell: ({ cell }) => {
         return <>{date2dtstr(new Date(cell.value))}</>
       }
     },
     {
-      Header: "Trạng thái",
+      Header: () => {
+        return <Dropdown
+          controlClassName="dropDownMachine"
+          options={_status}
+          onChange={onStatusSelected}
+          value={_status.find((i) => i.value == status)}
+          placeholder="Select an option"
+        />
+      },
       accessor: "status",
       Cell: ({ cell: { value } }) =>
         value == 'DONE' ? (
@@ -178,6 +163,24 @@ export default function OrderTable({ data }) {
         ) : (
           <p className="status-bag red">Chưa xử lý</p>
         )
+    },
+    {
+      Header: "Thêm thao tác",
+      accessor: "action",
+      Cell: ({ cell }) => {
+        let order = cell.row.original;
+        if (order.status == "DONE") {
+          return <button
+            className="btn blue"
+            onClick={() => onRowClicked(order)}
+          >
+            Đi đến trang giao hàng
+          </button>
+        } else {
+          return null;
+        }
+
+      }
     }
   ];
 

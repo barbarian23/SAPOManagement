@@ -31,8 +31,9 @@ class OrderService extends IService {
         {
           $project: {
             _id: 0,
-            id: { $toString: "$order_number" },
+            id: { $toString: "$id" },
             confirmed_at: 1,
+            order_number: 1,
             status: 1,
           }
         },
