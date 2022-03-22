@@ -50,10 +50,6 @@ const GetInventory = async function (location_ids, variant_ids) {
     
         let response = await fetch(urlGetInventory, { method: 'GET', headers: headers });
         let data = await response.json();
-    
-        console.log(location_ids, "location_ids");
-        console.log(variant_ids, "variant_ids");
-        console.log(urlGetInventory, "urlGetInventory");
 
         if(data.inventory_locations && data.inventory_locations.length > 0){
             qty_onhand = data.inventory_locations.map(item => item.qty_onhand).reduce((prev, next) => prev + next);
