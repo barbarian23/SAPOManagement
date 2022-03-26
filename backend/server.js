@@ -8,8 +8,8 @@ import Schedule from './job';
 import mongoose from "mongoose";
 
 const mongodb = mongoose.connect(
-  // 'mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false'
-  'mongodb://sapodb:xhbXHCckwFK7W5pLZhYtNRHRfCZElLXm3KLERpGxbFntArb7BfbW4VcIKWCAXxFHYavsLJWIVzHewDfdIKIlVg==@sapodb.mongo.cosmos.azure.com:10255/sapomanager?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000'
+  'mongodb://localhost:27017/sapomanager?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false'
+  // 'mongodb://sapodb:xhbXHCckwFK7W5pLZhYtNRHRfCZElLXm3KLERpGxbFntArb7BfbW4VcIKWCAXxFHYavsLJWIVzHewDfdIKIlVg==@sapodb.mongo.cosmos.azure.com:10255/sapomanager?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000'
   ).then((res) => {
     console.log("Connect mongodb successfully")
   }).catch((err) => {

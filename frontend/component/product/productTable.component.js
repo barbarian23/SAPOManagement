@@ -181,6 +181,17 @@ export default function ProduceTable({ data }) {
       }
     },
     {
+      Header: "Số lượng tồn kho",
+      accessor: "qty_onhand",
+      Cell: ({ cell }) => {
+        if(cell.value == null){
+          return <>Không có data từ hệ thống</>
+        }else{
+          return <>{cell.value}</>
+        }
+      }
+    },
+    {
       Header: () => {
         return <Dropdown
           controlClassName="dropDownMachine"
@@ -244,7 +255,7 @@ export default function ProduceTable({ data }) {
                 value={pageSize}
                 onChange={onPageSizeChanged} /> */}
               <select name="pageSize"
-                value = {pageSize}
+                value={pageSize}
                 onChange={onPageSizeChanged} >
                 <option value={10}>10</option>
                 <option value={20}>20</option>

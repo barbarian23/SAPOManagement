@@ -1,7 +1,6 @@
 import { Types } from 'mongoose';
 import IService from '../iservice';
 import { Order } from '../../model';
-import e from 'cors';
 
 class OrderService extends IService {
   constructor(model) {
@@ -200,6 +199,7 @@ class OrderService extends IService {
             sku: "$items.sku",
             name: "$items.name",
             status: "$items.status",
+            qty_onhand: "$items.qty_onhand",
           },
         },
         {
