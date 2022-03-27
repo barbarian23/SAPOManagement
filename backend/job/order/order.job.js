@@ -59,11 +59,24 @@ const GetInventory = async function (location_ids, variant_ids) {
     return qty_onhand;
 } 
 
-const CreateOrder = async function(){
+const GetCreatedLast = async function(){
     let orderCreatedLast = await OrderService.search(null, 0, 1, '-created_at');
     let createdLast = null;
     if(orderCreatedLast && orderCreatedLast.length > 0)
         createdLast = await orderCreatedLast[0].created_at;
+    return createdLast;
+}
+
+const GetUpdatedLast = async function(){
+    let orderUpdatedLast = await OrderService.search(null, 0, 1, '-updated_at');
+    let updatedLast = null
+    if(orderUpdatedLast && orderUpdatedLast.length > 0)
+        updatedLast = await orderUpdatedLast[0].updated_at;
+    return updatedLast;
+}
+
+const CreateOrder = async function(){
+    let createdLast = await GetCreatedLast();
     
     let params = { created_at_min: createdLast ? createdLast.toISOString() : null };
     
@@ -138,10 +151,7 @@ const CreateOrder = async function(){
 }
 
 const UpdateOrder = async function(){
-    let orderUpdatedLast = await OrderService.search(null, 0, 1, '-updated_at');
-    let updatedLast = null
-    if(orderUpdatedLast && orderUpdatedLast.length > 0)
-        updatedLast = await orderUpdatedLast[0].updated_at;
+    let updatedLast = await GetUpdatedLast();
     
     if(updatedLast){
         let params = { updated_at_min: updatedLast.toISOString() };
