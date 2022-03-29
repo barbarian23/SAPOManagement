@@ -114,8 +114,15 @@ const CreateOrder = async function(){
             let response = await fetch(urlGetOrder, { method: 'GET', headers: headers });
             let data = await response.json();
     
+            let checkOrders = await OrderService.searchAll({
+                id: {
+                    $in: data.orders.map(x => x.id),
+                }
+            });
+
             data.orders = data.orders.filter(obj => {
-                return new Date(obj.created_at) > new Date(createdLast) && obj.confirmed_at != null;
+                let checkOrder = checkOrders.find(x => x.id == obj.id);
+                return new Date(obj.created_at) > new Date(createdLast) && obj.confirmed_at != null && !checkOrder;
             });
     
             console.log(data.orders.length, "Create orders count of index " + index);
