@@ -44,7 +44,7 @@ class OrderService extends IService {
       ];
 
       if (keyword) {
-        orQueries.push({ id: { $regex: `.*${keyword}.*` } });
+        orQueries.push({ order_number: { $regex: `.*${keyword}.*` } });
       }
       if (status) {
         orQueries.push({ status: status });
