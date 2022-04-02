@@ -79,9 +79,9 @@ export default function OrderTable({ data }) {
   }
 
   const timebook = [
-    { value: "", label: "Thời gian đặt hàng" },
-    { value: "confirmed_at", label: "Tăng dần" },
-    { value: "-confirmed_at", label: "Giảm dần" },
+    // { value: "", label: "Thời gian đặt hàng" },
+    { value: "confirmed_at", label: "Thời gian đặt hàng (Cũ nhất)" },
+    { value: "-confirmed_at", label: "Thời gian đặt hàng (Mới nhất)" },
     { value: "daterange", label: "Tìm kiếm theo khoảng thời gian" },
   ];
 

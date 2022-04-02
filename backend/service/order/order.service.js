@@ -70,22 +70,22 @@ class OrderService extends IService {
       if (startDate > 0 && endDate > 0) {
         let start = new Date(startDate);
         let end = new Date(endDate);
-        andQueries.push({ confirmed_at: { $gte: start.toISOString() } });
-        andQueries.push({ confirmed_at: { $lte: end.toISOString() } });
+        andQueries.push({ confirmed_at: { $gte: start} });
+        andQueries.push({ confirmed_at: { $lte: end } });
       }
 
       if (andQueries.length > 0) {
         pipeline.push({ $match: { $and: andQueries } });
       }
 
-      if (startDate == 0 || endDate == 0) {
+      // if (startDate == 0 || endDate == 0) {
         if (sortBy == 'confirmed_at') {
           pipeline.push({ $sort: { confirmed_at: 1 } });
         } else //if (sortBy == '-confirmed_at') 
         {
           pipeline.push({ $sort: { confirmed_at: -1 } });
         }
-      }
+      // }
 
       pipeline = [
         ...pipeline,
@@ -135,8 +135,8 @@ class OrderService extends IService {
       if (startDate > 0 && endDate > 0) {
         let start = new Date(startDate);
         let end = new Date(endDate);
-        andQueries.push({ confirmed_at: { $gte: start.toISOString() } });
-        andQueries.push({ confirmed_at: { $lte: end.toISOString() } });
+        andQueries.push({ confirmed_at: { $gte: start } });
+        andQueries.push({ confirmed_at: { $lte: end } });
       }
 
       if (andQueries.length > 0) {
@@ -237,22 +237,26 @@ class OrderService extends IService {
       if (startDate > 0 && endDate > 0) {
         let start = new Date(startDate);
         let end = new Date(endDate);
-        andQueries.push({ confirmed_at: { $gte: start.toISOString() } });
-        andQueries.push({ confirmed_at: { $lte: end.toISOString() } });
+        andQueries.push({ confirmed_at: { $gte: start } });
+        andQueries.push({ confirmed_at: { $lte: end } });
       }
+
+      // console.log(andQueries);
 
       if (andQueries.length > 0) {
         pipeline.push({ $match: { $and: andQueries } });
       }
 
-      if (startDate == 0 || endDate == 0) {
+      //if (startDate == 0 || endDate == 0) {
         if (sortBy == 'confirmed_at') {
           pipeline.push({ $sort: { confirmed_at: 1 } });
         } else //if (sortBy == '-confirmed_at') 
         {
           pipeline.push({ $sort: { confirmed_at: -1 } });
         }
-      }
+      //}
+
+      //console.log(pipeline)
 
       pipeline = [
         ...pipeline,
@@ -314,8 +318,8 @@ class OrderService extends IService {
       if (startDate > 0 && endDate > 0) {
         let start = new Date(startDate);
         let end = new Date(endDate);
-        andQueries.push({ confirmed_at: { $gte: start.toISOString() } });
-        andQueries.push({ confirmed_at: { $lte: end.toISOString() } });
+        andQueries.push({ confirmed_at: { $gte: start } });
+        andQueries.push({ confirmed_at: { $lte: end } });
       }
 
       if (andQueries.length > 0) {

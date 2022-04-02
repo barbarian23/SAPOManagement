@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import {
   HIDE_ORDER_POPUP,
@@ -7,7 +7,8 @@ import Modal from "react-modal";
 import { useTable } from "react-table";
 import Barcode from "react-barcode";
 import QRCode from "react-qr-code";
-import { Box } from './orderPopup.style';
+import { useReactToPrint } from 'react-to-print';
+import { Box, Fulfillment } from './orderPopup.style';
 
 function Table({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
@@ -52,6 +53,7 @@ function Table({ columns, data }) {
 export default function OrderPopUp({ open, onClose }) {
   let { fulfillment } = useSelector(state => state.order);
   let dispatch = useDispatch();
+  const componentRef = useRef();
 
   const modalStyle = {
     content: {
@@ -84,9 +86,9 @@ export default function OrderPopUp({ open, onClose }) {
     },
   ];
 
-  const onPrintBtnClicked = () => {
-    window.print();
-  }
+  const onPrintBtnClicked = useReactToPrint({
+    content: () => componentRef.current,
+  });
 
   return (
     <Modal
@@ -97,73 +99,76 @@ export default function OrderPopUp({ open, onClose }) {
       ariaHideApp={false}
     >
       <Box>
-        <div style={{ display: 'flex' }}>
-          <div className="address">
-            <p>Đ/C: Hà Nội</p>
+        <Fulfillment ref={componentRef}>
+          <div style={{ display: 'flex' }}>
+            <div className="address">
+              <p>Đ/C: Hà Nội</p>
+            </div>
+            <div className="fulfillment-barcode">
+              {fulfillment.tracking_number
+                ? <>
+                  {/* <p>{fulfillment.source_name}</p> */}
+                  <Barcode
+                    value={fulfillment.tracking_number}
+                    height={75}
+                    fontSize={14}
+                  />
+                </>
+                : null}
+            </div>
           </div>
-          <div className="fulfillment-barcode">
-            {fulfillment.tracking_number
-              ? <>
-                {/* <p>{fulfillment.source_name}</p> */}
-                <Barcode
+
+          <hr />
+
+          <h4 className="modal-title">PHIẾU GIAO HÀNG</h4>
+          <table className="fulfillment-info">
+            <tbody>
+              <tr>
+                <td>Người nhận:</td>
+                <td><b>{receiver}</b></td>
+
+                <td>Thu hộ:</td>
+                <td><b>{fulfillment.real_shipping_fee} VNĐ</b></td>
+              </tr>
+              <tr>
+                <td>Số điện thoại:</td>
+                <td colSpan={3}><b>{fulfillment.shipping_phone}</b></td>
+              </tr>
+              <tr>
+                <td>Đ/C:</td>
+                <td colSpan={3}><b>{fulfillment.shipping_address}</b></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr className="dash-line" />
+          <p>Đơn hàng: {fulfillment.order_number} (Tổng SL sản phẩm: {fulfillment.total_quantity})</p>
+          <Table columns={columns} data={fulfillment.lineitems}></Table>
+
+          <hr />
+          <div style={{ display: 'flex' }}>
+            <div className="receiver-sign">
+              <p>Chữ ký người nhận</p>
+            </div>
+            <div className="sender-sign">
+              <p>Chữ ký người gửi</p>
+            </div>
+            <div className="fulfillment-qrcode">
+              {fulfillment.tracking_number
+                ? <><QRCode
                   value={fulfillment.tracking_number}
-                  height={75}
-                  fontSize={14}
+                  size={100}
                 />
-              </>
-              : null}
+                  <p>{fulfillment.tracking_number}</p>
+                </>
+                : null}
+            </div>
           </div>
-        </div>
-
-        <hr />
-
-        <h4 className="modal-title">PHIẾU GIAO HÀNG</h4>
-        <table className="bill-info">
-          <tbody>
-            <tr>
-              <td>Người nhận:</td>
-              <td><b>{receiver}</b></td>
-
-              <td>Thu hộ:</td>
-              <td><b>{fulfillment.real_shipping_fee} VNĐ</b></td>
-            </tr>
-            <tr>
-              <td>Số điện thoại:</td>
-              <td colSpan={3}><b>{fulfillment.shipping_phone}</b></td>
-            </tr>
-            <tr>
-              <td>Đ/C:</td>
-              <td colSpan={3}><b>{fulfillment.shipping_address}</b></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <hr className="dash-line" />
-        <p>Đơn hàng: {fulfillment.order_number} (Tổng SL sản phẩm: {fulfillment.total_quantity})</p>
-        <Table columns={columns} data={fulfillment.lineitems}></Table>
-
-        <hr />
-        <div style={{ display: 'flex' }}>
-          <div className="receiver-sign">
-            <p>Chữ ký người nhận</p>
-          </div>
-          <div className="sender-sign">
-            <p>Chữ ký người gửi</p>
-          </div>
-          <div className="fulfillment-qrcode">
-            {fulfillment.tracking_number
-              ? <><QRCode
-                value={fulfillment.tracking_number}
-                size={100}
-              />
-                <p>{fulfillment.tracking_number}</p>
-              </>
-              : null}
-          </div>
-        </div>
+        </Fulfillment>
 
         <div className="right" style={{ marginTop: 5 }}>
-          <button className="modal-btn blue" onClick={onPrintBtnClicked}>
+          <button className="modal-btn blue" onClick={onPrintBtnClicked}
+          >
             IN
           </button>
           <button className="modal-btn" onClick={onClose}>

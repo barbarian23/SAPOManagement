@@ -4,6 +4,28 @@ export const Box = styled.div`
   font-family: "Roboto";
   font-size: 14px;
 
+  .modal-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 10px 0px;
+  }
+
+  .modal-btn {
+    width: 100px;
+    border: none;
+    padding: 10px;
+    margin: 20px 5px;
+    border-radius: 5px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+`;
+
+export const Fulfillment = styled.div`
+  font-family: "Roboto";
+  font-size: 14px;
+
   .address{
     flex: 1;
   }
@@ -13,7 +35,7 @@ export const Box = styled.div`
     text-align: center;
   }
 
-  .modal-title {
+  .title {
     text-align: center;
     font-size: 20px;
     font-weight: 700;
@@ -60,7 +82,7 @@ export const Box = styled.div`
     }
   }
 
-  .bill-info {
+  .fulfillment-info {
     background-color: #ffffff;
     border-spacing: 0;
 
@@ -104,14 +126,4 @@ export const Box = styled.div`
       margin-top: 5px;
     }
   }
-
-  .modal-btn {
-    width: 100px;
-    border: none;
-    padding: 10px;
-    margin: 20px 5px;
-    border-radius: 5px;
-    font-weight: 700;
-    cursor: pointer;
-  }
-`;
+`
