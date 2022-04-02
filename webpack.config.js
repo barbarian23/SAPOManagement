@@ -39,6 +39,14 @@ const file = {
     ],
 };
 
+const image = {
+    test: /\.(png|jpe?g|gif)$/i,
+    loader: 'file-loader',
+    options: {
+      name: '[path][name].[ext]',
+    },
+}
+
 
 const serverConfig = {
     mode: "development",
@@ -51,8 +59,8 @@ const serverConfig = {
         "index": path.resolve(__dirname, "backend/server.js"),
     },
     module: {
-        rules: [js, css, { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader" },
-        { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader" }]
+        rules: [js, css, image, { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader" },
+            { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader" }]
     },
     watchOptions: {
         poll: 1000, // Check for changes every second
@@ -79,11 +87,11 @@ const clientConfig = {
         ),
     },
     module: {
-        rules: [js, css, { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader" },
-        { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader" },{
-            test: /\.(svg|eot|woff|woff2|ttf)$/,
-            type: 'asset/inline'
-        },],
+        rules: [js, css, image, { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader" },
+            { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader" }, {
+                test: /\.(svg|eot|woff|woff2|ttf)$/,
+                type: 'asset/inline'
+            },],
     },
     watchOptions: {
         poll: 1000, // Check for changes every second

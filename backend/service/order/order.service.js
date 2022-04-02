@@ -28,12 +28,25 @@ class OrderService extends IService {
 
       let pipeline = [
         {
+          $lookup: {
+            from: 'fulfillments',
+            localField: 'id',
+            foreignField: 'order_id',
+            as: 'fulfillments'
+          }
+        },
+        { $addFields: { fulfillment: { $first: "$fulfillments" } } },
+        // { $unwind: { path: "$fulfillment", preserveNullAndEmptyArrays: true } },
+        {
           $project: {
             _id: 0,
             id: { $toString: "$id" },
             confirmed_at: 1,
             order_number: 1,
             status: 1,
+            fulfillment: 1,
+            fulfillment_status: "$fulfillment.status",
+            fulfillment_id: "$fulfillment.id"
           }
         },
         {

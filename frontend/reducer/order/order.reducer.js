@@ -10,8 +10,15 @@ import {
     STATUS_CHANGE,
     SORT_BY_CHANGE,
     DATE_RANGE_CHANGE,
+    SHOW_ORDER_POPUP,
+    HIDE_ORDER_POPUP,
     SHOW_DATE_RANGE_POPUP,
     HIDE_DATE_RANGE_POPUP,
+    SELECT_FULFILLMENT,
+    START_LOADING_POPUP_TABLE_DATA,
+    STOP_LOADING_POPUP_TABLE_DATA,
+    GET_FULFILLMENT_DETAIL_SUCCESS,
+    GET_FULFILLMENT_DETAIL_FAIL,
 } from '../../action/order/order.action';
 
 const initialState = {
@@ -24,9 +31,28 @@ const initialState = {
     sortBy: "",
     status: "",
 
+    isShowOrderPopup: false,
     isShowDateRangePopup: false,
     startDate: 0,
     endDate: 0,
+
+    //popup
+    isPopupTableLoading: false,
+    selectedFulfillmentID: 0,
+    fulfillment: {
+        id: 0,
+        status: "",
+        real_shipping_fee: 0,
+        first_name: "",
+        last_name: "",
+        shipping_address: "",
+        shipping_phone: "",
+        order_number: "",
+        source_name: "",
+        quantity: 0,
+        total_quantity: 0,
+        lineitems: [],
+    },
 };
 
 export default function homeReducer(state = initialState, action) {
@@ -90,6 +116,18 @@ export default function homeReducer(state = initialState, action) {
                 startDate: action.value.startDate,
                 endDate: action.value.endDate,
             }
+
+        //POPUP
+        case SHOW_ORDER_POPUP:
+            return {
+                ...state,
+                isShowOrderPopup: true
+            }
+        case HIDE_ORDER_POPUP:
+            return {
+                ...state,
+                isShowOrderPopup: false
+            }
         case SHOW_DATE_RANGE_POPUP:
             return {
                 ...state,
@@ -99,6 +137,32 @@ export default function homeReducer(state = initialState, action) {
             return {
                 ...state,
                 isShowDateRangePopup: false
+            }
+        case SELECT_FULFILLMENT:
+            return {
+                ...state,
+                selectedFulfillmentID: action.value
+            }
+        case START_LOADING_POPUP_TABLE_DATA:
+            return {
+                ...state,
+                isPopupTableLoading: true,
+            }
+        case STOP_LOADING_POPUP_TABLE_DATA:
+            return {
+                ...state,
+                isPopupTableLoading: false,
+            }
+
+        case GET_FULFILLMENT_DETAIL_SUCCESS:
+            return {
+                ...state,
+                fulfillment: action.value,
+            }
+        case GET_FULFILLMENT_DETAIL_FAIL:
+            return {
+                ...state,
+                fulfillment: initialState.fulfillment,
             }
         default:
             return {

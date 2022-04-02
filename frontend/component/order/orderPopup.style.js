@@ -4,10 +4,24 @@ export const Box = styled.div`
   font-family: "Roboto";
   font-size: 14px;
 
+  .address{
+    flex: 1;
+  }
+
+  .fulfillment-barcode{
+    flex: 1;
+    text-align: center;
+  }
+
   .modal-title {
-    font-size: 14px;
+    text-align: center;
+    font-size: 20px;
     font-weight: 700;
-    padding: 10px 0 0 10px;
+    margin: 10px 0px;
+  }
+
+  .dash-line{
+
   }
 
   table {
@@ -61,6 +75,33 @@ export const Box = styled.div`
         width: 150px;
         padding-left: 10px;
       }
+    }
+  }
+
+  .receiver-sign{
+    flex: 1;
+    text-align: center;
+    border: dashed 1.5px;
+    p {
+      margin-top: 5px;
+    }
+  }
+
+  .sender-sign{
+    flex: 1;
+    text-align: center;
+    border: dashed 1.5px;
+    p {
+      margin-top: 5px;
+    }
+  }
+
+  .fulfillment-qrcode{
+    flex: 1;
+    height: 100px;
+    text-align: center;
+    p {
+      margin-top: 5px;
     }
   }
 
