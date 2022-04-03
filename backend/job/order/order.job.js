@@ -210,7 +210,7 @@ const UpdateOrder = async function(){
                 }
                 order.fulfillments = fulfillmentResults.map(x => x._id);
 
-                let orderResult = await OrderService.updateByField({id: order.id}, order, true);
+                let orderResult = await OrderService.updateByField({id: order.id}, order);
             });
         }
     }
