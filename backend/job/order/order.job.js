@@ -181,16 +181,17 @@ const UpdateOrder = async function(){
                         id: { "$nin": order.line_items.map(x => x.id) },
                         order_id: order.id
                     });
-                    order.line_items.forEach(async line_item => {
+                    for await (const line_item of order.line_items) {
                         line_item.order_id = order.id;
                         line_item.qty_onhand = await GetInventory(location.id, line_item.variant_id);
 
                         let lineItemResult = await LineItemService.updateByField({id: line_item.id}, line_item);
-                        if(lineItemResult)
+                        if(lineItemResult){
                             lineItemResults.push(lineItemResult);
-                    });
+                        }
+                    }
+                    order.line_items = await lineItemResults.map(x => x._id);
                 }
-                order.line_items = lineItemResults.map(x => x._id);
                 
                 // let fulfillmentResults = await FulfillmentService.searchAll({ order_id: order.id });
 
@@ -200,15 +201,19 @@ const UpdateOrder = async function(){
                         id: { "$nin": order.fulfillments.map(x => x.id) },
                         order_id: order.id
                     });
-                    order.fulfillments.forEach(async fulfillment => {
+                    for await (const fulfillment of order.fulfillments) {
                         let result = lineItemResults.filter(async obj => {
                             return fulfillment.line_items.map(x => x.id).includes(obj.id);
                         });
                         fulfillment.line_items = result.map(x => x._id);
                         fulfillmentResult = await FulfillmentService.updateByField({id: fulfillment.id}, fulfillment);
-                    });
+                        
+                        if(fulfillmentResult){
+                            fulfillmentResults.push(fulfillmentResult);
+                        }
+                    }
+                    order.fulfillments = fulfillmentResults.map(x => x._id);
                 }
-                order.fulfillments = fulfillmentResults.map(x => x._id);
 
                 let orderResult = await OrderService.updateByField({id: order.id}, order);
             });
