@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
 import "../../assets/css/react-datepicker.css";
-import DatePicker from "react-datepicker";
+import DatePicker, { registerLocale } from "react-datepicker";
+import vi from 'date-fns/locale/vi';
 import { Box } from "./productPopup.style";
 
 const modalStyle = {
@@ -34,11 +35,19 @@ export default function DateRangePopUp({ open, onClose, onOK }) {
         <div className="daterangepicker-box">
           <div style={{flex:1}}>
             <p>Từ ngày</p>
-            <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} />
+            <DatePicker 
+              selected={startDate} 
+              locale="vi"
+              dateFormat='dd/MM/yyyy'
+              onChange={(date) => setStartDate(date)} />
           </div>
           <div style={{flex:1}}>
             <p>Đến ngày</p>
-            <DatePicker selected={endDate} onChange={(date) => setEndDate(date)} />
+            <DatePicker 
+              selected={endDate} 
+              locale="vi"
+              dateFormat='dd/MM/yyyy'
+              onChange={(date) => setEndDate(date)} />
           </div>
         </div>
 

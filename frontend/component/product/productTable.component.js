@@ -89,6 +89,13 @@ export default function ProduceTable({ data }) {
     dispatch({ type: SEARCH_BUTTON_CLICK });
   }
 
+  const onKeywordKeyPressed = (e) => {
+    console.log(e.key);
+    if (e.key === 'Enter') {
+      dispatch({ type: SEARCH_BUTTON_CLICK });
+    }
+  }
+
   const onDecreasePageClicked = () => {
     if (page > 1) {
       dispatch({ type: PAGE_CHANGE, value: page - 1 });
@@ -111,8 +118,9 @@ export default function ProduceTable({ data }) {
 
   const _status = [
     { value: '', label: "Trạng thái" },
-    { value: 'NOT', label: "Chưa xử lý" },
-    { value: 'DONE', label: "Đã xử lý" }];
+    { value: 'NOT', label: "Trạng thái (Chưa xử lý)" },
+    { value: 'DONE', label: "Trạng thái (Đã xử lý)" }
+  ];
 
   const onStatusSelected = (e) => {
     dispatch({ type: STATUS_CHANGE, value: e.value });
@@ -224,6 +232,7 @@ export default function ProduceTable({ data }) {
             placeholder="Tìm kiếm Mã SKU / Mã đơn hàng"
             value={keyword}
             onChange={onKeywordChanged}
+            onKeyPress={onKeywordKeyPressed}
           />
         </div>
         <button

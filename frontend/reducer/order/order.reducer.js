@@ -103,18 +103,21 @@ export default function homeReducer(state = initialState, action) {
         case STATUS_CHANGE:
             return {
                 ...state,
-                status: action.value
+                status: action.value,
+                page: 1,
             }
         case SORT_BY_CHANGE:
             return {
                 ...state,
-                sortBy: action.value
+                sortBy: action.value,
+                page: 1,
             }
         case DATE_RANGE_CHANGE:
             return {
                 ...state,
                 startDate: action.value.startDate,
                 endDate: action.value.endDate,
+                page: 1,
             }
 
         //POPUP

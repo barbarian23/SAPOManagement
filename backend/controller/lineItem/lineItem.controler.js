@@ -25,10 +25,10 @@ class LineItemController extends IController {
                 }
                 //check order
                 let orders = await OrderService.getLineItemsByID(_id);
-                console.log(orders)
+                // console.log(orders)
                 for(var i = 0; i< orders.length; i++){
                     let status = await OrderService.isAllLineItemsDone(orders[i].order_number);
-                    console.log(status)
+                    // console.log(status)
                     if (status) {
                         await OrderService.setStatusDone(orders[i].order_number);
                     } else {

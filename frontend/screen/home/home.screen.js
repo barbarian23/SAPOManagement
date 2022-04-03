@@ -10,10 +10,13 @@ export default function Home() {
     return (
         <div className="parent">
             <div className="child-left">
-            <   LeftMenu />
+                <LeftMenu />
             </div>
             <div className="child-right">
-                <Route path="/product">
+                <Route path="/" exact >
+                    <Product />
+                </Route>
+                <Route path="/product" >
                     <Product />
                 </Route>
                 <Route path="/order">

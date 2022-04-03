@@ -70,8 +70,8 @@ export default function OrderTable({ data }) {
 
   const _status = [
     { value: '', label: "Trạng thái" },
-    { value: 'NOT', label: "Chưa xử lý" },
-    { value: 'DONE', label: "Đã xử lý" }
+    { value: 'NOT', label: "Trạng thái (Chưa xử lý)" },
+    { value: 'DONE', label: "Trạng thái (Đã xử lý)" }
   ];
 
   const onStatusSelected = (e) => {
@@ -94,12 +94,15 @@ export default function OrderTable({ data }) {
     }
   };
 
-  const onRowClicked = (order) => {
-    // let id = order.id;
-    // window.open(`https://epeben-1.myharavan.com/admin/orders/${id}`, "_blank");
+  const onPrintBtnClicked = (order) => {
     dispatch({ type: SELECT_FULFILLMENT, value: order.fulfillment_id });
     dispatch({ type: GET_FULFILLMENT_DETAIL });
     dispatch({ type: SHOW_ORDER_POPUP });
+  };
+
+  const onGotoBtnClicked = (order) => {
+    let id = order.id;
+    window.open(`https://epeben-1.myharavan.com/admin/orders/${id}`, "_blank");
   };
 
   const onKeywordChanged = (e) => {
@@ -110,17 +113,24 @@ export default function OrderTable({ data }) {
     dispatch({ type: SEARCH_BUTTON_CLICK });
   }
 
-  const onDecreasePageClicked = () => {
-    if (page > 1) {
-      dispatch({ type: PAGE_CHANGE, value: page - 1 });
+  const onKeywordKeyPressed = (e) => {
+    // console.log(e.key);
+    if (e.key === 'Enter') {
+      dispatch({ type: SEARCH_BUTTON_CLICK });
     }
   }
 
-  const onIncreasePageClicked = () => {
-    if (page < totalPage) {
-      dispatch({ type: PAGE_CHANGE, value: page + 1 });
-    }
-  }
+  // const onDecreasePageClicked = () => {
+  //   if (page > 1) {
+  //     dispatch({ type: PAGE_CHANGE, value: page - 1 });
+  //   }
+  // }
+
+  // const onIncreasePageClicked = () => {
+  //   if (page < totalPage) {
+  //     dispatch({ type: PAGE_CHANGE, value: page + 1 });
+  //   }
+  // }
 
   const onPageClicked = (_page) => {
     dispatch({ type: PAGE_CHANGE, value: _page });
@@ -162,29 +172,44 @@ export default function OrderTable({ data }) {
         />
       },
       accessor: "fulfillment_status",
-      Cell: ({ cell: { value } }) =>
-        value == 'success' ? (
-          <p className="status-bag green">Đã xử lý</p>
-        ) : (
-          <p className="status-bag red">Chưa xử lý</p>
-        )
+      Cell: ({ cell }) => {
+        let order = cell.row.original;
+        if (order.status == "DONE") {
+          return <p className="status-bag green">Đã xử lý</p>
+
+          // if (order.fulfillment_status == "success") {
+          //   return <p className="status-bag green">Đã xử lý</p>
+          // } else {
+          //   return <p className="status-bag green">Đã xử lý</p>
+          // }
+        }
+        return <p className="status-bag red">Chưa xử lý</p>;
+      }
     },
     {
       Header: "Thêm thao tác",
       accessor: "action",
       Cell: ({ cell }) => {
         let order = cell.row.original;
-        if (order.fulfillment_status == "success") {
-          return <button
-            className="btn blue"
-            onClick={() => onRowClicked(order)}
-          >
-            In hóa đơn
-          </button>
-        } else {
-          return null;
+        if (order.status == "DONE") {
+          if (order.fulfillment_status == "success") {
+            return <button
+              className="btn blue"
+              onClick={() => onPrintBtnClicked(order)}
+            >
+              In hóa đơn
+            </button>
+          } else {
+            return <button
+              className="btn blue"
+              onClick={() => onGotoBtnClicked(order)}
+            >
+              Đi đến trang giao vận
+            </button>
+          }
         }
 
+        return null;
       }
     }
   ];
@@ -203,6 +228,7 @@ export default function OrderTable({ data }) {
             placeholder="Tìm kiếm mã đơn hàng"
             value={keyword}
             onChange={onKeywordChanged}
+            onKeyPress={onKeywordKeyPressed}
           />
         </div>
         <button
