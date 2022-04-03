@@ -39,7 +39,7 @@ const LineItemSchema = mongoose.Schema({
         enum: ['NOT', 'DONE'],
         default: 'NOT'
     },
-    qty_onhand:           { type: Number, default: null },
+    qty_onhand:           { type: Number, default: 0 },
 });
 
 const LineItem = mongoose.model('LineItem', LineItemSchema);
