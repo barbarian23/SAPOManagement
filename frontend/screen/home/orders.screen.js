@@ -3,17 +3,22 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   GET_LIST_ORDERS,
   DATE_RANGE_CHANGE,
-  HIDE_DATE_RANGE_POPUP
+  HIDE_DATE_RANGE_POPUP,
+  HIDE_ORDER_POPUP,
 } from "../../action/order/order.action";
-import { OrderTable, OrderDateRangePopUp } from "../../component";
+import { OrderTable, OrderDateRangePopUp, OrderPopUp } from "../../component";
 
 export default function SapoOrder() {
-  let { listOrders, isShowDateRangePopup } = useSelector(state => state.order);
+  let { listOrders, isShowDateRangePopup, isShowOrderPopup } = useSelector(state => state.order);
   let dispatch = useDispatch();
   useEffect(() => dispatch({ type: GET_LIST_ORDERS }), []);
 
   const onDateRangePopupClosed = () => {
     dispatch({ type: HIDE_DATE_RANGE_POPUP })
+  };
+
+  const onOrderPopupClosed = () => {
+    dispatch({ type: HIDE_ORDER_POPUP })
   };
 
   const onDateRangePopupConfirmed = (startDate, endDate) => {
@@ -24,8 +29,12 @@ export default function SapoOrder() {
 
   return (
     <div style={{ height: 1000, width: "100%", marginTop: -77 }}>
-      <OrderTable 
+      <OrderTable
         data={listOrders} />
+
+      <OrderPopUp
+        open={isShowOrderPopup}
+        onClose={onOrderPopupClosed} />
 
       <OrderDateRangePopUp
         open={isShowDateRangePopup}

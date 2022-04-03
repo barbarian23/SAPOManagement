@@ -28,5 +28,21 @@ class FulfillmentController extends IController {
                   next(e);
             }
       }
+
+      async getDetailByID(req, res, next) {
+            try {
+                  const { id } = req.query;
+                  if(id){
+                        const fulfillment = await this.service.getDetailByID(Number(id));
+                        responceJson(res, 200, fulfillment);
+                  }else{
+                        responceJson(res, 400, {error: 'Bad params'})
+                  }
+            } catch (e) {
+                  console.log(e);
+                  responceJson(res, 400, {error: e});
+                  next(e);
+            }
+      }
 }
 export default new FulfillmentController(FulfillmentService);

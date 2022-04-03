@@ -5,9 +5,45 @@ export const Box = styled.div`
   font-size: 14px;
 
   .modal-title {
-    font-size: 14px;
+    text-align: center;
+    font-size: 20px;
     font-weight: 700;
-    padding: 10px 0 0 10px;
+    margin: 10px 0px;
+  }
+
+  .modal-btn {
+    width: 100px;
+    border: none;
+    padding: 10px;
+    margin: 20px 5px;
+    border-radius: 5px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+`;
+
+export const Fulfillment = styled.div`
+  font-family: "Roboto";
+  font-size: 14px;
+
+  .address{
+    flex: 1;
+  }
+
+  .fulfillment-barcode{
+    flex: 1;
+    text-align: center;
+  }
+
+  .title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 10px 0px;
+  }
+
+  .dash-line{
+
   }
 
   table {
@@ -46,7 +82,7 @@ export const Box = styled.div`
     }
   }
 
-  .bill-info {
+  .fulfillment-info {
     background-color: #ffffff;
     border-spacing: 0;
 
@@ -64,13 +100,30 @@ export const Box = styled.div`
     }
   }
 
-  .modal-btn {
-    width: 100px;
-    border: none;
-    padding: 10px;
-    margin: 20px 5px;
-    border-radius: 5px;
-    font-weight: 700;
-    cursor: pointer;
+  .receiver-sign{
+    flex: 1;
+    text-align: center;
+    border: dashed 1.5px;
+    p {
+      margin-top: 5px;
+    }
   }
-`;
+
+  .sender-sign{
+    flex: 1;
+    text-align: center;
+    border: dashed 1.5px;
+    p {
+      margin-top: 5px;
+    }
+  }
+
+  .fulfillment-qrcode{
+    flex: 1;
+    height: 100px;
+    text-align: center;
+    p {
+      margin-top: 5px;
+    }
+  }
+`

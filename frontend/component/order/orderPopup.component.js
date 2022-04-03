@@ -1,7 +1,14 @@
-import React from "react";
+import React, { useRef } from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  HIDE_ORDER_POPUP,
+} from "../../action/order/order.action";
 import Modal from "react-modal";
 import { useTable } from "react-table";
-import {Box} from './orderPopup.style';
+import Barcode from "react-barcode";
+import QRCode from "react-qr-code";
+import { useReactToPrint } from 'react-to-print';
+import { Box, Fulfillment } from './orderPopup.style';
 
 function Table({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
@@ -38,79 +45,51 @@ function Table({ columns, data }) {
             </tr>
           );
         })}
-        <tr className="total">
-          <td></td>
-          <td></td>
-          <td>
-            <b>Tổng cộng</b>
-          </td>
-          <td>
-            <b>10000đ</b>
-          </td>
-        </tr>
       </tbody>
     </table>
   );
 }
 
-const sample = [
-  {
-    product: "Khung tranh",
-    quantity: 1,
-    price: 1000,
-    total: 1000
-  },
-  {
-    product: "Tranh màu",
-    quantity: 1,
-    price: 5000,
-    total: 5000
-  }
-];
+export default function OrderPopUp({ open, onClose }) {
+  let { fulfillment } = useSelector(state => state.order);
+  let dispatch = useDispatch();
+  const componentRef = useRef();
 
-const data = [];
-for (let i = 0; i < 2; i += 1) {
-  let s = sample[Math.floor(Math.random() * sample.length)];
-  data.push(s);
-}
+  const modalStyle = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      width: 700,
+      height: "80%"
+    }
+  };
 
-const columns = [
-  {
-    width: 300,
-    Header: "Sản phẩm",
-    accessor: "product"
-  },
-  {
-    width: 300,
-    Header: "Số lượng",
-    accessor: "quantity"
-  },
-  {
-    width: 300,
-    Header: "Đơn giá",
-    accessor: "price"
-  },
-  {
-    width: 300,
-    Header: "Thành tiền",
-    accessor: "total"
-  }
-];
+  const receiver = (fulfillment.last_name ? fulfillment.last_name : '')
+    + (fulfillment.first_name ? (' ' + fulfillment.first_name) : '');
 
-const modalStyle = {
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)",
-    width: 700,
-    height: "60%"
-  }
-};
+  const columns = [
+    {
+      Header: "Tên sản phẩm",
+      accessor: "name"
+    },
+    {
+      Header: "Mã SP",
+      accessor: "sku",
+    },
+    {
+      Header: "Số lượng",
+      accessor: "quantity"
+    },
+  ];
 
-export default function BillPopUp({ open, onClose }) {
+  const onPrintBtnClicked = useReactToPrint({
+    content: () => componentRef.current,
+  });
+
   return (
     <Modal
       isOpen={open}
@@ -120,33 +99,76 @@ export default function BillPopUp({ open, onClose }) {
       ariaHideApp={false}
     >
       <Box>
-        <h4 className="modal-title">ĐƠN HÀNG</h4>
+        <Fulfillment ref={componentRef}>
+          <div style={{ display: 'flex' }}>
+            <div className="address">
+              <p>Đ/C: Hà Nội</p>
+            </div>
+            <div className="fulfillment-barcode">
+              {fulfillment.tracking_number
+                ? <>
+                  {/* <p>{fulfillment.source_name}</p> */}
+                  <Barcode
+                    value={fulfillment.tracking_number}
+                    height={75}
+                    fontSize={14}
+                  />
+                </>
+                : null}
+            </div>
+          </div>
 
-        <table className="bill-info">
-          <tr>
-            <td>
-              <b>Mã đơn hàng</b>
-            </td>
-            <td>2201160J18YDR4</td>
-          </tr>
-          <tr>
-            <td>
-              <b>Thời gian đặt hàng</b>
-            </td>
-            <td>15:02 16/01/2022</td>
-          </tr>
-          <tr>
-            <td>
-              <b>Khách hàng</b>
-            </td>
-            <td>Sapo</td>
-          </tr>
-        </table>
+          <hr />
 
-        <Table columns={columns} data={data}></Table>
+          <h4 className="modal-title">PHIẾU GIAO HÀNG</h4>
+          <table className="fulfillment-info">
+            <tbody>
+              <tr>
+                <td>Người nhận:</td>
+                <td><b>{receiver}</b></td>
 
-        <div className="right">
-          <button className="modal-btn blue" onClick={onClose}>
+                <td>Thu hộ:</td>
+                <td><b>{fulfillment.real_shipping_fee} VNĐ</b></td>
+              </tr>
+              <tr>
+                <td>Số điện thoại:</td>
+                <td colSpan={3}><b>{fulfillment.shipping_phone}</b></td>
+              </tr>
+              <tr>
+                <td>Đ/C:</td>
+                <td colSpan={3}><b>{fulfillment.shipping_address}</b></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr className="dash-line" />
+          <p>Đơn hàng: {fulfillment.order_number} (Tổng SL sản phẩm: {fulfillment.total_quantity})</p>
+          <Table columns={columns} data={fulfillment.lineitems}></Table>
+
+          <hr />
+          <div style={{ display: 'flex' }}>
+            <div className="receiver-sign">
+              <p>Chữ ký người nhận</p>
+            </div>
+            <div className="sender-sign">
+              <p>Chữ ký người gửi</p>
+            </div>
+            <div className="fulfillment-qrcode">
+              {fulfillment.tracking_number
+                ? <><QRCode
+                  value={fulfillment.tracking_number}
+                  size={100}
+                />
+                  <p>{fulfillment.tracking_number}</p>
+                </>
+                : null}
+            </div>
+          </div>
+        </Fulfillment>
+
+        <div className="right" style={{ marginTop: 5 }}>
+          <button className="modal-btn blue" onClick={onPrintBtnClicked}
+          >
             IN
           </button>
           <button className="modal-btn" onClick={onClose}>

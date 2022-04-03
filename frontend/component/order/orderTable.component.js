@@ -6,10 +6,12 @@ import {
   PAGE_CHANGE,
   PAGE_SIZE_CHANGE,
   SHOW_DATE_RANGE_POPUP,
+  SHOW_ORDER_POPUP,
   SORT_BY_CHANGE,
   STATUS_CHANGE,
   DATE_RANGE_CHANGE,
-
+  SELECT_FULFILLMENT,
+  GET_FULFILLMENT_DETAIL,
 } from "../../action/order/order.action";
 import { useTable } from "react-table";
 import { TableBox } from './orderTable.style';
@@ -77,9 +79,9 @@ export default function OrderTable({ data }) {
   }
 
   const timebook = [
-    { value: "", label: "Thời gian đặt hàng" },
-    { value: "confirmed_at", label: "Tăng dần" },
-    { value: "-confirmed_at", label: "Giảm dần" },
+    // { value: "", label: "Thời gian đặt hàng" },
+    { value: "confirmed_at", label: "Thời gian đặt hàng (Cũ nhất)" },
+    { value: "-confirmed_at", label: "Thời gian đặt hàng (Mới nhất)" },
     { value: "daterange", label: "Tìm kiếm theo khoảng thời gian" },
   ];
 
@@ -93,8 +95,11 @@ export default function OrderTable({ data }) {
   };
 
   const onRowClicked = (order) => {
-    let id = order.id;
-    window.open(`https://epeben-1.myharavan.com/admin/orders/${id}`, "_blank");
+    // let id = order.id;
+    // window.open(`https://epeben-1.myharavan.com/admin/orders/${id}`, "_blank");
+    dispatch({ type: SELECT_FULFILLMENT, value: order.fulfillment_id });
+    dispatch({ type: GET_FULFILLMENT_DETAIL });
+    dispatch({ type: SHOW_ORDER_POPUP });
   };
 
   const onKeywordChanged = (e) => {
@@ -156,9 +161,9 @@ export default function OrderTable({ data }) {
           placeholder="Select an option"
         />
       },
-      accessor: "status",
+      accessor: "fulfillment_status",
       Cell: ({ cell: { value } }) =>
-        value == 'DONE' ? (
+        value == 'success' ? (
           <p className="status-bag green">Đã xử lý</p>
         ) : (
           <p className="status-bag red">Chưa xử lý</p>
@@ -169,12 +174,12 @@ export default function OrderTable({ data }) {
       accessor: "action",
       Cell: ({ cell }) => {
         let order = cell.row.original;
-        if (order.status == "DONE") {
+        if (order.fulfillment_status == "success") {
           return <button
             className="btn blue"
             onClick={() => onRowClicked(order)}
           >
-            Đi đến trang giao hàng
+            In hóa đơn
           </button>
         } else {
           return null;
