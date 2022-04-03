@@ -50,13 +50,13 @@ const GetInventory = async function (location_ids, variant_ids) {
     
         let response = await fetch(urlGetInventory, { method: 'GET', headers: headers });
         let data = await response.json();
-
+        
         if(data.inventory_locations && data.inventory_locations.length > 0){
             qty_onhand = data.inventory_locations.map(item => item.qty_onhand).reduce((prev, next) => prev + next);
         }
     }
 
-    return qty_onhand;
+    return qty_onhand ? qty_onhand : 0;
 } 
 
 const GetCreatedLast = async function(){
@@ -190,7 +190,6 @@ const UpdateOrder = async function(){
                             lineItemResults.push(lineItemResult);
                     });
                 }
-
                 order.line_items = lineItemResults.map(x => x._id);
                 
                 // let fulfillmentResults = await FulfillmentService.searchAll({ order_id: order.id });
