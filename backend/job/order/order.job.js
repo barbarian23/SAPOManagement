@@ -122,7 +122,7 @@ const CreateOrder = async function(){
 
             data.orders = data.orders.filter(obj => {
                 let checkOrder = checkOrders.find(x => x.id == obj.id);
-                return new Date(obj.created_at) > new Date(createdLast) && obj.confirmed_at != null && !checkOrder;
+                return new Date(obj.created_at) > new Date(createdLast) && !checkOrder;
             });
     
             console.log(data.orders.length, "Create orders count of index " + index);
@@ -168,7 +168,7 @@ const UpdateOrder = async function(){
         let data = await response.json();
 
         data.orders = data.orders.filter(obj => {
-            return new Date(obj.updated_at) > new Date(updatedLast) && obj.confirmed_at != null;
+            return new Date(obj.updated_at) > new Date(updatedLast);
         });
 
         console.log(data.orders.length, "Update orders count");
@@ -190,7 +190,7 @@ const UpdateOrder = async function(){
                             lineItemResults.push(lineItemResult);
                         }
                     }
-                    order.line_items = await lineItemResults.map(x => x._id);
+                    order.line_items = lineItemResults.map(x => x._id);
                 }
                 
                 // let fulfillmentResults = await FulfillmentService.searchAll({ order_id: order.id });
