@@ -14,18 +14,40 @@ export const date2dtstr = date => {
 }
 
 export const ts2daystr = timestamp => {
-    let ts = Math.floor(timestamp/1000);
+    let ts = Math.floor(timestamp / 1000);
     let day = Math.floor(ts / (24 * 3600));
     let hour = (Math.floor(ts / 3600)) % 24;
     let min = Math.floor(ts / 60) % 60;
     let sec = ts % 60;
-    if(day){
+    if (day) {
         return `${day} ngày ${hour} giờ ${min} phút`;
-    }else if(hour){
+    } else if (hour) {
         return `${hour} giờ ${min} phút`;
-    }else if(min){
+    } else if (min) {
         return `${min} phút`;
-    }else if(sec){
+    } else if (sec) {
         return `${sec} giây`;
     }
+}
+
+export const int2money = (num) => {
+    let str = '';
+    while (num > 0) {
+        if (num > 1000) {
+            let m = num % 1000;
+            if(m == 0){
+                str = `,000${str}`;
+            }else if(m < 10){
+                str = `,00${m}${str}`;
+            }else if(m<100){
+                str = `,0${m}${str}`;
+            }else{
+                str = `,${m}${str}`;
+            }
+        } else {
+            str = `${num}${str}`;
+        }
+        num = Math.floor(num / 1000);
+    }
+    return str;
 }

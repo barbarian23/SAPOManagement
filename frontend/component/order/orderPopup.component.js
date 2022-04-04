@@ -9,6 +9,8 @@ import Barcode from "react-barcode";
 import QRCode from "react-qr-code";
 import { useReactToPrint } from 'react-to-print';
 import { Box, Fulfillment } from './orderPopup.style';
+import { int2money } from '../../service/util/utils.client';
+
 
 function Table({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
@@ -128,7 +130,7 @@ export default function OrderPopUp({ open, onClose }) {
                 <td><b>{receiver}</b></td>
 
                 <td>Thu hộ:</td>
-                <td><b>{fulfillment.real_shipping_fee} VNĐ</b></td>
+                <td><b>{int2money(fulfillment.real_shipping_fee)} VNĐ</b></td>
               </tr>
               <tr>
                 <td>Số điện thoại:</td>
@@ -137,6 +139,10 @@ export default function OrderPopUp({ open, onClose }) {
               <tr>
                 <td>Đ/C:</td>
                 <td colSpan={3}><b>{fulfillment.shipping_address}</b></td>
+              </tr>
+              <tr>
+                <td>Ghi chú:</td>
+                <td colSpan={3}><b>{fulfillment.shipping_notes}</b></td>
               </tr>
             </tbody>
           </table>
