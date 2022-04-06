@@ -211,6 +211,7 @@ class OrderService extends IService {
             confirmed_at: 1,
             sku: "$items.sku",
             name: "$items.name",
+            title: "$items.title",
             status: "$items.status",
             qty_onhand: "$items.qty_onhand",
           },
@@ -225,6 +226,7 @@ class OrderService extends IService {
       if (keyword) {
         orQueries.push({ sku: { $regex: `.*${keyword}.*`, $options: 'i' } });
         orQueries.push({ order_number: { $regex: `.*${keyword}.*`, $options: 'i' } });
+        orQueries.push({ title: { $regex: `.*${keyword}.*`, $options: 'i' } });
       }
       if (status) {
         orQueries.push({ status: status });
@@ -293,6 +295,8 @@ class OrderService extends IService {
             order_number: 1,
             confirmed_at: 1,
             sku: "$items.sku",
+            name: "$items.name",
+            title: "$items.title",
             status: "$items.status",
           }
         },
@@ -306,6 +310,7 @@ class OrderService extends IService {
       if (keyword) {
         orQueries.push({ sku: { $regex: `.*${keyword}.*`, $options: 'i' } });
         orQueries.push({ order_number: { $regex: `.*${keyword}.*`, $options: 'i' } });
+        orQueries.push({ title: { $regex: `.*${keyword}.*`, $options: 'i' } });
       }
       if (status) {
         orQueries.push({ status: status });
@@ -361,6 +366,7 @@ class OrderService extends IService {
             order_number: 1,
             sku: "$items.sku",
             name: "$items.name",
+            title: "$items.title",
             machine_id: { $ifNull: ["$items.machine_id", ""] },
             machine_code: { $ifNull: ["$items.code", ""] },
             machine_name: { $ifNull: ["$items.name", ""] },

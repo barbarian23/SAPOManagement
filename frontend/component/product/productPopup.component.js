@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { code, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import {
   HIDE_PRODUCT_POPUP,
@@ -57,6 +57,8 @@ function Table({ columns, data }) {
 
 export default function ProductPopUp({ open, onClose }) {
   let { lineItems, machines, popupKeyword, isPopupTableLoading } = useSelector(state => state.product);
+  const [notice, setNotice] = useState('Hãy chọn mã máy!');
+  const [isShowNotice, setIsShowNotice] = useState(false);
   let dispatch = useDispatch();
   let _machines = machines.map((machine) => {
     return {
@@ -89,24 +91,37 @@ export default function ProductPopUp({ open, onClose }) {
     });
   }
 
-  const onUpdateBtnClick = () => {
-    lineItems.forEach(item => {
-      if (item.isEdited) {
-        // console.log(item);
-        dispatch({
-          type: UPDATE_LINE_ITEM_STATUS,
-          value: {
-            id: item.id,
-            status: item.status,
-            machine_id: item.machine_id
-          }
-        })
+  const isValidData = (lineItems) => {
+    for(let i=0; i< lineItems.length; i++){
+      if(lineItems[i].status == 'DONE'){
+        if(lineItems[i].machine_id == null || lineItems[i].machine_id == '' ){
+          setIsShowNotice(true);
+          return false;
+        }
       }
-    });
+    }
+    return true;    
+  }
 
-
-    dispatch({ type: HIDE_PRODUCT_POPUP });
-
+  const onUpdateBtnClick = () => {
+    let isValid = isValidData(lineItems);
+    if(isValid) {
+      for(let i=0; i< lineItems.length; i++){
+        if (lineItems[i].isEdited) {
+          // console.log(lineItems[i]);
+          dispatch({
+            type: UPDATE_LINE_ITEM_STATUS,
+            value: {
+              id: lineItems[i].id,
+              status: lineItems[i].status,
+              machine_id: lineItems[i].machine_id
+            }
+          })
+        }
+      };
+  
+      dispatch({ type: HIDE_PRODUCT_POPUP });
+    }
   }
 
   const statuses = [
@@ -234,6 +249,7 @@ export default function ProductPopUp({ open, onClose }) {
           </div> : null}
 
         <div className="right">
+          {isShowNotice ? <span style={{color:'red'}}>{notice}</span> : null}
           <button className="modal-btn blue" onClick={onUpdateBtnClick}>
             CẬP NHẬT
           </button>

@@ -5,7 +5,7 @@ export const Box = styled.div`
   font-size: 14px;
 
   .modal-title {
-    text-align: center;
+    // text-align: center;
     font-size: 20px;
     font-weight: 700;
     margin: 10px 0px;

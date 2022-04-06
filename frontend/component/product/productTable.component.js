@@ -159,15 +159,16 @@ export default function ProduceTable({ data }) {
       accessor: "order_number"
     },
     {
-      Header: () => {
-        return <Dropdown
-          controlClassName="dropDownMachine"
-          options={timebook}
-          onChange={onSelectTimeBook}
-          value={timebook.find((i) => i.value == sortBy)}
-          placeholder="Select an option"
-        />
-      },
+      // Header: () => {
+      //   return <Dropdown
+      //     controlClassName="dropDownMachine"
+      //     options={timebook}
+      //     onChange={onSelectTimeBook}
+      //     value={timebook.find((i) => i.value == sortBy)}
+      //     placeholder="Select an option"
+      //   />
+      // },
+      Header: "Thơi gian đặt hàng",
       accessor: "confirmed_at",
       Cell: ({ cell }) => {
         return <>{date2dtstr(new Date(cell.value))}</>
@@ -200,15 +201,16 @@ export default function ProduceTable({ data }) {
       }
     },
     {
-      Header: () => {
-        return <Dropdown
-          controlClassName="dropDownMachine"
-          options={_status}
-          onChange={onStatusSelected}
-          value={_status.find((i) => i.value == status)}
-          placeholder="Select an option"
-        />
-      },
+      // Header: () => {
+      //   return <Dropdown
+      //     controlClassName="dropDownMachine"
+      //     options={_status}
+      //     onChange={onStatusSelected}
+      //     value={_status.find((i) => i.value == status)}
+      //     placeholder="Select an option"
+      //   />
+      // },
+      Header: "Trạng thái",
       accessor: "status",
       Cell: ({ cell: { value } }) =>
         value == "DONE" ? (

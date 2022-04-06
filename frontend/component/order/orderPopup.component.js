@@ -75,12 +75,19 @@ export default function OrderPopUp({ open, onClose }) {
 
   const columns = [
     {
-      Header: "Tên sản phẩm",
-      accessor: "name"
-    },
-    {
       Header: "Mã SP",
       accessor: "sku",
+      Cell: ({ cell }) => {
+        if (cell.value) {
+          return <>{cell.value.slice(0, 50)}</>
+        } else {
+          return <>{cell.row.original.name.slice(0, 50)}</>
+        }
+      }
+    },
+    {
+      Header: "Máy SX",
+      accessor: "machine_code",
     },
     {
       Header: "Số lượng",
@@ -122,7 +129,7 @@ export default function OrderPopUp({ open, onClose }) {
 
           <hr />
 
-          <h4 className="modal-title">PHIẾU GIAO HÀNG</h4>
+          <h4 className="title">PHIẾU GIAO HÀNG</h4>
           <table className="fulfillment-info">
             <tbody>
               <tr>
