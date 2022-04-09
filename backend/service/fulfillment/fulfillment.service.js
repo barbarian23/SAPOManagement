@@ -30,15 +30,6 @@ class FulfillmentService extends IService {
           }
         },
         //get lineitems
-        // {
-        //   $lookup: {
-        //     from: 'lineitems',
-        //     localField: 'line_items',
-        //     foreignField: '_id',
-        //     as: 'lineitems'
-        //   }
-        // },
-
         {
           $lookup: {
             from: 'lineitems',
@@ -52,24 +43,26 @@ class FulfillmentService extends IService {
                   from: 'machines',
                   localField: 'machine_id',
                   foreignField: '_id',
-                  as: 'machine'
+                  as: 'machines'
                 }
               },
-              { $unwind: { path: "$machine", preserveNullAndEmptyArrays: true } },
+              { $addFields: { machine: { $first: "$machines" } } },
+              {
+                $project: {
+                  name: 1,
+                  quantity: 1,
+                  sku: 1,
+                  id: 1,
+                  // machine: { $ifNull: ["$machine", ""] },
+                  // machine: 1,
+                  machine_code: "$machine.code",
+                }
+              }
             ],
             as: 'lineitems'
           }
         },
 
-        // {
-        //   $lookup: {
-        //     from: 'machines',
-        //     localField: 'lineitems.machine_id',
-        //     foreignField: '_id',
-        //     as: 'lineitems.machine'
-        //   }
-        // },
-        //{ $unwind: { path: "$lineitems.machine", preserveNullAndEmptyArrays: true } },
         //end
         {
           $project: {
@@ -82,7 +75,7 @@ class FulfillmentService extends IService {
               quantity: 1,
               sku: 1,
               id: 1,
-              machine_code: { $ifNull: ["$lineitems.machine.code", ""] },
+              machine_code: 1,
             },
             tracking_number: 1,
             status: 1,
