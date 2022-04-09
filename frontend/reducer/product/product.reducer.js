@@ -37,7 +37,7 @@ const initialState = {
     pageSize: 10,
     keyword: "",
     sortBy: "-confirmed_at",
-    status: "NOT",
+    status: "",
 
     isShowDateRangePopup: false,
     startDate: 0,

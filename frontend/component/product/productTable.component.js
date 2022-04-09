@@ -201,16 +201,16 @@ export default function ProduceTable({ data }) {
       }
     },
     {
-      // Header: () => {
-      //   return <Dropdown
-      //     controlClassName="dropDownMachine"
-      //     options={_status}
-      //     onChange={onStatusSelected}
-      //     value={_status.find((i) => i.value == status)}
-      //     placeholder="Select an option"
-      //   />
-      // },
-      Header: "Trạng thái",
+      Header: () => {
+        return <Dropdown
+          controlClassName="dropDownMachine"
+          options={_status}
+          onChange={onStatusSelected}
+          value={_status.find((i) => i.value == status)}
+          placeholder="Select an option"
+        />
+      },
+      // Header: "Trạng thái",
       accessor: "status",
       Cell: ({ cell: { value } }) =>
         value == "DONE" ? (
