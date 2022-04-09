@@ -178,14 +178,18 @@ export default function ProduceTable({ data }) {
       Header: "Thời hạn xử lý",
       accessor: "deadline",
       Cell: ({ cell }) => {
-        let confirmedAt = new Date(cell.row.original.confirmed_at);
-        confirmedAt.setDate(confirmedAt.getDate() + 2);
-        let now = Date.now();
-        let diff = now - confirmedAt.getTime();
-        if (diff > 0) {
-          return <p style={{ fontWeight: 700, color: "#f64343" }}>Quá hạn {ts2daystr(Math.abs(diff))}</p>
+        if (cell.row.original.status == "NOT") {
+          let confirmedAt = new Date(cell.row.original.confirmed_at);
+          confirmedAt.setDate(confirmedAt.getDate() + 2);
+          let now = Date.now();
+          let diff = now - confirmedAt.getTime();
+          if (diff > 0) {
+            return <p style={{ fontWeight: 700, color: "#f64343" }}>Quá hạn {ts2daystr(Math.abs(diff))}</p>
+          } else {
+            return <p style={{ fontWeight: 700, color: "#2ad38b" }}>Còn {ts2daystr(Math.abs(diff))}</p>
+          }
         } else {
-          return <p style={{ fontWeight: 700, color: "#2ad38b" }}>Còn {ts2daystr(Math.abs(diff))}</p>
+          return <p></p>
         }
       }
     },
@@ -193,9 +197,9 @@ export default function ProduceTable({ data }) {
       Header: "Số lượng tồn kho",
       accessor: "qty_onhand",
       Cell: ({ cell }) => {
-        if(cell.value == null){
+        if (cell.value == null) {
           return <>Không có data từ hệ thống</>
-        }else{
+        } else {
           return <>{cell.value}</>
         }
       }
