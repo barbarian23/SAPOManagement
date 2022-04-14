@@ -80,8 +80,8 @@ export default function OrderTable({ data }) {
 
   const timebook = [
     // { value: "", label: "Thời gian đặt hàng" },
-    { value: "confirmed_at", label: "Thời gian đặt hàng (Cũ nhất)" },
-    { value: "-confirmed_at", label: "Thời gian đặt hàng (Mới nhất)" },
+    { value: "created_at", label: "Thời gian đặt hàng (Cũ nhất)" },
+    { value: "-created_at", label: "Thời gian đặt hàng (Mới nhất)" },
     { value: "daterange", label: "Tìm kiếm theo khoảng thời gian" },
   ];
 
@@ -156,7 +156,7 @@ export default function OrderTable({ data }) {
           placeholder="Select an option"
         />
       },
-      accessor: "confirmed_at",
+      accessor: "created_at",
       Cell: ({ cell }) => {
         return <>{date2dtstr(new Date(cell.value))}</>
       }

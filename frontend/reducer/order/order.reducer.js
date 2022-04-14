@@ -28,7 +28,7 @@ const initialState = {
     page: 1,
     pageSize: 10,
     keyword: "",
-    sortBy: "-confirmed_at",
+    sortBy: "-created_at",
     status: "",
 
     isShowOrderPopup: false,

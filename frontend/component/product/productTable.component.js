@@ -128,8 +128,10 @@ export default function ProduceTable({ data }) {
 
   const timebook = [
     // { value: "", label: "Thời gian đặt hàng" },
-    { value: "confirmed_at", label: "Thời gian đặt hàng (Cũ nhất)" },
-    { value: "-confirmed_at", label: "Thời gian đặt hàng (Mới nhất)" },
+    // { value: "confirmed_at", label: "Thời gian đặt hàng (Cũ nhất)" },
+    // { value: "-confirmed_at", label: "Thời gian đặt hàng (Mới nhất)" },
+    { value: "created_at", label: "Thời gian đặt hàng (Cũ nhất)" },
+    { value: "-created_at", label: "Thời gian đặt hàng (Mới nhất)" },
     { value: "daterange", label: "Tìm kiếm theo khoảng thời gian" },
   ];
 
@@ -169,7 +171,8 @@ export default function ProduceTable({ data }) {
       //   />
       // },
       Header: "Thơi gian đặt hàng",
-      accessor: "confirmed_at",
+      // accessor: "confirmed_at",
+      accessor: "created_at",
       Cell: ({ cell }) => {
         return <>{date2dtstr(new Date(cell.value))}</>
       }
@@ -179,10 +182,13 @@ export default function ProduceTable({ data }) {
       accessor: "deadline",
       Cell: ({ cell }) => {
         if (cell.row.original.status == "NOT") {
-          let confirmedAt = new Date(cell.row.original.confirmed_at);
-          confirmedAt.setDate(confirmedAt.getDate() + 2);
+          // let confirmedAt = new Date(cell.row.original.confirmed_at);
+          let createdAt = new Date(cell.row.original.created_at);
+          // confirmedAt.setDate(confirmedAt.getDate() + 2);
+          createdAt.setDate(createdAt.getDate() + 2);
           let now = Date.now();
-          let diff = now - confirmedAt.getTime();
+          // let diff = now - confirmedAt.getTime();
+          let diff = now - createdAt.getTime();
           if (diff > 0) {
             return <p style={{ fontWeight: 700, color: "#f64343" }}>Quá hạn {ts2daystr(Math.abs(diff))}</p>
           } else {
