@@ -170,7 +170,7 @@ export default function ProduceTable({ data }) {
       //     placeholder="Select an option"
       //   />
       // },
-      Header: "Thơi gian đặt hàng",
+      Header: "Thời gian đặt hàng",
       // accessor: "confirmed_at",
       accessor: "created_at",
       Cell: ({ cell }) => {
