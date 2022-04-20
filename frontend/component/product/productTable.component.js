@@ -36,7 +36,7 @@ function Table({ columns, data }) {
 
   let dispatch = useDispatch();
   const onCellClicked = (cell) => {
-    dispatch({ type: LINE_ITEM_SELECT, value: cell.row.original.id });
+    dispatch({ type: LINE_ITEM_SELECT, value: cell.row.original.sku ? cell.row.original.sku : cell.row.original.id  });
     dispatch({ type: GET_MACHINES });
     dispatch({ type: SHOW_PRODUCT_POPUP });
   };
@@ -211,16 +211,16 @@ export default function ProduceTable({ data }) {
       }
     },
     {
-      Header: () => {
-        return <Dropdown
-          controlClassName="dropDownMachine"
-          options={_status}
-          onChange={onStatusSelected}
-          value={_status.find((i) => i.value == status)}
-          placeholder="Select an option"
-        />
-      },
-      // Header: "Trạng thái",
+      // Header: () => {
+      //   return <Dropdown
+      //     controlClassName="dropDownMachine"
+      //     options={_status}
+      //     onChange={onStatusSelected}
+      //     value={_status.find((i) => i.value == status)}
+      //     placeholder="Select an option"
+      //   />
+      // },
+      Header: "Trạng thái",
       accessor: "status",
       Cell: ({ cell: { value } }) =>
         value == "DONE" ? (

@@ -37,7 +37,7 @@ const initialState = {
     pageSize: 10,
     keyword: "",
     sortBy: "-created_at",
-    status: "",
+    status: "NOT",
 
     isShowDateRangePopup: false,
     startDate: 0,

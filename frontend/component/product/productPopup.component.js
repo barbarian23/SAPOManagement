@@ -1,4 +1,4 @@
-import React, { code, useState } from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import {
   HIDE_PRODUCT_POPUP,

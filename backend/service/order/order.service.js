@@ -9,7 +9,7 @@ class OrderService extends IService {
 
   async getByOrderNumber(orderNumber) {
     try {
-      let item = await this.model.findOne({order_number: orderNumber});
+      let item = await this.model.findOne({ order_number: orderNumber });
       if (item) {
         return item;
       }
@@ -60,9 +60,6 @@ class OrderService extends IService {
       if (keyword) {
         orQueries.push({ order_number: { $regex: `.*${keyword}.*` } });
       }
-      if (status) {
-        orQueries.push({ status: status });
-      }
 
       if (orQueries.length > 0) {
         pipeline.push({ $match: { $or: orQueries } });
@@ -71,8 +68,12 @@ class OrderService extends IService {
       if (startDate > 0 && endDate > 0) {
         let start = new Date(startDate);
         let end = new Date(endDate);
-        andQueries.push({ created_at: { $gte: start} });
+        andQueries.push({ created_at: { $gte: start } });
         andQueries.push({ created_at: { $lte: end } });
+      }
+      
+      if (status) {
+        andQueries.push({ status: status });
       }
 
       if (andQueries.length > 0) {
@@ -80,12 +81,12 @@ class OrderService extends IService {
       }
 
       // if (startDate == 0 || endDate == 0) {
-        if (sortBy == 'created_at') {
-          pipeline.push({ $sort: { created_at: 1 } });
-        } else //if (sortBy == '-confirmed_at') 
-        {
-          pipeline.push({ $sort: { created_at: -1 } });
-        }
+      if (sortBy == 'created_at') {
+        pipeline.push({ $sort: { created_at: 1 } });
+      } else //if (sortBy == '-confirmed_at') 
+      {
+        pipeline.push({ $sort: { created_at: -1 } });
+      }
       // }
 
       pipeline = [
@@ -126,9 +127,6 @@ class OrderService extends IService {
       if (keyword) {
         orQueries.push({ id: { $regex: `.*${keyword}.*` } });
       }
-      if (status) {
-        orQueries.push({ status: status });
-      }
 
       if (orQueries.length > 0) {
         pipeline.push({ $match: { $or: orQueries } });
@@ -139,6 +137,10 @@ class OrderService extends IService {
         let end = new Date(endDate);
         andQueries.push({ created_at: { $gte: start } });
         andQueries.push({ created_at: { $lte: end } });
+      }
+
+      if (status) {
+        andQueries.push({ status: status });
       }
 
       if (andQueries.length > 0) {
@@ -231,13 +233,12 @@ class OrderService extends IService {
         orQueries.push({ order_number: { $regex: `.*${keyword}.*`, $options: 'i' } });
         orQueries.push({ title: { $regex: `.*${keyword}.*`, $options: 'i' } });
       }
-      if (status) {
-        orQueries.push({ status: status });
-      }
 
       if (orQueries.length > 0) {
         pipeline.push({ $match: { $or: orQueries } });
       }
+
+      // console.log(orQueries);
 
       if (startDate > 0 && endDate > 0) {
         let start = new Date(startDate);
@@ -246,22 +247,25 @@ class OrderService extends IService {
         andQueries.push({ created_at: { $lte: end } });
       }
 
+      if (status) {
+        andQueries.push({ status: status });
+      }
       // console.log(andQueries);
-
+      
       if (andQueries.length > 0) {
         pipeline.push({ $match: { $and: andQueries } });
       }
 
       //if (startDate == 0 || endDate == 0) {
-        if (sortBy == 'created_at') {
-          pipeline.push({ $sort: { created_at: 1 } });
-        } else //if (sortBy == '-confirmed_at') 
-        {
-          pipeline.push({ $sort: { created_at: -1 } });
-        }
+      if (sortBy == 'created_at') {
+        pipeline.push({ $sort: { created_at: 1 } });
+      } else //if (sortBy == '-confirmed_at') 
+      {
+        pipeline.push({ $sort: { created_at: -1 } });
+      }
       //}
 
-      //console.log(pipeline)
+      // console.log(pipeline)
 
       pipeline = [
         ...pipeline,
@@ -316,9 +320,6 @@ class OrderService extends IService {
         orQueries.push({ order_number: { $regex: `.*${keyword}.*`, $options: 'i' } });
         orQueries.push({ title: { $regex: `.*${keyword}.*`, $options: 'i' } });
       }
-      if (status) {
-        orQueries.push({ status: status });
-      }
 
       if (orQueries.length > 0) {
         pipeline.push({ $match: { $or: orQueries } });
@@ -329,6 +330,10 @@ class OrderService extends IService {
         let end = new Date(endDate);
         andQueries.push({ created_at: { $gte: start } });
         andQueries.push({ created_at: { $lte: end } });
+      }
+
+      if (status) {
+        andQueries.push({ status: status });
       }
 
       if (andQueries.length > 0) {
@@ -432,8 +437,23 @@ class OrderService extends IService {
             id: "$items._id",
           }
         },
-        { $match: { id: Types.ObjectId(id) } },
+        
       ];
+
+      if(id.length === 12){
+        pipeline.push({
+          $match: {
+            $or: [
+              { id: Types.ObjectId(id) },
+              { sku: id },
+            ]
+          }
+        })
+      }else{
+        pipeline.push({
+          $match: { sku: id }
+        },)
+      }
 
       if (keyword) {
         pipeline.push({
