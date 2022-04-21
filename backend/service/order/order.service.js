@@ -399,6 +399,7 @@ class OrderService extends IService {
             sku: "$items.sku",
             name: "$items.name",
             title: "$items.title",
+            quantity: "$items.quantity",
             machine_id: { $ifNull: ["$items.machine_id", ""] },
             machine_code: { $ifNull: ["$items.code", ""] },
             machine_name: { $ifNull: ["$items.name", ""] },

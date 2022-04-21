@@ -153,7 +153,10 @@ export default function ProductPopUp({ open, onClose }) {
     },
     {
       Header: "Số lượng",
-      accessor: "quantity"
+      accessor: "quantity",
+      Cell: ({ cell }) => {
+        return <>{cell.value == null ? 1 : cell.value}</>
+      }
     },
     {
       Header: "Trạng thái",
