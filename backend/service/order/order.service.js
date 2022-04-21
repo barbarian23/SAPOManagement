@@ -58,6 +58,11 @@ class OrderService extends IService {
       ];
 
       if (keyword) {
+        //replace [ ] { } ( ) \ ^ $ . | ? * +
+        const replaceArr = ["[", "]", "{", "}", "(", ")", "\\", "^", "$", ".", "|", "?", "*", "+"];
+        for (let i = 0; i < replaceArr.length; i++) {
+          keyword = keyword.replace(replaceArr[i], '\\' + replaceArr[i]);
+        }
         orQueries.push({ order_number: { $regex: `.*${keyword}.*` } });
       }
 
@@ -71,7 +76,7 @@ class OrderService extends IService {
         andQueries.push({ created_at: { $gte: start } });
         andQueries.push({ created_at: { $lte: end } });
       }
-      
+
       if (status) {
         andQueries.push({ status: status });
       }
@@ -125,6 +130,11 @@ class OrderService extends IService {
       ];
 
       if (keyword) {
+        //replace [ ] { } ( ) \ ^ $ . | ? * +
+        const replaceArr = ["[", "]", "{", "}", "(", ")", "\\", "^", "$", ".", "|", "?", "*", "+"];
+        for (let i = 0; i < replaceArr.length; i++) {
+          keyword = keyword.replace(replaceArr[i], '\\' + replaceArr[i]);
+        }
         orQueries.push({ id: { $regex: `.*${keyword}.*` } });
       }
 
@@ -230,6 +240,11 @@ class OrderService extends IService {
       ];
 
       if (keyword) {
+        //replace [ ] { } ( ) \ ^ $ . | ? * +
+        const replaceArr = ["[", "]", "{", "}", "(", ")", "\\", "^", "$", ".", "|", "?", "*", "+"];
+        for (let i = 0; i < replaceArr.length; i++) {
+          keyword = keyword.replace(replaceArr[i], '\\' + replaceArr[i]);
+        }
         orQueries.push({ sku: { $regex: `.*${keyword}.*`, $options: 'i' } });
         orQueries.push({ order_number: { $regex: `.*${keyword}.*`, $options: 'i' } });
         orQueries.push({ title: { $regex: `.*${keyword}.*`, $options: 'i' } });
@@ -239,7 +254,7 @@ class OrderService extends IService {
         pipeline.push({ $match: { $or: orQueries } });
       }
 
-      // console.log(orQueries);
+      console.log(orQueries);
 
       if (startDate > 0 && endDate > 0) {
         let start = new Date(startDate);
@@ -252,7 +267,7 @@ class OrderService extends IService {
         andQueries.push({ status: status });
       }
       // console.log(andQueries);
-      
+
       if (andQueries.length > 0) {
         pipeline.push({ $match: { $and: andQueries } });
       }
@@ -319,6 +334,11 @@ class OrderService extends IService {
       ];
 
       if (keyword) {
+        //replace [ ] { } ( ) \ ^ $ . | ? * +
+        const replaceArr = ["[", "]", "{", "}", "(", ")", "\\", "^", "$", ".", "|", "?", "*", "+"];
+        for (let i = 0; i < replaceArr.length; i++) {
+          keyword = keyword.replace(replaceArr[i], '\\' + replaceArr[i]);
+        }
         orQueries.push({ sku: { $regex: `.*${keyword}.*`, $options: 'i' } });
         orQueries.push({ order_number: { $regex: `.*${keyword}.*`, $options: 'i' } });
         orQueries.push({ title: { $regex: `.*${keyword}.*`, $options: 'i' } });
@@ -351,7 +371,7 @@ class OrderService extends IService {
     }
   }
 
-  async getLineItemsBySKU(sku, keyword) {
+  async getLineItemsBySKU(sku, status = '', keyword = '') {
     try {
       let pipeline = [
         {
@@ -397,6 +417,11 @@ class OrderService extends IService {
           }
         });
       }
+
+      if (status != '') {
+        pipeline.push({ $match: { status: status } })
+      }
+
       const lineItems = await this.aggregate(pipeline);
       return lineItems;
     } catch (errors) {
@@ -405,7 +430,7 @@ class OrderService extends IService {
     }
   }
 
-  async getLineItemsByID(id, keyword) {
+  async getLineItemsByID(id, status = '', keyword = '') {
     try {
       let pipeline = [
         {
@@ -441,23 +466,10 @@ class OrderService extends IService {
             id: "$items._id",
           }
         },
-        
+        {
+          $match: { id: Types.ObjectId(id) }
+        }
       ];
-
-      if(id.length === 12){
-        pipeline.push({
-          $match: {
-            $or: [
-              { id: Types.ObjectId(id) },
-              { sku: id },
-            ]
-          }
-        })
-      }else{
-        pipeline.push({
-          $match: { sku: id }
-        },)
-      }
 
       if (keyword) {
         pipeline.push({
@@ -466,7 +478,11 @@ class OrderService extends IService {
           }
         });
       }
-      pipeline.push({$match: { status: 'NOT' }})
+
+      if (status != '') {
+        pipeline.push({ $match: { status: status } })
+      }
+
       const lineItems = await this.aggregate(pipeline);
       return lineItems;
     } catch (errors) {

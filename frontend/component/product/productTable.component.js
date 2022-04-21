@@ -36,7 +36,12 @@ function Table({ columns, data }) {
 
   let dispatch = useDispatch();
   const onCellClicked = (cell) => {
-    dispatch({ type: LINE_ITEM_SELECT, value: cell.row.original.sku ? cell.row.original.sku : cell.row.original.id  });
+    dispatch({
+      type: LINE_ITEM_SELECT, value: {
+        selectedSKU: cell.row.original.sku,
+        selectedLineItemID: cell.row.original.id
+      }
+    });
     dispatch({ type: GET_MACHINES });
     dispatch({ type: SHOW_PRODUCT_POPUP });
   };

@@ -23,14 +23,16 @@ export function searchLineItems(page = 1, pageSize = 10, keyword = '', sortBy = 
 }
 
 
-export function getLineItemsBySKU(sku='', keyword='') {
+export function getLineItemsBySKU(sku='', status='', keyword='') {
     return axiosSerivce.get(`api/order/getLineItemsBySKU`
-        + `?sku=${sku}`
+        + `?sku=${encodeURIComponent(sku)}`
+        + `&status=${status}`
         + `&keyword=${encodeURIComponent(keyword)}`);
 }
 
-export function getLineItemsByID(id='', keyword='') {
+export function getLineItemsByID(id='', status='', keyword='') {
     return axiosSerivce.get(`api/order/getLineItemsByID`
-        + `?id=${id}`
+        + `?id=${encodeURIComponent(id)}`
+        + `&status=${status}`
         + `&keyword=${encodeURIComponent(keyword)}`);
 }

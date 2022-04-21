@@ -55,10 +55,11 @@ class OrderController extends IController {
 
       async getLineItemsBySKU(req, res, next) {
             try {
-                  const { sku, keyword } = req.query;
+                  const { sku, status, keyword } = req.query;
                   let _sku = sku ? sku : null;
+                  let _status = status ? status : null;
                   let _keyword = keyword ? keyword : null;
-                  const lineItems = await this.service.getLineItemsBySKU(_sku, _keyword);
+                  const lineItems = await this.service.getLineItemsBySKU(_sku, _status, _keyword);
                   responceJson(res, 200, lineItems);
             } catch (e) {
                   console.log(e);
@@ -69,10 +70,11 @@ class OrderController extends IController {
 
       async getLineItemsByID(req, res, next) {
             try {
-                  const { id, keyword } = req.query;
+                  const { id, status, keyword } = req.query;
                   let _id = id ? id : null;
+                  let _status = status ? status : null;
                   let _keyword = keyword ? keyword : null;
-                  const lineItems = await this.service.getLineItemsByID(_id, _keyword);
+                  const lineItems = await this.service.getLineItemsByID(_id, _status, _keyword);
                   responceJson(res, 200, lineItems);
             } catch (e) {
                   console.log(e);
