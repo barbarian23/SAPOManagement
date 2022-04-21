@@ -161,6 +161,10 @@ export default function ProduceTable({ data }) {
       accessor: "order_number"
     },
     {
+      Header: "Số lượng",
+      accessor: "quantity"
+    },
+    {
       // Header: () => {
       //   return <Dropdown
       //     controlClassName="dropDownMachine"

@@ -219,6 +219,7 @@ class OrderService extends IService {
             title: "$items.title",
             status: "$items.status",
             qty_onhand: "$items.qty_onhand",
+            quantity: "$items.quantity",
           },
         },
         // {
@@ -300,12 +301,14 @@ class OrderService extends IService {
             _id: 0,
             id: "$items._id",
             order_number: 1,
-            created_at: 1,
             confirmed_at: 1,
+            created_at: 1,
             sku: "$items.sku",
             name: "$items.name",
             title: "$items.title",
             status: "$items.status",
+            qty_onhand: "$items.qty_onhand",
+            quantity: "$items.quantity",
           }
         },
         // {
@@ -429,6 +432,7 @@ class OrderService extends IService {
             order_number: 1,
             sku: "$items.sku",
             name: "$items.name",
+            quantity: "$items.quantity",
             machine_id: { $ifNull: ["$items.machine_id", ""] },
             machine_code: { $ifNull: ["$items.code", ""] },
             machine_name: { $ifNull: ["$items.name", ""] },
@@ -462,6 +466,7 @@ class OrderService extends IService {
           }
         });
       }
+      pipeline.push({$match: { status: 'NOT' }})
       const lineItems = await this.aggregate(pipeline);
       return lineItems;
     } catch (errors) {

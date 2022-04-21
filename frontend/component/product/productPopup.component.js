@@ -152,6 +152,10 @@ export default function ProductPopUp({ open, onClose }) {
       accessor: "order_number"
     },
     {
+      Header: "Số lượng",
+      accessor: "quantity"
+    },
+    {
       Header: "Trạng thái",
       accessor: "status",
       Cell: ({ cell, iRow, iCell }) => {
