@@ -224,6 +224,7 @@ class OrderService extends IService {
             order_number: 1,
             confirmed_at: 1,
             created_at: 1,
+            cancelled_at : 1,
             sku: "$items.sku",
             name: "$items.name",
             title: "$items.title",
@@ -232,11 +233,11 @@ class OrderService extends IService {
             quantity: "$items.quantity",
           },
         },
-        // {
-        //   $match: {
-        //     confirmed_at: { $ne: null },
-        //   },
-        // },
+        {
+          $match: {
+            cancelled_at: null,
+          },
+        },
       ];
 
       if (keyword) {
@@ -318,6 +319,7 @@ class OrderService extends IService {
             order_number: 1,
             confirmed_at: 1,
             created_at: 1,
+            cancelled_at: 1,
             sku: "$items.sku",
             name: "$items.name",
             title: "$items.title",
@@ -326,11 +328,11 @@ class OrderService extends IService {
             quantity: "$items.quantity",
           }
         },
-        // {
-        //   $match: {
-        //     confirmed_at: { $ne: null },
-        //   },
-        // },
+        {
+          $match: {
+            cancelled_at: null,
+          },
+        },
       ];
 
       if (keyword) {
