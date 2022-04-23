@@ -43,6 +43,7 @@ class OrderService extends IService {
             id: { $toString: "$id" },
             confirmed_at: 1,
             created_at: 1,
+            cancelled_at : 1,
             order_number: 1,
             status: 1,
             fulfillment: 1,
@@ -50,11 +51,11 @@ class OrderService extends IService {
             fulfillment_id: "$fulfillment.id"
           }
         },
-        // {
-        //   $match: {
-        //     confirmed_at: { $ne: null },
-        //   },
-        // },
+        {
+          $match: {
+            cancelled_at: null 
+          },
+        },
       ];
 
       if (keyword) {
@@ -119,14 +120,15 @@ class OrderService extends IService {
             id: { $toString: "$order_number" },
             created_at: 1,
             confirmed_at: 1,
+            cancelled_at : 1,
             status: 1,
           }
         },
-        // {
-        //   $match: {
-        //     confirmed_at: { $ne: null },
-        //   },
-        // },
+        {
+          $match: {
+            cancelled_at: null 
+          },
+        },
       ];
 
       if (keyword) {
