@@ -35,6 +35,11 @@ export const Fulfillment = styled.div`
     text-align: center;
   }
 
+  .tracking-company{
+    margin: -5px 0px;
+
+  }
+
   .title {
     text-align: center;
     font-size: 20px;
