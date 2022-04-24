@@ -77,6 +77,7 @@ class FulfillmentService extends IService {
               id: 1,
               machine_code: 1,
             },
+            tracking_company: 1,
             tracking_number: 1,
             status: 1,
             shipping_address: 1,
