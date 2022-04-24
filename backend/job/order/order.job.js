@@ -2,6 +2,7 @@ import { OrderService, LineItemService, FulfillmentService } from "../../service
 import fetch from 'node-fetch';
 import { json } from "express";
 const schedule = require('node-schedule');
+const moment = require('moment');
 
 const headers = {
     Authorization: 'Bearer D9CBEEF3950683AB7BF852A3BED03E35AD68C117825CEBA2F54CCF8F60786212',
@@ -164,7 +165,7 @@ const CreateOrder = async function(){
 
             data.orders = data.orders.filter(obj => {
                 let checkOrder = checkOrders.find(x => x.id == obj.id);
-                return new Date(obj.created_at) > createdLast && !checkOrder;
+                return moment(obj.created_at).utcOffset(420) > createdLast && !checkOrder;
             });
     
             console.log(data.orders.length, "Create orders count of index " + index);
@@ -225,7 +226,7 @@ const UpdateOrder = async function(){
 
             data.orders = data.orders.filter(obj => {
                 let checkOrder = checkOrders.find(x => x.id == obj.id);
-                return new Date(obj.updated_at) > updatedLast && checkOrder;
+                return moment(obj.updated_at).utcOffset(420) > updatedLast && checkOrder;
             });
     
             console.log(data.orders.length, "Update orders count");
