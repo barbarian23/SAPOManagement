@@ -16,7 +16,7 @@ const urlGetInventory = new URL('https://apis.haravan.com/com/inventory_location
 const urlGetFulfillments = function(order_id){
     return new URL(`https://apis.haravan.com/com/orders/${order_id}/fulfillments.json`);
 };
-const dateAtMin = new Date('2022-04-23T07:24:00');
+const dateAtMin = moment('2022-04-23T00:24:00').utcOffset(420);
 
 const location = {
     id: 979462,
@@ -113,8 +113,10 @@ const GetUpdatedLast = async function(){
 
 const CreateOrder = async function(){
     let createdLast = await GetCreatedLast();
-    
-    let params = { created_at_min: createdLast ? createdLast.toLocaleString('sv-SE') : null };
+    console.log(createdLast,"createdLast_check");
+    console.log(moment(createdLast).format('YYYY-MM-DD[T]HH:mm:ss'),"createdLast_toLocaleString");
+
+    let params = { created_at_min: createdLast ? moment(createdLast).format('YYYY-MM-DD[T]HH:mm:ss') : null };
     
     urlCountOrder.search = new URLSearchParams(params).toString();
     let countResponse = await fetch(urlCountOrder, { method: 'GET', headers: headers });
@@ -163,9 +165,16 @@ const CreateOrder = async function(){
                 }
             });
 
+            console.log(data.orders.length,"Create orders count befor of index " + index);
+
             data.orders = data.orders.filter(obj => {
                 let checkOrder = checkOrders.find(x => x.id == obj.id);
-                return moment(obj.created_at).utcOffset(420) > createdLast && !checkOrder;
+                
+                console.log(obj.created_at, "obj.created_at");
+                console.log(moment(obj.created_at).utcOffset(420), "moment(obj.created_at).utcOffset(420)");
+                console.log(moment(obj.created_at).utcOffset(420).isSameOrAfter(createdLast), "res");
+
+                return moment(obj.created_at).utcOffset(420).isSameOrAfter(createdLast) && !checkOrder;
             });
     
             console.log(data.orders.length, "Create orders count of index " + index);
@@ -206,7 +215,7 @@ const UpdateOrder = async function(){
         let updatedLast = await GetUpdatedLast();
     
         if(updatedLast){
-            let params = { updated_at_min: updatedLast.toLocaleString('sv-SE') };
+            let params = { updated_at_min: moment(updatedLast).format('YYYY-MM-DD[T]HH:mm:ss') };
             urlGetOrder.search = new URLSearchParams(params).toString();
     
             let status = 0;
