@@ -99,7 +99,7 @@ const GetCreatedLast = async function(){
     let orderCreatedLast = await OrderService.search(null, 0, 1, '-created_at');
     let createdLast = dateAtMin;
     if(orderCreatedLast && orderCreatedLast.length > 0)
-        createdLast = new Date(await orderCreatedLast[0].created_at);
+        createdLast = moment(await orderCreatedLast[0].created_at).utcOffset(420);
     return createdLast;
 }
 
@@ -107,7 +107,7 @@ const GetUpdatedLast = async function(){
     let orderUpdatedLast = await OrderService.search(null, 0, 1, '-updated_at');
     let updatedLast = dateAtMin;
     if(orderUpdatedLast && orderUpdatedLast.length > 0)
-        updatedLast = new Date(await orderUpdatedLast[0].updated_at);
+        updatedLast = moment(await orderUpdatedLast[0].updated_at).utcOffset(420);
     return updatedLast;
 }
 
