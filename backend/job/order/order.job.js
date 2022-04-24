@@ -2,6 +2,7 @@ import { OrderService, LineItemService, FulfillmentService } from "../../service
 import fetch from 'node-fetch';
 import { json } from "express";
 const schedule = require('node-schedule');
+const moment = require('moment');
 
 const headers = {
     Authorization: 'Bearer D9CBEEF3950683AB7BF852A3BED03E35AD68C117825CEBA2F54CCF8F60786212',
@@ -98,7 +99,7 @@ const GetCreatedLast = async function(){
     let orderCreatedLast = await OrderService.search(null, 0, 1, '-created_at');
     let createdLast = dateAtMin;
     if(orderCreatedLast && orderCreatedLast.length > 0)
-        createdLast = new Date(await orderCreatedLast[0].created_at);
+        createdLast = moment(await orderCreatedLast[0].created_at).utcOffset(420);
     return createdLast;
 }
 
@@ -106,7 +107,7 @@ const GetUpdatedLast = async function(){
     let orderUpdatedLast = await OrderService.search(null, 0, 1, '-updated_at');
     let updatedLast = dateAtMin;
     if(orderUpdatedLast && orderUpdatedLast.length > 0)
-        updatedLast = new Date(await orderUpdatedLast[0].updated_at);
+        updatedLast = moment(await orderUpdatedLast[0].updated_at).utcOffset(420);
     return updatedLast;
 }
 
@@ -164,7 +165,7 @@ const CreateOrder = async function(){
 
             data.orders = data.orders.filter(obj => {
                 let checkOrder = checkOrders.find(x => x.id == obj.id);
-                return new Date(obj.created_at) > createdLast && !checkOrder;
+                return moment(obj.created_at).utcOffset(420) > createdLast && !checkOrder;
             });
     
             console.log(data.orders.length, "Create orders count of index " + index);
@@ -225,7 +226,7 @@ const UpdateOrder = async function(){
 
             data.orders = data.orders.filter(obj => {
                 let checkOrder = checkOrders.find(x => x.id == obj.id);
-                return new Date(obj.updated_at) > updatedLast && checkOrder;
+                return moment(obj.updated_at).utcOffset(420) > updatedLast && checkOrder;
             });
     
             console.log(data.orders.length, "Update orders count");
