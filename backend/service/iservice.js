@@ -123,9 +123,9 @@ export default class IService {
         }
     }
 
-    async updateByField(filter, data) {
+    async updateByField(filter, data, upsert = false) {
         try {
-            let item = await this.model.findOneAndUpdate(filter, data, { new: true });
+            let item = await this.model.findOneAndUpdate(filter, data, { new: true, upsert });
             return item;
         } catch (errors) {
             throw errors;
