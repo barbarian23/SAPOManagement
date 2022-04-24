@@ -15,7 +15,7 @@ const urlGetInventory = new URL('https://apis.haravan.com/com/inventory_location
 const urlGetFulfillments = function(order_id){
     return new URL(`https://apis.haravan.com/com/orders/${order_id}/fulfillments.json`);
 };
-const dateAtMin = new Date('2022-04-23T07:23:00');
+const dateAtMin = new Date('2022-04-23T07:24:00');
 
 const location = {
     id: 979462,
