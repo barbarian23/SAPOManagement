@@ -25,7 +25,6 @@ const LineItemSchema = mongoose.Schema({
     product_exists:       Boolean,
     barcode:              String,
     properties:           String,
-    applied_discounts:    [String],
     total_discount:       Number,
     image:                Object,
     not_allow_promotion:  Boolean,
