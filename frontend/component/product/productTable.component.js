@@ -124,7 +124,7 @@ export default function ProduceTable({ data }) {
   const _status = [
     { value: '', label: "Trạng thái" },
     { value: 'NOT', label: "Trạng thái (Chưa xử lý)" },
-    { value: 'DONE', label: "Trạng thái (Đã xử lý)" }
+    // { value: 'DONE', label: "Trạng thái (Đã xử lý)" }
   ];
 
   const onStatusSelected = (e) => {
@@ -180,7 +180,6 @@ export default function ProduceTable({ data }) {
       //   />
       // },
       Header: "Thời gian đặt hàng",
-      // accessor: "confirmed_at",
       accessor: "created_at",
       Cell: ({ cell }) => {
         return <>{date2dtstr(new Date(cell.value))}</>
@@ -191,12 +190,9 @@ export default function ProduceTable({ data }) {
       accessor: "deadline",
       Cell: ({ cell }) => {
         if (cell.row.original.status == "NOT") {
-          // let confirmedAt = new Date(cell.row.original.confirmed_at);
           let createdAt = new Date(cell.row.original.created_at);
-          // confirmedAt.setDate(confirmedAt.getDate() + 2);
           createdAt.setDate(createdAt.getDate() + 2);
           let now = Date.now();
-          // let diff = now - confirmedAt.getTime();
           let diff = now - createdAt.getTime();
           if (diff > 0) {
             return <p style={{ fontWeight: 700, color: "#f64343" }}>Quá hạn {ts2daystr(Math.abs(diff))}</p>
@@ -220,16 +216,16 @@ export default function ProduceTable({ data }) {
       }
     },
     {
-      // Header: () => {
-      //   return <Dropdown
-      //     controlClassName="dropDownMachine"
-      //     options={_status}
-      //     onChange={onStatusSelected}
-      //     value={_status.find((i) => i.value == status)}
-      //     placeholder="Select an option"
-      //   />
-      // },
-      Header: "Trạng thái",
+      Header: () => {
+        return <Dropdown
+          controlClassName="dropDownMachine"
+          options={_status}
+          onChange={onStatusSelected}
+          value={_status.find((i) => i.value == status)}
+          placeholder="Select an option"
+        />
+      },
+      // Header: "Trạng thái",
       accessor: "status",
       Cell: ({ cell: { value } }) =>
         value == "DONE" ? (
