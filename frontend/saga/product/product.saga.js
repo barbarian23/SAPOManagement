@@ -77,8 +77,8 @@ function* getLineItemsSaga({ value }) {
     yield put({type: START_LOADING_POPUP_TABLE_DATA});
     try {
         const response = selectedSKU 
-            ? yield call( getLineItemsBySKU, selectedSKU, 'NOT', popupKeyword)
-            : yield call( getLineItemsByID, selectedLineItemID, 'NOT', popupKeyword);
+            ? yield call( getLineItemsBySKU, selectedSKU, '', popupKeyword)
+            : yield call( getLineItemsByID, selectedLineItemID, '', popupKeyword);
         if (response.status === 200) {
             const { code, message, data } =  response.data;
             if (code==200) {

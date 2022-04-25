@@ -423,7 +423,7 @@ class OrderService extends IService {
         });
       }
 
-      if (status != '') {
+      if (status) {
         pipeline.push({ $match: { status: status } })
       }
 
@@ -484,7 +484,7 @@ class OrderService extends IService {
         });
       }
 
-      if (status != '') {
+      if (status) {
         pipeline.push({ $match: { status: status } })
       }
 
