@@ -70,6 +70,8 @@ const GetInventory = async function (location_ids, variant_ids) {
                         // console.log(qty_onhand, 'Get data qty_onhand');
                     }
                 }
+                else
+                    await timer(2000);
             }
         }
     }
@@ -80,10 +82,13 @@ const GetInventory = async function (location_ids, variant_ids) {
     return qty_onhand ? qty_onhand : 0;
 } 
 
+const timer = function (time) {
+    return new Promise(res => setTimeout(res, time));
+}
+
 const GetFulfillments = async function (order_id) {
     let status = 0;
     let data = [];
-    
 
     try{
         while(status != 200){
@@ -97,6 +102,8 @@ const GetFulfillments = async function (order_id) {
                     console.log(data.length, 'Create fulfillments count');
                 }
             }
+            else
+                await timer(2000);
         }
     }
     catch(exception){
@@ -141,6 +148,8 @@ const CreateOrder = async function(){
             {
                 countPages = parseInt(parseInt((await countResponse.json()).count) / 50) + 1;
             }
+            else
+                await timer(2000);
         }
 
         console.log(countPages, "Total orders pages");
@@ -178,6 +187,8 @@ const CreateOrder = async function(){
                     status = response.status;
                     if(status == 200)
                         data = await response.json();
+                    else
+                        await timer(2000);
                 }
         
                 let checkOrders = await OrderService.searchAll({
@@ -208,6 +219,9 @@ const CreateOrder = async function(){
                         let lineItemResults = await LineItemService.insertMany(order.line_items);
 
                         order.fulfillments = await GetFulfillments(order.id);
+                        if(!order.fulfillments || order.fulfillments.length == 0){
+                            console.log(order.order_number,"order.order_number 1");
+                        }
                         order.fulfillments.forEach (async fulfillment => {
                             let result = lineItemResults.filter(async obj => {
                                 return fulfillment.line_items.map(x => x.id).includes(obj.id);
@@ -252,6 +266,8 @@ const UpdateOrder = async function(){
                 status = response.status;
                 if(status == 200)
                     data = await response.json();
+                else
+                    await timer(2000);
             }
             
             let checkOrders = await OrderService.searchAll({
