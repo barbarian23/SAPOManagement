@@ -1,4 +1,4 @@
-import { OrderService, LineItemService, FulfillmentService } from "../../service";
+import { OrderService, LineItemService, FulfillmentService, ExceptionService } from "../../service";
 import fetch from 'node-fetch';
 import { json } from "express";
 const schedule = require('node-schedule');
@@ -52,24 +52,29 @@ const Order = function () {
 const GetInventory = async function (location_ids, variant_ids) {
     let qty_onhand = null;
 
-    if(location_ids && variant_ids){
-        let params = { location_ids, variant_ids };
-        urlGetInventory.search = new URLSearchParams(params).toString();
-    
-        let status = 0;
-        let data = {};
-        while(status != 200){
-            let response = await fetch(urlGetInventory, { method: 'GET', headers: headers });
-            status = response.status;
-            if(status == 200)
-            {
-                data = await response.json();
-                if(data.inventory_locations && data.inventory_locations.length > 0){
-                    qty_onhand = data.inventory_locations.map(item => item.qty_onhand).reduce((prev, next) => prev + next);
-                    // console.log(qty_onhand, 'Get data qty_onhand');
+    try{
+        if(location_ids && variant_ids){
+            let params = { location_ids, variant_ids };
+            urlGetInventory.search = new URLSearchParams(params).toString();
+        
+            let status = 0;
+            let data = {};
+            while(status != 200){
+                let response = await fetch(urlGetInventory, { method: 'GET', headers: headers });
+                status = response.status;
+                if(status == 200)
+                {
+                    data = await response.json();
+                    if(data.inventory_locations && data.inventory_locations.length > 0){
+                        qty_onhand = data.inventory_locations.map(item => item.qty_onhand).reduce((prev, next) => prev + next);
+                        // console.log(qty_onhand, 'Get data qty_onhand');
+                    }
                 }
             }
         }
+    }
+    catch(exception){
+        await ExceptionService.insert({created_at: new Date(), content: exception.message})
     }
 
     return qty_onhand ? qty_onhand : 0;
@@ -78,17 +83,24 @@ const GetInventory = async function (location_ids, variant_ids) {
 const GetFulfillments = async function (order_id) {
     let status = 0;
     let data = [];
-    while(status != 200){
-        let response = await fetch(urlGetFulfillments(order_id), { method: 'GET', headers: headers });
-        status = response.status;
-        if(status == 200)
-        {
-            let dataText = await response.text();
-            if(dataText){
-                data = JSON.parse(dataText).fulfillments;
-                console.log(data.length, 'Create fulfillments count');
+    
+
+    try{
+        while(status != 200){
+            let response = await fetch(urlGetFulfillments(order_id), { method: 'GET', headers: headers });
+            status = response.status;
+            if(status == 200)
+            {
+                let dataText = await response.text();
+                if(dataText){
+                    data = JSON.parse(dataText).fulfillments;
+                    console.log(data.length, 'Create fulfillments count');
+                }
             }
         }
+    }
+    catch(exception){
+        await ExceptionService.insert({created_at: new Date(), content: exception.message})
     }
 
     return data;
@@ -111,111 +123,118 @@ const GetUpdatedLast = async function(){
 }
 
 const CreateOrder = async function(){
-    let createdLast = await GetCreatedLast();
-    console.log(createdLast,"createdLast_check");
-    console.log(moment(createdLast).format('YYYY-MM-DD[T]HH:mm:ss'),"createdLast_toLocaleString");
+    try{
+        let createdLast = await GetCreatedLast();
+        console.log(createdLast,"createdLast_check");
+        console.log(moment(createdLast).format('YYYY-MM-DD[T]HH:mm:ss'),"createdLast_toLocaleString");
 
-    let params = { created_at_min: createdLast ? moment(createdLast).format('YYYY-MM-DD[T]HH:mm:ss') : null };
-    
-    urlCountOrder.search = new URLSearchParams(params).toString();
-    let countPages = 0;
+        let params = { created_at_min: createdLast ? moment(createdLast).format('YYYY-MM-DD[T]HH:mm:ss') : null };
+        
+        urlCountOrder.search = new URLSearchParams(params).toString();
+        let countPages = 0;
 
-    let status = 0;
-    while(status != 200){
-        let countResponse = await fetch(urlCountOrder, { method: 'GET', headers: headers });
-        status = countResponse.status;
-        if(status == 200)
-        {
-            countPages = parseInt(parseInt((await countResponse.json()).count) / 50) + 1;
-        }
-    }
-
-    console.log(countPages, "Total orders pages");
-
-    const LIMIT = countPages;
-    const asyncIterable = {
-        [Symbol.asyncIterator]() {
-            let i = LIMIT;
-            return {
-            next() {
-                const done = i === 0;
-                const value = done ? undefined : i--;
-                return Promise.resolve({ value, done });
-            },
-            return() {
-                // This will be reached if the consumer called 'break' or 'return' early in the loop.
-                return { done: true };
+        let status = 0;
+        while(status != 200){
+            let countResponse = await fetch(urlCountOrder, { method: 'GET', headers: headers });
+            status = countResponse.status;
+            if(status == 200)
+            {
+                countPages = parseInt(parseInt((await countResponse.json()).count) / 50) + 1;
             }
-            };
         }
-    };
 
-    for await (const index of asyncIterable) {
-        try {
-            console.log("------------------------");
-            console.log(index, "Start page index");
-            params.page = index;
-            params.limit = 50;
-            urlGetOrder.search = new URLSearchParams(params).toString();
+        console.log(countPages, "Total orders pages");
 
-            let status = 0;
-            let data = {};
-            while(status != 200){
-                let response = await fetch(urlGetOrder, { method: 'GET', headers: headers });
-                status = response.status;
-                if(status == 200)
-                    data = await response.json();
-            }
-    
-            let checkOrders = await OrderService.searchAll({
-                id: {
-                    $in: data.orders.map(x => x.id),
+        const LIMIT = countPages;
+        const asyncIterable = {
+            [Symbol.asyncIterator]() {
+                let i = LIMIT;
+                return {
+                next() {
+                    const done = i === 0;
+                    const value = done ? undefined : i--;
+                    return Promise.resolve({ value, done });
+                },
+                return() {
+                    // This will be reached if the consumer called 'break' or 'return' early in the loop.
+                    return { done: true };
                 }
-            });
-
-            console.log(data.orders.length,"Create orders count befor of index " + index);
-
-            data.orders = data.orders.filter(obj => {
-                let checkOrder = checkOrders.find(x => x.id == obj.id);
-                
-                console.log(obj.created_at, "obj.created_at");
-                console.log(moment(obj.created_at).utcOffset(420), "moment(obj.created_at).utcOffset(420)");
-                console.log(moment(obj.created_at).utcOffset(420).isSameOrAfter(createdLast), "res");
-
-                return moment(obj.created_at).utcOffset(420).isSameOrAfter(createdLast) && !checkOrder;
-            });
-    
-            console.log(data.orders.length, "Create orders count of index " + index);
-            if(data.orders && data.orders.length > 0){
-                data.orders.forEach(async order => {
-                    order.line_items.forEach(async line_item => {
-                        line_item.order_id = order.id;
-                        line_item.qty_onhand = await GetInventory(location.id, line_item.variant_id);
-                    });
-                    let lineItemResults = await LineItemService.insertMany(order.line_items);
-
-                    order.fulfillments = await GetFulfillments(order.id);
-                    order.fulfillments.forEach (async fulfillment => {
-                        let result = lineItemResults.filter(async obj => {
-                            return fulfillment.line_items.map(x => x.id).includes(obj.id);
-                        });
-                        fulfillment.line_items = result.map(x => x._id);
-                    });
-                    let fulfillmentResults = await FulfillmentService.insertMany(order.fulfillments);
-    
-                    order.line_items = lineItemResults.map(x => x._id);
-                    order.fulfillments = fulfillmentResults.map(x => x._id);
-                    let orderResult = await OrderService.insert(order);
-                });
+                };
             }
-            console.log(index, "End page index");
+        };
+
+        for await (const index of asyncIterable) {
+            try {
+                console.log("------------------------");
+                console.log(index, "Start page index");
+                params.page = index;
+                params.limit = 50;
+                urlGetOrder.search = new URLSearchParams(params).toString();
+
+                let status = 0;
+                let data = {};
+                while(status != 200){
+                    let response = await fetch(urlGetOrder, { method: 'GET', headers: headers });
+                    status = response.status;
+                    if(status == 200)
+                        data = await response.json();
+                }
+        
+                let checkOrders = await OrderService.searchAll({
+                    id: {
+                        $in: data.orders.map(x => x.id),
+                    }
+                });
+
+                console.log(data.orders.length,"Create orders count befor of index " + index);
+
+                data.orders = data.orders.filter(obj => {
+                    let checkOrder = checkOrders.find(x => x.id == obj.id);
+                    
+                    console.log(obj.created_at, "obj.created_at");
+                    console.log(moment(obj.created_at).utcOffset(420), "moment(obj.created_at).utcOffset(420)");
+                    console.log(moment(obj.created_at).utcOffset(420).isSameOrAfter(createdLast), "res");
+
+                    return moment(obj.created_at).utcOffset(420).isSameOrAfter(createdLast) && !checkOrder;
+                });
+        
+                console.log(data.orders.length, "Create orders count of index " + index);
+                if(data.orders && data.orders.length > 0){
+                    data.orders.forEach(async order => {
+                        order.line_items.forEach(async line_item => {
+                            line_item.order_id = order.id;
+                            line_item.qty_onhand = await GetInventory(location.id, line_item.variant_id);
+                        });
+                        let lineItemResults = await LineItemService.insertMany(order.line_items);
+
+                        order.fulfillments = await GetFulfillments(order.id);
+                        order.fulfillments.forEach (async fulfillment => {
+                            let result = lineItemResults.filter(async obj => {
+                                return fulfillment.line_items.map(x => x.id).includes(obj.id);
+                            });
+                            fulfillment.line_items = result.map(x => x._id);
+                        });
+                        let fulfillmentResults = await FulfillmentService.insertMany(order.fulfillments);
+        
+                        order.line_items = lineItemResults.map(x => x._id);
+                        order.fulfillments = fulfillmentResults.map(x => x._id);
+                        let orderResult = await OrderService.insert(order);
+                    });
+                }
+                console.log(index, "End page index");
+            }
+            catch(exe) {
+                console.log(index,"Error page index");
+                console.log(exe,"Error show");
+                await ExceptionService.insert({created_at: new Date(), content: exe.message})
+            }
+            console.log("------------------------");
         }
-        catch(exe) {
-            console.log(index,"Error page index");
-            console.log(exe,"Error show");
-        }
-        console.log("------------------------");
     }
+    catch(exception){
+        await ExceptionService.insert({created_at: new Date(), content: exception.message})
+    }
+    
 }
 
 const UpdateOrder = async function(){
@@ -295,6 +314,7 @@ const UpdateOrder = async function(){
     }
     catch(exe) {
         console.log(exe,"Error show");
+        await ExceptionService.insert({created_at: new Date(), content: exe.message})
     }
 }
 

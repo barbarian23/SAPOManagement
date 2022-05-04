@@ -77,5 +77,4 @@ const FulfillmentSchema = mongoose.Schema({
 });
 
 const Fulfillment = mongoose.model('Fulfillment', FulfillmentSchema);
-
 export default Fulfillment;
