@@ -5,6 +5,7 @@ import OrderService from "./order/order.service";
 import MachineService from "./machine/machine.service";
 import LineItemService from "./lineItem/lineItem.service";
 import FulfillmentService from "./fulfillment/fulfillment.service";
+import ExceptionService from "./exception/exception.service";
 
 export {
     Render,
@@ -12,5 +13,6 @@ export {
     OrderService,
     MachineService,
     LineItemService,
-    FulfillmentService
+    FulfillmentService,
+    ExceptionService
 }
