@@ -6,9 +6,8 @@ const moment = require('moment');
 
 const headers = {
     Authorization: 'Bearer D9CBEEF3950683AB7BF852A3BED03E35AD68C117825CEBA2F54CCF8F60786212',
-    accept: "application/json, text/plain, */*",
-    "accept-language": "en-US,en;q=0.9,es;q=0.8",
-    "content-type": "application/json;charset=UTF-8",
+    Accept: "application/json, text/plain, */*",
+    "Content-Type": "application/json",
 };
 const urlCountOrder = new URL('https://apis.haravan.com/com/orders/count.json');
 const urlGetOrder = new URL('https://apis.haravan.com/com/orders.json');
@@ -119,8 +118,17 @@ const CreateOrder = async function(){
     let params = { created_at_min: createdLast ? moment(createdLast).format('YYYY-MM-DD[T]HH:mm:ss') : null };
     
     urlCountOrder.search = new URLSearchParams(params).toString();
-    let countResponse = await fetch(urlCountOrder, { method: 'GET', headers: headers });
-    let countPages = parseInt(parseInt((await countResponse.json()).count) / 50) + 1;
+    let countPages = 0;
+
+    let status = 0;
+    while(status != 200){
+        let countResponse = await fetch(urlCountOrder, { method: 'GET', headers: headers });
+        status = countResponse.status;
+        if(status == 200)
+        {
+            countPages = parseInt(parseInt((await countResponse.json()).count) / 50) + 1;
+        }
+    }
 
     console.log(countPages, "Total orders pages");
 
