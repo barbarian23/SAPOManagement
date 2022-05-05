@@ -211,7 +211,7 @@ const CreateOrder = async function(){
         
                 console.log(data.orders.length, "Create orders count of index " + index);
                 if(data.orders && data.orders.length > 0){
-                    data.orders.forEach(async order => {
+                    for await (const order of data.orders) {
                         order.line_items.forEach(async line_item => {
                             line_item.order_id = order.id;
                             line_item.qty_onhand = await GetInventory(location.id, line_item.variant_id);
@@ -233,7 +233,7 @@ const CreateOrder = async function(){
                         order.line_items = lineItemResults.map(x => x._id);
                         order.fulfillments = fulfillmentResults.map(x => x._id);
                         let orderResult = await OrderService.insert(order);
-                    });
+                    };
                 }
                 console.log(index, "End page index");
             }
@@ -283,7 +283,7 @@ const UpdateOrder = async function(){
     
             console.log(data.orders.length, "Update orders count");
             if(data.orders && data.orders.length > 0){
-                data.orders.forEach(async order => {
+                for await (const order of data.orders) {
                     let lineItemResults = [];
                     if(order.line_items && order.line_items.length > 0){
                         let lineItemDeletes = await LineItemService.deleteMany({
@@ -324,7 +324,7 @@ const UpdateOrder = async function(){
                     }
     
                     let orderResult = await OrderService.updateByField({id: order.id}, order);
-                });
+                };
             }
         }
     }
