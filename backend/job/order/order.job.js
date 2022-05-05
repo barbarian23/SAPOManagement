@@ -12,7 +12,7 @@ const headers = {
 const urlCountOrder = new URL('https://apis.haravan.com/com/orders/count.json');
 const urlGetOrder = new URL('https://apis.haravan.com/com/orders.json');
 const urlGetInventory = new URL('https://apis.haravan.com/com/inventory_locations.json');
-const urlGetFulfillments = function(order_id){
+const urlGetFulfillments = async function(order_id){
     return new URL(`https://apis.haravan.com/com/orders/${order_id}/fulfillments.json`);
 };
 const dateAtMin = moment('2022-04-23T00:24:00').utcOffset(420);
@@ -92,18 +92,18 @@ const GetFulfillments = async function (order_id) {
 
     try{
         while(status != 200){
-            let response = await fetch(urlGetFulfillments(order_id), { method: 'GET', headers: headers });
+            let response = await fetch(await urlGetFulfillments(order_id), { method: 'GET', headers: headers });
             status = response.status;
             if(status == 200)
             {
                 let dataText = await response.text();
                 if(dataText){
                     data = JSON.parse(dataText).fulfillments;
-                    console.log(data.length, 'Create fulfillments count');
+                    // console.log(data.length, 'Create fulfillments count');
                 }
+                else status = 0;
             }
-            else
-                await timer(2000);
+            else await timer(2000);
         }
     }
     catch(exception){
@@ -211,7 +211,7 @@ const CreateOrder = async function(){
         
                 console.log(data.orders.length, "Create orders count of index " + index);
                 if(data.orders && data.orders.length > 0){
-                    for await (const order of data.orders) {
+                    data.orders.forEach(async order => {
                         order.line_items.forEach(async line_item => {
                             line_item.order_id = order.id;
                             line_item.qty_onhand = await GetInventory(location.id, line_item.variant_id);
@@ -219,9 +219,7 @@ const CreateOrder = async function(){
                         let lineItemResults = await LineItemService.insertMany(order.line_items);
 
                         order.fulfillments = await GetFulfillments(order.id);
-                        if(!order.fulfillments || order.fulfillments.length == 0){
-                            console.log(order.order_number,"order.order_number 1");
-                        }
+                        
                         order.fulfillments.forEach (async fulfillment => {
                             let result = lineItemResults.filter(async obj => {
                                 return fulfillment.line_items.map(x => x.id).includes(obj.id);
@@ -233,7 +231,7 @@ const CreateOrder = async function(){
                         order.line_items = lineItemResults.map(x => x._id);
                         order.fulfillments = fulfillmentResults.map(x => x._id);
                         let orderResult = await OrderService.insert(order);
-                    };
+                    });
                 }
                 console.log(index, "End page index");
             }
@@ -283,7 +281,7 @@ const UpdateOrder = async function(){
     
             console.log(data.orders.length, "Update orders count");
             if(data.orders && data.orders.length > 0){
-                for await (const order of data.orders) {
+                data.orders.forEach(async order => {
                     let lineItemResults = [];
                     if(order.line_items && order.line_items.length > 0){
                         let lineItemDeletes = await LineItemService.deleteMany({
@@ -324,7 +322,7 @@ const UpdateOrder = async function(){
                     }
     
                     let orderResult = await OrderService.updateByField({id: order.id}, order);
-                };
+                });
             }
         }
     }
