@@ -39,6 +39,7 @@ table {
   }
 
   .sku-cell{
+    max-width: 500px;
     cursor: pointer;
     text-decoration: underline;
     :hover{

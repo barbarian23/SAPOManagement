@@ -92,21 +92,21 @@ export default function ProductPopUp({ open, onClose }) {
   }
 
   const isValidData = (lineItems) => {
-    for(let i=0; i< lineItems.length; i++){
-      if(lineItems[i].status == 'DONE'){
-        if(lineItems[i].machine_id == null || lineItems[i].machine_id == '' ){
+    for (let i = 0; i < lineItems.length; i++) {
+      if (lineItems[i].status == 'DONE') {
+        if (lineItems[i].machine_id == null || lineItems[i].machine_id == '') {
           setIsShowNotice(true);
           return false;
         }
       }
     }
-    return true;    
+    return true;
   }
 
   const onUpdateBtnClick = () => {
     let isValid = isValidData(lineItems);
-    if(isValid) {
-      for(let i=0; i< lineItems.length; i++){
+    if (isValid) {
+      for (let i = 0; i < lineItems.length; i++) {
         if (lineItems[i].isEdited) {
           // console.log(lineItems[i]);
           dispatch({
@@ -119,7 +119,7 @@ export default function ProductPopUp({ open, onClose }) {
           })
         }
       };
-  
+
       dispatch({ type: HIDE_PRODUCT_POPUP });
     }
   }
@@ -140,9 +140,9 @@ export default function ProductPopUp({ open, onClose }) {
       Header: "Mã SKU",
       accessor: "sku",
       Cell: ({ cell }) => {
-        if(cell.value){
+        if (cell.value) {
           return <>{cell.value}</>
-        }else{
+        } else {
           return <>{cell.row.original.name}</>
         }
       }
@@ -208,7 +208,7 @@ export default function ProductPopUp({ open, onClose }) {
       bottom: "auto",
       marginRight: "-50%",
       transform: "translate(-50%, -50%)",
-      width: 800,
+      width: 850,
       height: "auto",
       overflow: "visible",
     }
@@ -243,7 +243,9 @@ export default function ProductPopUp({ open, onClose }) {
           </button>
         </div>
 
-        <Table columns={columns} data={lineItems}></Table>
+        <div className="table-scroll">
+          <Table columns={columns} data={lineItems}></Table>
+        </div>
 
         {isPopupTableLoading
           ? <div className="loading-box">
@@ -256,7 +258,7 @@ export default function ProductPopUp({ open, onClose }) {
           </div> : null}
 
         <div className="right">
-          {isShowNotice ? <span style={{color:'red'}}>{notice}</span> : null}
+          {isShowNotice ? <span style={{ color: 'red' }}>{notice}</span> : null}
           <button className="modal-btn blue" onClick={onUpdateBtnClick}>
             CẬP NHẬT
           </button>
