@@ -73,6 +73,8 @@ export default function OrderPopUp({ open, onClose }) {
   const receiver = (fulfillment.last_name ? fulfillment.last_name : '')
     + (fulfillment.first_name ? (' ' + fulfillment.first_name) : '');
 
+  const address = fulfillment.customer.default_address;
+
   const columns = [
     {
       Header: "Mã SP",
@@ -145,7 +147,10 @@ export default function OrderPopUp({ open, onClose }) {
               </tr>
               <tr>
                 <td>Đ/C:</td>
-                <td colSpan={3}><b>{fulfillment.shipping_address}</b></td>
+                <td colSpan={3}>
+                  <p><b>{address ? address.address1 : ''}</b></p>
+                  <p><b>{address.ward ? `${address.ward},` : ''} {address.district ? `${address.district},` : ''} {address.province   ? address.province : ''}</b></p>
+                </td>
               </tr>
               <tr>
                 <td>Ghi chú:</td>

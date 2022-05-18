@@ -45,6 +45,14 @@ const initialState = {
         real_shipping_fee: 0,
         first_name: "",
         last_name: "",
+        customer: {
+            default_address:{
+                address1: '',
+                ward: '',
+                district: '',
+                province: '',
+            }
+        },
         shipping_address: "",
         shipping_phone: "",
         order_number: "",

@@ -97,6 +97,10 @@ export const Fulfillment = styled.div`
         width: 150px;
         padding-left: 10px;
       }
+
+      p {
+        margin: 0px;
+      }
     }
   }
 

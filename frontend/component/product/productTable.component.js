@@ -132,7 +132,7 @@ export default function ProduceTable({ data }) {
     // { value: "-confirmed_at", label: "Thời gian đặt hàng (Mới nhất)" },
     { value: "created_at", label: "Thời gian đặt hàng (Cũ nhất)" },
     { value: "-created_at", label: "Thời gian đặt hàng (Mới nhất)" },
-    { value: "daterange", label: "Tìm kiếm theo khoảng thời gian" },
+    // { value: "daterange", label: "Tìm kiếm theo khoảng thời gian" },
   ];
 
   const onSelectTimeBook = (e, i, index) => {
@@ -161,16 +161,16 @@ export default function ProduceTable({ data }) {
       accessor: "order_number"
     },
     {
-      // Header: () => {
-      //   return <Dropdown
-      //     controlClassName="dropDownMachine"
-      //     options={timebook}
-      //     onChange={onSelectTimeBook}
-      //     value={timebook.find((i) => i.value == sortBy)}
-      //     placeholder="Select an option"
-      //   />
-      // },
-      Header: "Thời gian đặt hàng",
+      Header: () => {
+        return <Dropdown
+          controlClassName="dropDownMachine"
+          options={timebook}
+          onChange={onSelectTimeBook}
+          value={timebook.find((i) => i.value == sortBy)}
+          placeholder="Select an option"
+        />
+      },
+      // Header: "Thời gian đặt hàng",
       // accessor: "confirmed_at",
       accessor: "created_at",
       Cell: ({ cell }) => {
