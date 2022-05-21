@@ -19,6 +19,7 @@ import {
     STOP_LOADING_POPUP_TABLE_DATA,
     GET_FULFILLMENT_DETAIL_SUCCESS,
     GET_FULFILLMENT_DETAIL_FAIL,
+    SET_IS_PRINTED_SUCCESS,
 } from '../../action/order/order.action';
 
 const initialState = {
@@ -127,7 +128,7 @@ export default function homeReducer(state = initialState, action) {
                 endDate: action.value.endDate,
                 page: 1,
             }
-
+        
         //POPUP
         case SHOW_ORDER_POPUP:
             return {

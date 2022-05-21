@@ -17,7 +17,7 @@ class OrderController extends IController {
                   let _startDate = startDate ? Number(startDate) : 0;
                   let _endDate = endDate ? Number(endDate) : 0;
                   let _status = status ? status : null;
-            
+
                   const total = await this.service.countOrders(_keyword, _startDate, _endDate, _status);
                   const orders = await this.service.searchPagingOrders(_page, _pageSize, _keyword, _sortBy, _startDate, _endDate, _status);
                   responceJson(res, 200, {
@@ -25,7 +25,34 @@ class OrderController extends IController {
                         total: total
                   });
             } catch (e) {
-                  responceJson(res, 400, {error: e});
+                  responceJson(res, 400, { error: e });
+                  next(e);
+            }
+      }
+
+      async setPrinted(req, res, next) {
+            try {
+                  const { isPrinted, orderNumber } = req.query;
+                  let _isPrinted = isPrinted == '1' ? true : false;
+                  let _orderNumber = orderNumber ? orderNumber : '';
+                  if (_orderNumber) {
+                        if (_isPrinted) {
+                              await this.service.setPrintedDone(_orderNumber);
+                              responceJson(res, 200, {
+                                    is_printed: true, 
+                              });
+
+                        } else {
+                              await this.service.setPrintedNot(_orderNumber);
+                              responceJson(res, 200, {
+                                    is_printed: false, 
+                              });
+                        }
+                        
+                  }
+
+            } catch (e) {
+                  responceJson(res, 400, { error: e });
                   next(e);
             }
       }
@@ -40,7 +67,7 @@ class OrderController extends IController {
                   let _startDate = startDate ? Number(startDate) : 0;
                   let _endDate = endDate ? Number(endDate) : 0;
                   let _status = status ? status : null;
-     
+
                   const total = await this.service.countLineItems(_keyword, _startDate, _endDate, _status);
                   const lineItems = await this.service.searchPagingLineItems(_page, _pageSize, _keyword, _sortBy, _startDate, _endDate, _status);
                   responceJson(res, 200, {
@@ -48,7 +75,7 @@ class OrderController extends IController {
                         total: total
                   });
             } catch (e) {
-                  responceJson(res, 400, {error: e});
+                  responceJson(res, 400, { error: e });
                   next(e);
             }
       }
@@ -62,7 +89,7 @@ class OrderController extends IController {
                   responceJson(res, 200, lineItems);
             } catch (e) {
                   console.log(e);
-                  responceJson(res, 400, {error: e});
+                  responceJson(res, 400, { error: e });
                   next(e);
             }
       }
@@ -76,7 +103,7 @@ class OrderController extends IController {
                   responceJson(res, 200, lineItems);
             } catch (e) {
                   console.log(e);
-                  responceJson(res, 400, {error: e});
+                  responceJson(res, 400, { error: e });
                   next(e);
             }
       }

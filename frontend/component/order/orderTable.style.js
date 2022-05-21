@@ -103,11 +103,17 @@ table {
 }
 
 .btn {
+  height: 25px;
   border: none;
   padding: 5px;
   border-radius: 5px;
   font-weight: 700;
   cursor: pointer;
+}
+
+.print-switch{
+  // padding-top: 10px;
+  margin-left: 10px;
 }
 
 .pagging-box {

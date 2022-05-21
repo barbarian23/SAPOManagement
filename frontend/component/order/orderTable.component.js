@@ -12,14 +12,16 @@ import {
   DATE_RANGE_CHANGE,
   SELECT_FULFILLMENT,
   GET_FULFILLMENT_DETAIL,
+  SET_IS_PRINTED,
 } from "../../action/order/order.action";
 import { useTable } from "react-table";
-import { TableBox } from './orderTable.style';
 import Dropdown from "react-dropdown";
+import ReactLoading from 'react-loading';
+import Switch from "react-switch";
+import { TableBox } from './orderTable.style';
+import { date2dtstr } from "../../service/util/utils.client";
 import "../../assets/css/react-dropdown-style.css";
 import "../../assets/css/dropdown-styles.css";
-import ReactLoading from 'react-loading';
-import { date2dtstr } from "../../service/util/utils.client";
 
 function Table({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
@@ -71,7 +73,8 @@ export default function OrderTable({ data }) {
   const _status = [
     { value: '', label: "Trạng thái" },
     { value: 'NOT', label: "Trạng thái (Chưa xử lý)" },
-    { value: 'DONE', label: "Trạng thái (Đã xử lý)" }
+    { value: 'DONE', label: "Trạng thái (Đã xử lý)" },
+    { value: 'PRINTED', label: "Trạng thái (Đã in hóa đơn)" }
   ];
 
   const onStatusSelected = (e) => {
@@ -82,7 +85,7 @@ export default function OrderTable({ data }) {
     // { value: "", label: "Thời gian đặt hàng" },
     { value: "created_at", label: "Thời gian đặt hàng (Cũ nhất)" },
     { value: "-created_at", label: "Thời gian đặt hàng (Mới nhất)" },
-    { value: "daterange", label: "Tìm kiếm theo khoảng thời gian" },
+    // { value: "daterange", label: "Tìm kiếm theo khoảng thời gian" },
   ];
 
   const onSelectTimeBook = (e, i, index) => {
@@ -118,6 +121,17 @@ export default function OrderTable({ data }) {
     if (e.key === 'Enter') {
       dispatch({ type: SEARCH_BUTTON_CLICK });
     }
+  }
+
+  const onPrintSwitchClicked = (order) => {
+    dispatch({
+      type: SET_IS_PRINTED,
+      value: {
+        isPrinted: !order.is_printed,
+        orderNumber: order.order_number,
+      }
+    });
+
   }
 
   // const onDecreasePageClicked = () => {
@@ -193,12 +207,27 @@ export default function OrderTable({ data }) {
         let order = cell.row.original;
         if (order.status == "DONE") {
           if (order.fulfillment_status == "success") {
-            return <button
-              className="btn blue"
-              onClick={() => onPrintBtnClicked(order)}
-            >
-              In hóa đơn
-            </button>
+            return <div style={{ display: 'inline-flex' }}>
+              {order.is_printed
+                ? <button
+                  className="btn blue"
+                  onClick={() => onPrintBtnClicked(order)}
+                >
+                  In hóa đơn
+                </button>
+                : null}
+
+              <span
+                title={order.is_printed ? "Đã in hóa đơn" : "Chưa in hóa đơn"}
+              >
+                <Switch
+                  onChange={() => onPrintSwitchClicked(order)}
+                  checked={order.is_printed}
+                  height={25}
+                  className="print-switch"
+                />
+              </span>
+            </div>
           } else {
             return <button
               className="btn blue"

@@ -22,6 +22,11 @@ export function searchLineItems(page = 1, pageSize = 10, keyword = '', sortBy = 
         + `&status=${status}`);
 }
 
+export function setPrinted(isPrinted, orderNumber){
+    return axiosSerivce.get(`api/order/setPrinted`
+        + `?isPrinted=${isPrinted ? 1 : 0}`
+        + `&orderNumber=${encodeURIComponent(orderNumber)}`);
+}
 
 export function getLineItemsBySKU(sku='', keyword='') {
     return axiosSerivce.get(`api/order/getLineItemsBySKU`

@@ -47,7 +47,8 @@ class OrderService extends IService {
             status: 1,
             fulfillment: 1,
             fulfillment_status: "$fulfillment.status",
-            fulfillment_id: "$fulfillment.id"
+            fulfillment_id: "$fulfillment.id",
+            is_printed: { $ifNull: ["$is_printed", false] },
           }
         },
         // {
@@ -536,6 +537,40 @@ class OrderService extends IService {
       }
       // no order
       return null;
+    } catch (errors) {
+      console.log(errors);
+      throw errors;
+    }
+  }
+
+  async setPrintedDone(orderNumber) {
+    try {
+      let order = await this.getByOrderNumber(orderNumber);
+      if (order) {
+        order.is_printed = true;
+        let result = order.save();
+        return result;
+      } else {
+        // no order
+        return null;
+      }
+    } catch (errors) {
+      console.log(errors);
+      throw errors;
+    }
+  }
+
+  async setPrintedNot(orderNumber) {
+    try {
+      let order = await this.getByOrderNumber(orderNumber);
+      if (order) {
+        order.is_printed = false;
+        let result = order.save();
+        return result;
+      } else {
+        // no order
+        return null;
+      }
     } catch (errors) {
       console.log(errors);
       throw errors;

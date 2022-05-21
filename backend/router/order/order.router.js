@@ -7,6 +7,7 @@ const router = express.Router()
 applyMiddleware(router, "get", "/getAll", (...agrs) => OrderController.getAll(...agrs));
 applyMiddleware(router, "get", "/getByID", (...agrs) => OrderController.getByID(...agrs));
 applyMiddleware(router, "get", "/search", (...agrs) => OrderController.search(...agrs));
+applyMiddleware(router, "get", "/setPrinted", (...agrs) => OrderController.setPrinted(...agrs));
 applyMiddleware(router, "get", "/searchLineItems", (...agrs) => OrderController.searchLineItems(...agrs));
 applyMiddleware(router, "get", "/getLineItemsBySKU", (...agrs) => OrderController.getLineItemsBySKU(...agrs));
 applyMiddleware(router, "get", "/getLineItemsByID", (...agrs) => OrderController.getLineItemsByID(...agrs));

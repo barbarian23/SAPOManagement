@@ -21,6 +21,7 @@ const OrderSchema = mongoose.Schema({
     gateway:                 String,
     gateway_code:            String,
     id:                      Number,
+    is_printed:              Boolean,
     landing_site:            String,
     landing_site_ref:        String,
     source:                  String,
