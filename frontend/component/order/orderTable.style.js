@@ -98,7 +98,7 @@ table {
   border-radius: 5px;
   font-weight: 700;
   color: #ffffff;
-  width: 80px;
+  min-width: 80px;
   display: inline-table;
 }
 

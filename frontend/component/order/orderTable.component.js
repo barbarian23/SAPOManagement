@@ -189,6 +189,9 @@ export default function OrderTable({ data }) {
       Cell: ({ cell }) => {
         let order = cell.row.original;
         if (order.status == "DONE") {
+          if(order.is_printed) {
+            return <p className="status-bag green">Đã in hóa đơn</p>
+          }
           return <p className="status-bag green">Đã xử lý</p>
 
           // if (order.fulfillment_status == "success") {
@@ -208,7 +211,7 @@ export default function OrderTable({ data }) {
         if (order.status == "DONE") {
           if (order.fulfillment_status == "success") {
             return <div style={{ display: 'inline-flex' }}>
-              {order.is_printed
+              {!order.is_printed
                 ? <button
                   className="btn blue"
                   onClick={() => onPrintBtnClicked(order)}
