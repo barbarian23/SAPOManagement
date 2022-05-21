@@ -69,7 +69,6 @@ const FulfillmentSchema = mongoose.Schema({
     is_open_box:                  Boolean,
     request_id:                   String,
     carrier_options:              String,
-    note_attributes:              String,
     first_name:                   String,
     last_name:                    String,
     shipping_address:             String,
@@ -78,5 +77,4 @@ const FulfillmentSchema = mongoose.Schema({
 });
 
 const Fulfillment = mongoose.model('Fulfillment', FulfillmentSchema);
-
 export default Fulfillment;

@@ -9,7 +9,7 @@ import Barcode from "react-barcode";
 import QRCode from "react-qr-code";
 import { useReactToPrint } from 'react-to-print';
 import { Box, Fulfillment } from './orderPopup.style';
-import { int2money } from '../../service/util/utils.client';
+// import { int2money } from '../../service/util/utils.client';
 
 
 function Table({ columns, data }) {
@@ -113,17 +113,17 @@ export default function OrderPopUp({ open, onClose }) {
         <Fulfillment ref={componentRef}>
           <div style={{ display: 'flex' }}>
             <div className="address">
-              <p>Đ/C: Hà Nội</p>
+              <p>Kênh bán hàng <b>{fulfillment.source_name}</b></p>
             </div>
             <div className="fulfillment-barcode">
               {fulfillment.tracking_number
                 ? <>
-                  {/* <p>{fulfillment.source_name}</p> */}
                   <Barcode
                     value={fulfillment.tracking_number}
                     height={75}
                     fontSize={14}
                   />
+                  <p className="tracking-company">{fulfillment.tracking_company}</p>
                 </>
                 : null}
             </div>
@@ -138,8 +138,8 @@ export default function OrderPopUp({ open, onClose }) {
                 <td>Người nhận:</td>
                 <td><b>{receiver}</b></td>
 
-                <td>Thu hộ:</td>
-                <td><b>{int2money(fulfillment.real_shipping_fee)} VNĐ</b></td>
+                {/* <td>Thu hộ:</td>
+                <td><b>{int2money(fulfillment.real_shipping_fee)} VNĐ</b></td> */}
               </tr>
               <tr>
                 <td>Số điện thoại:</td>

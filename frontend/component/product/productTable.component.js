@@ -36,7 +36,12 @@ function Table({ columns, data }) {
 
   let dispatch = useDispatch();
   const onCellClicked = (cell) => {
-    dispatch({ type: LINE_ITEM_SELECT, value: cell.row.original.sku ? cell.row.original.sku : cell.row.original.id  });
+    dispatch({
+      type: LINE_ITEM_SELECT, value: {
+        selectedSKU: cell.row.original.sku,
+        selectedLineItemID: cell.row.original.id
+      }
+    });
     dispatch({ type: GET_MACHINES });
     dispatch({ type: SHOW_PRODUCT_POPUP });
   };
@@ -119,7 +124,7 @@ export default function ProduceTable({ data }) {
   const _status = [
     { value: '', label: "Trạng thái" },
     { value: 'NOT', label: "Trạng thái (Chưa xử lý)" },
-    { value: 'DONE', label: "Trạng thái (Đã xử lý)" }
+    // { value: 'DONE', label: "Trạng thái (Đã xử lý)" }
   ];
 
   const onStatusSelected = (e) => {
@@ -182,12 +187,9 @@ export default function ProduceTable({ data }) {
       accessor: "deadline",
       Cell: ({ cell }) => {
         if (cell.row.original.status == "NOT") {
-          // let confirmedAt = new Date(cell.row.original.confirmed_at);
           let createdAt = new Date(cell.row.original.created_at);
-          // confirmedAt.setDate(confirmedAt.getDate() + 2);
           createdAt.setDate(createdAt.getDate() + 2);
           let now = Date.now();
-          // let diff = now - confirmedAt.getTime();
           let diff = now - createdAt.getTime();
           if (diff > 0) {
             return <p style={{ fontWeight: 700, color: "#f64343" }}>Quá hạn {ts2daystr(Math.abs(diff))}</p>
@@ -211,16 +213,16 @@ export default function ProduceTable({ data }) {
       }
     },
     {
-      // Header: () => {
-      //   return <Dropdown
-      //     controlClassName="dropDownMachine"
-      //     options={_status}
-      //     onChange={onStatusSelected}
-      //     value={_status.find((i) => i.value == status)}
-      //     placeholder="Select an option"
-      //   />
-      // },
-      Header: "Trạng thái",
+      Header: () => {
+        return <Dropdown
+          controlClassName="dropDownMachine"
+          options={_status}
+          onChange={onStatusSelected}
+          value={_status.find((i) => i.value == status)}
+          placeholder="Select an option"
+        />
+      },
+      // Header: "Trạng thái",
       accessor: "status",
       Cell: ({ cell: { value } }) =>
         value == "DONE" ? (

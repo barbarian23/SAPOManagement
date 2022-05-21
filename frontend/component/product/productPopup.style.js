@@ -10,6 +10,11 @@ export const Box = styled.div`
     padding: 10px 0 0 10px;
   }
 
+  .table-scroll {
+    max-height: 520px;
+    overflow-y:auto;  
+  }
+
   table {
     width: 100%;
     background-color: #ffffff;

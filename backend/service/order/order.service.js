@@ -43,6 +43,7 @@ class OrderService extends IService {
             id: { $toString: "$id" },
             confirmed_at: 1,
             created_at: 1,
+            cancelled_at : 1,
             order_number: 1,
             status: 1,
             fulfillment: 1,
@@ -51,14 +52,19 @@ class OrderService extends IService {
             is_printed: { $ifNull: ["$is_printed", false] },
           }
         },
-        // {
-        //   $match: {
-        //     confirmed_at: { $ne: null },
-        //   },
-        // },
+        {
+          $match: {
+            cancelled_at: null 
+          },
+        },
       ];
 
       if (keyword) {
+        //replace [ ] { } ( ) \ ^ $ . | ? * +
+        const replaceArr = ["[", "]", "{", "}", "(", ")", "\\", "^", "$", ".", "|", "?", "*", "+"];
+        for (let i = 0; i < replaceArr.length; i++) {
+          keyword = keyword.replace(replaceArr[i], '\\' + replaceArr[i]);
+        }
         orQueries.push({ order_number: { $regex: `.*${keyword}.*` } });
       }
 
@@ -72,7 +78,7 @@ class OrderService extends IService {
         andQueries.push({ created_at: { $gte: start } });
         andQueries.push({ created_at: { $lte: end } });
       }
-      
+
       if (status) {
         andQueries.push({ status: status });
       }
@@ -115,17 +121,23 @@ class OrderService extends IService {
             id: { $toString: "$order_number" },
             created_at: 1,
             confirmed_at: 1,
+            cancelled_at : 1,
             status: 1,
           }
         },
-        // {
-        //   $match: {
-        //     confirmed_at: { $ne: null },
-        //   },
-        // },
+        {
+          $match: {
+            cancelled_at: null 
+          },
+        },
       ];
 
       if (keyword) {
+        //replace [ ] { } ( ) \ ^ $ . | ? * +
+        const replaceArr = ["[", "]", "{", "}", "(", ")", "\\", "^", "$", ".", "|", "?", "*", "+"];
+        for (let i = 0; i < replaceArr.length; i++) {
+          keyword = keyword.replace(replaceArr[i], '\\' + replaceArr[i]);
+        }
         orQueries.push({ id: { $regex: `.*${keyword}.*` } });
       }
 
@@ -215,21 +227,28 @@ class OrderService extends IService {
             order_number: 1,
             confirmed_at: 1,
             created_at: 1,
+            cancelled_at : 1,
             sku: "$items.sku",
             name: "$items.name",
             title: "$items.title",
             status: "$items.status",
             qty_onhand: "$items.qty_onhand",
+            quantity: "$items.quantity",
           },
         },
-        // {
-        //   $match: {
-        //     confirmed_at: { $ne: null },
-        //   },
-        // },
+        {
+          $match: {
+            cancelled_at: null,
+          },
+        },
       ];
 
       if (keyword) {
+        //replace [ ] { } ( ) \ ^ $ . | ? * +
+        const replaceArr = ["[", "]", "{", "}", "(", ")", "\\", "^", "$", ".", "|", "?", "*", "+"];
+        for (let i = 0; i < replaceArr.length; i++) {
+          keyword = keyword.replace(replaceArr[i], '\\' + replaceArr[i]);
+        }
         orQueries.push({ sku: { $regex: `.*${keyword}.*`, $options: 'i' } });
         orQueries.push({ order_number: { $regex: `.*${keyword}.*`, $options: 'i' } });
         orQueries.push({ title: { $regex: `.*${keyword}.*`, $options: 'i' } });
@@ -239,7 +258,7 @@ class OrderService extends IService {
         pipeline.push({ $match: { $or: orQueries } });
       }
 
-      // console.log(orQueries);
+      console.log(orQueries);
 
       if (startDate > 0 && endDate > 0) {
         let start = new Date(startDate);
@@ -252,7 +271,7 @@ class OrderService extends IService {
         andQueries.push({ status: status });
       }
       // console.log(andQueries);
-      
+
       if (andQueries.length > 0) {
         pipeline.push({ $match: { $and: andQueries } });
       }
@@ -301,22 +320,30 @@ class OrderService extends IService {
             _id: 0,
             id: "$items._id",
             order_number: 1,
-            created_at: 1,
             confirmed_at: 1,
+            created_at: 1,
+            cancelled_at: 1,
             sku: "$items.sku",
             name: "$items.name",
             title: "$items.title",
             status: "$items.status",
+            qty_onhand: "$items.qty_onhand",
+            quantity: "$items.quantity",
           }
         },
-        // {
-        //   $match: {
-        //     confirmed_at: { $ne: null },
-        //   },
-        // },
+        {
+          $match: {
+            cancelled_at: null,
+          },
+        },
       ];
 
       if (keyword) {
+        //replace [ ] { } ( ) \ ^ $ . | ? * +
+        const replaceArr = ["[", "]", "{", "}", "(", ")", "\\", "^", "$", ".", "|", "?", "*", "+"];
+        for (let i = 0; i < replaceArr.length; i++) {
+          keyword = keyword.replace(replaceArr[i], '\\' + replaceArr[i]);
+        }
         orQueries.push({ sku: { $regex: `.*${keyword}.*`, $options: 'i' } });
         orQueries.push({ order_number: { $regex: `.*${keyword}.*`, $options: 'i' } });
         orQueries.push({ title: { $regex: `.*${keyword}.*`, $options: 'i' } });
@@ -349,7 +376,7 @@ class OrderService extends IService {
     }
   }
 
-  async getLineItemsBySKU(sku, keyword) {
+  async getLineItemsBySKU(sku, status = '', keyword = '') {
     try {
       let pipeline = [
         {
@@ -377,6 +404,7 @@ class OrderService extends IService {
             sku: "$items.sku",
             name: "$items.name",
             title: "$items.title",
+            quantity: "$items.quantity",
             machine_id: { $ifNull: ["$items.machine_id", ""] },
             machine_code: { $ifNull: ["$items.code", ""] },
             machine_name: { $ifNull: ["$items.name", ""] },
@@ -395,6 +423,11 @@ class OrderService extends IService {
           }
         });
       }
+
+      if (status) {
+        pipeline.push({ $match: { status: status } })
+      }
+
       const lineItems = await this.aggregate(pipeline);
       return lineItems;
     } catch (errors) {
@@ -403,7 +436,7 @@ class OrderService extends IService {
     }
   }
 
-  async getLineItemsByID(id, keyword) {
+  async getLineItemsByID(id, status = '', keyword = '') {
     try {
       let pipeline = [
         {
@@ -430,6 +463,7 @@ class OrderService extends IService {
             order_number: 1,
             sku: "$items.sku",
             name: "$items.name",
+            quantity: "$items.quantity",
             machine_id: { $ifNull: ["$items.machine_id", ""] },
             machine_code: { $ifNull: ["$items.code", ""] },
             machine_name: { $ifNull: ["$items.name", ""] },
@@ -438,23 +472,10 @@ class OrderService extends IService {
             id: "$items._id",
           }
         },
-        
+        {
+          $match: { id: Types.ObjectId(id) }
+        }
       ];
-
-      if(id.length === 12){
-        pipeline.push({
-          $match: {
-            $or: [
-              { id: Types.ObjectId(id) },
-              { sku: id },
-            ]
-          }
-        })
-      }else{
-        pipeline.push({
-          $match: { sku: id }
-        },)
-      }
 
       if (keyword) {
         pipeline.push({
@@ -463,6 +484,11 @@ class OrderService extends IService {
           }
         });
       }
+
+      if (status) {
+        pipeline.push({ $match: { status: status } })
+      }
+
       const lineItems = await this.aggregate(pipeline);
       return lineItems;
     } catch (errors) {

@@ -1,4 +1,4 @@
-import { takeLatest, take, put, call, select } from 'redux-saga/effects';
+import { takeLatest, put, call, select } from 'redux-saga/effects';
 import { 
     GET_LINE_ITEMS_BY_SKU_FAIL,
     GET_LINE_ITEMS_BY_SKU_SUCCESS,
@@ -21,7 +21,6 @@ import {
     // POPUP_KEYWORD_CHANGE,
     START_LOADING_TABLE_DATA,
     STOP_LOADING_TABLE_DATA,
-    LOADING_TABLE_DATA,
     SEARCH_BUTTON_CLICK,
     START_LOADING_POPUP_TABLE_DATA,
     STOP_LOADING_POPUP_TABLE_DATA,
@@ -74,10 +73,12 @@ function* getListProductsSaga({ value }) {
 
 function* getLineItemsSaga({ value }) {
     const state = yield select((state) => state.product);
-    const { selectedLineItemID, popupKeyword } = state;
+    const { selectedLineItemID, selectedSKU, popupKeyword } = state;
     yield put({type: START_LOADING_POPUP_TABLE_DATA});
     try {
-        const response = yield call(getLineItemsByID, selectedLineItemID, popupKeyword);
+        const response = selectedSKU 
+            ? yield call( getLineItemsBySKU, selectedSKU, '', popupKeyword)
+            : yield call( getLineItemsByID, selectedLineItemID, '', popupKeyword);
         if (response.status === 200) {
             const { code, message, data } =  response.data;
             if (code==200) {

@@ -162,7 +162,8 @@ export default function homeReducer(state = initialState, action) {
         case LINE_ITEM_SELECT:
             return {
                 ...state,
-                selectedLineItemID: action.value
+                selectedLineItemID: action.value.selectedLineItemID,
+                selectedSKU: action.value.selectedSKU,
             }
         case POPUP_KEYWORD_CHANGE:
             return {

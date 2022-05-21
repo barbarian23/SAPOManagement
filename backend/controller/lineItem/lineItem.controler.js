@@ -23,16 +23,18 @@ class LineItemController extends IController {
                 } else {
                     result = await this.service.setStatusNot(_id);
                 }
-                //check order
-                let orders = await OrderService.getLineItemsByID(_id);
-                // console.log(orders)
-                for(var i = 0; i< orders.length; i++){
-                    let status = await OrderService.isAllLineItemsDone(orders[i].order_number);
-                    // console.log(status)
+                //check orders in lineitems
+                console.log(_id);
+                let lineitems = await OrderService.getLineItemsByID(_id);
+                console.log(lineitems)
+                for(var i = 0; i< lineitems.length; i++){
+                    let order_number = lineitems[i].order_number;
+                    let status = await OrderService.isAllLineItemsDone(order_number);
+                    console.log(status)
                     if (status) {
-                        await OrderService.setStatusDone(orders[i].order_number);
+                        await OrderService.setStatusDone(order_number);
                     } else {
-                        await OrderService.setStatusNot(orders[i].order_number);
+                        await OrderService.setStatusNot(order_number);
                     }
                 }
                 responceJson(res, 200, { result: result });
