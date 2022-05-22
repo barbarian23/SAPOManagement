@@ -56,6 +56,7 @@ class FulfillmentService extends IService {
                   // machine: { $ifNull: ["$machine", ""] },
                   // machine: 1,
                   machine_code: "$machine.code",
+                  price: 1,
                 }
               }
             ],
@@ -76,9 +77,11 @@ class FulfillmentService extends IService {
               sku: 1,
               id: 1,
               machine_code: 1,
+              price: 1,
             },
             customer: "$order.customer",
             gateway: "$order.gateway",
+            confirmed_at: "$order.confirmed_at",
             tracking_number: 1,
             status: 1,
             shipping_address: 1,

@@ -170,6 +170,11 @@ export const HaravanBill = styled.div`
     width: 30%;
   }
 
+  .long-barcode{
+    width: 100%;
+    text-align: center;
+  }
+
   .box{
     padding: 0px 5px;
     min-height: 100px;
@@ -194,6 +199,10 @@ export const HaravanBill = styled.div`
       margin: 5px 0px;
     }
   }
+
+  .no-border{
+    border: none;
+  }
   
   .left{
     float: left;
@@ -203,15 +212,25 @@ export const HaravanBill = styled.div`
     float: right;
   }
 
+  .center{
+    text-align: center;
+  }
+
   .bill-table{
     width: 100%;
-    
+    border-collapse: collapse;
+
     th{
 
     }   
 
     tbody > tr {
-      border: 2px solid #EAEAEA;
+      border-top: 2px solid #EAEAEA;
+      font-size: 12px;
     }
+  }
+
+  .total-table{
+    width: 100%;
   }
 `

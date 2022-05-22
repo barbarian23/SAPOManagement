@@ -19,7 +19,7 @@ import Dropdown from "react-dropdown";
 import ReactLoading from 'react-loading';
 import Switch from "react-switch";
 import { TableBox } from './orderTable.style';
-import { date2dtstr } from "../../service/util/utils.client";
+import { date2datetimestr } from "../../service/util/utils.client";
 import "../../assets/css/react-dropdown-style.css";
 import "../../assets/css/dropdown-styles.css";
 
@@ -172,7 +172,7 @@ export default function OrderTable({ data }) {
       },
       accessor: "created_at",
       Cell: ({ cell }) => {
-        return <>{date2dtstr(new Date(cell.value))}</>
+        return <>{date2datetimestr(new Date(cell.value))}</>
       }
     },
     {

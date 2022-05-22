@@ -3,7 +3,7 @@ export const validatePhonenumber = number => {
     return regex.test(String(number));
 }
 
-export const date2dtstr = date => {
+export const date2datetimestr = date => {
     let year = String(date.getFullYear()).padStart(4, '0');
     let month = String(date.getMonth() + 1).padStart(2, '0');
     let _date = String(date.getDate()).padStart(2, '0');
@@ -11,6 +11,13 @@ export const date2dtstr = date => {
     let min = String(date.getMinutes()).padStart(2, '0');
     let sec = String(date.getSeconds()).padStart(2, '0');
     return `${_date}/${month}/${year} ${hour}:${min}:${sec}`
+}
+
+export const date2datestr = date => {
+    let year = String(date.getFullYear()).padStart(4, '0');
+    let month = String(date.getMonth() + 1).padStart(2, '0');
+    let _date = String(date.getDate()).padStart(2, '0');
+    return `${_date}/${month}/${year}`
 }
 
 export const ts2daystr = timestamp => {

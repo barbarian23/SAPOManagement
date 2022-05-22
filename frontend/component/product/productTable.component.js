@@ -19,7 +19,7 @@ import Dropdown from "react-dropdown";
 import "../../assets/css/react-dropdown-style.css";
 import "../../assets/css/dropdown-styles.css";
 import ReactLoading from 'react-loading';
-import { date2dtstr, ts2daystr } from "../../service/util/utils.client";
+import { date2datetimestr, ts2daystr } from "../../service/util/utils.client";
 
 function Table({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
@@ -179,7 +179,7 @@ export default function ProduceTable({ data }) {
       // accessor: "confirmed_at",
       accessor: "created_at",
       Cell: ({ cell }) => {
-        return <>{date2dtstr(new Date(cell.value))}</>
+        return <>{date2datetimestr(new Date(cell.value))}</>
       }
     },
     {

@@ -9,7 +9,7 @@ import Barcode from "react-barcode";
 import QRCode from "react-qr-code";
 import { useReactToPrint } from 'react-to-print';
 import { Box, Fulfillment, HaravanBill } from './orderPopup.style';
-// import { int2money } from '../../service/util/utils.client';
+import { int2money, date2datestr } from '../../service/util/utils.client';
 
 
 function Table({ columns, data }) {
@@ -77,6 +77,11 @@ export default function OrderPopUp({ open, onClose }) {
 
   const address = fulfillment.customer.default_address;
 
+  let total = 0;
+  for (let i = 0; i < fulfillment.lineitems.length; i++) {
+    total += fulfillment.lineitems[i].quantity * fulfillment.lineitems[i].price;
+  }
+
   const columns = [
     {
       Header: "Mã SP",
@@ -122,178 +127,226 @@ export default function OrderPopUp({ open, onClose }) {
       ariaHideApp={false}
     >
       <Box>
-        <Fulfillment ref={componentRef}>
-          <div style={{ display: 'flex' }}>
-            <div className="address">
-              <p>Kênh bán hàng <b>{fulfillment.source_name}</b></p>
+        <div ref={componentRef}>
+          <Fulfillment>
+            <div style={{ display: 'flex' }}>
+              <div className="address">
+                <p>Kênh bán hàng <b>{fulfillment.source_name}</b></p>
+              </div>
+              <div className="fulfillment-barcode">
+                {fulfillment.tracking_number
+                  ? <>
+                    <Barcode
+                      value={fulfillment.tracking_number}
+                      height={75}
+                      fontSize={14}
+                    />
+                    <p className="tracking-company">{fulfillment.tracking_company}</p>
+                  </>
+                  : null}
+              </div>
             </div>
-            <div className="fulfillment-barcode">
-              {fulfillment.tracking_number
-                ? <>
-                  <Barcode
-                    value={fulfillment.tracking_number}
-                    height={75}
-                    fontSize={14}
-                  />
-                  <p className="tracking-company">{fulfillment.tracking_company}</p>
-                </>
-                : null}
-            </div>
-          </div>
 
-          <hr />
+            <hr />
 
-          <h4 className="title">PHIẾU GIAO HÀNG</h4>
-          <table className="fulfillment-info">
-            <tbody>
-              <tr>
-                <td>Người nhận:</td>
-                <td><b>{receiver}</b></td>
+            <h4 className="title">PHIẾU GIAO HÀNG</h4>
+            <table className="fulfillment-info">
+              <tbody>
+                <tr>
+                  <td>Người nhận:</td>
+                  <td><b>{receiver}</b></td>
 
-                {/* <td>Thu hộ:</td>
+                  {/* <td>Thu hộ:</td>
                 <td><b>{int2money(fulfillment.real_shipping_fee)} VNĐ</b></td> */}
-              </tr>
-              <tr>
-                <td>Số điện thoại:</td>
-                <td colSpan={3}><b>{fulfillment.shipping_phone}</b></td>
-              </tr>
-              <tr>
-                <td>Đ/C:</td>
-                <td colSpan={3}>
-                  <p><b>{address ? address.address1 : ''}</b></p>
-                  <p><b>{address.ward ? `${address.ward},` : ''} {address.district ? `${address.district},` : ''} {address.province ? address.province : ''}</b></p>
-                </td>
-              </tr>
-              <tr>
-                <td>Ghi chú:</td>
-                <td colSpan={3}><b>{fulfillment.shipping_notes}</b></td>
-              </tr>
-            </tbody>
-          </table>
+                </tr>
+                <tr>
+                  <td>Số điện thoại:</td>
+                  <td colSpan={3}><b>{fulfillment.shipping_phone}</b></td>
+                </tr>
+                <tr>
+                  <td>Đ/C:</td>
+                  <td colSpan={3}>
+                    <p><b>{address ? address.address1 : ''}</b></p>
+                    <p><b>{address.ward ? `${address.ward},` : ''} {address.district ? `${address.district},` : ''} {address.province ? address.province : ''}</b></p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Ghi chú:</td>
+                  <td colSpan={3}><b>{fulfillment.shipping_notes}</b></td>
+                </tr>
+              </tbody>
+            </table>
 
-          <hr className="dash-line" />
-          <p>Đơn hàng: {fulfillment.order_number} (Tổng SL sản phẩm: {fulfillment.total_quantity})</p>
-          <Table columns={columns} data={fulfillment.lineitems}></Table>
+            <hr className="dash-line" />
+            <p>Đơn hàng: {fulfillment.order_number} (Tổng SL sản phẩm: {fulfillment.total_quantity})</p>
+            <Table columns={columns} data={fulfillment.lineitems}></Table>
 
-          <hr />
-          <div style={{ display: 'flex' }}>
-            <div className="receiver-sign">
-              <p>Chữ ký người nhận</p>
+            <hr />
+            <div style={{ display: 'flex' }}>
+              <div className="receiver-sign">
+                <p>Chữ ký người nhận</p>
+              </div>
+              <div className="sender-sign">
+                <p>Chữ ký người gửi</p>
+              </div>
+              <div className="fulfillment-qrcode">
+                {fulfillment.tracking_number
+                  ? <><QRCode
+                    value={fulfillment.tracking_number}
+                    size={100}
+                  />
+                    <p>{fulfillment.tracking_number}</p>
+                  </>
+                  : null}
+              </div>
             </div>
-            <div className="sender-sign">
-              <p>Chữ ký người gửi</p>
-            </div>
-            <div className="fulfillment-qrcode">
-              {fulfillment.tracking_number
-                ? <><QRCode
-                  value={fulfillment.tracking_number}
-                  size={100}
-                />
-                  <p>{fulfillment.tracking_number}</p>
-                </>
-                : null}
-            </div>
-          </div>
-        </Fulfillment>
+          </Fulfillment>
 
-        <HaravanBill>
-          <div style={{ minHeight: 30 }}>
-            <div className="title"><h3>EPeBen - Đẹp Để Nhớ</h3></div>
-            <div className="order-date">
-              <p>Ngày đặt hàng: </p>
-            </div>
-          </div>
-
-          <div style={{ minHeight: 100 }}>
-            <div className="bill-info">
-              <p><b>Địa chỉ</b>: {address ? address.address1 : ''}</p>
-              <p><b>Điện thoại</b>: {fulfillment.shipping_phone}</p>
-              <p><b>Website</b>: https://epeben.com</p>
-              <p><b>Email</b>: {customer.email}</p>
+          <HaravanBill>
+            <div style={{ minHeight: 30 }}>
+              <div className="title"><h3>EPeBen - Đẹp Để Nhớ</h3></div>
+              <div className="order-date">
+                <p>Ngày đặt hàng: {date2datestr(new Date(fulfillment.confirmed_at))}</p>
+              </div>
             </div>
 
-            <div className="barcode">
-              {fulfillment.tracking_number
-                ? <>
-                  <Barcode
+            <div style={{ minHeight: 100, display: 'inline-block', marginTop: 1 }}>
+              <div className="bill-info">
+                <p><b>Địa chỉ</b>: {address ? address.address1 : ''}</p>
+                <p><b>Điện thoại</b>: {fulfillment.shipping_phone}</p>
+                <p><b>Website</b>: https://epeben.com</p>
+                <p><b>Email</b>: {customer.email}</p>
+              </div>
+
+              <div className="barcode">
+                {fulfillment.tracking_number && fulfillment.tracking_number.length <= 14
+                  ? <Barcode
                     value={fulfillment.tracking_number}
                     height={75}
                     fontSize={14}
                   />
-                </>
+                  : null}
+              </div>
+            </div>
+
+            <div className="long-barcode">
+              {fulfillment.tracking_number && fulfillment.tracking_number.length > 14
+                ? <Barcode
+                  value={fulfillment.tracking_number}
+                  height={75}
+                  fontSize={14}
+                />
                 : null}
             </div>
-          </div>
 
-          <div style={{ display: 'flex', minHeight: 100, marginTop: 15 }}>
-            <div style={{ width: '60%' }}>
-              <div className="box" >
-                <div className="box-header">
-                  <h3>
-                    Chi tiết hóa đơn
-                  </h3>
+            <div style={{ display: 'flex', minHeight: 100, marginTop: 15 }}>
+              <div style={{ width: '60%' }}>
+                <div className="box" >
+                  <div className="box-header">
+                    <h3>
+                      Chi tiết hóa đơn
+                    </h3>
+                  </div>
+                  <div className="box-content no-border">
+                    <table className="bill-table">
+                      <thead>
+                        <tr>
+                          <th className="left"><b>Mã sản phẩm</b></th>
+                          <th className="center"><b>Số lượng</b></th>
+                          <th className="right"><b>Giá</b></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {fulfillment.lineitems.map((item, index) => {
+                          return <tr key={index}>
+                            <td className="left">{item.name}</td>
+                            <td className="center">{item.quantity}</td>
+                            <td className="right">{int2money(item.price)}</td>
+                          </tr>
+                        })}
+
+                      </tbody>
+                    </table>
+                    <p><b>Thông tin thanh toán</b></p>
+                    <table className="total-table">
+                      <tbody>
+                        <tr>
+                          <td>Tổng giá sản phẩm:</td>
+                          <td className="right">
+                            {int2money(total)}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Phí vận chuyển:</td>
+                          <td className="right">
+                            {int2money(fulfillment.real_shipping_fee)}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><b>Tổng tiền:</b></td>
+                          <td className="right">
+                            <b>{int2money(total + fulfillment.real_shipping_fee)}</b>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><b>Số tiền đã trả:</b></td>
+                          <td className="right">
+                            <b>0</b>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><b>Tổng tiền phải trả:</b></td>
+                          <td className="right">
+                            <b>{int2money(total + fulfillment.real_shipping_fee)}</b>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <p><b>Ghi chú</b></p>
+                    <p>{fulfillment.shipping_notes}</p>
+                  </div>
                 </div>
-                <div className="box-content">
-                  <table className="bill-table">
-                    <thead>
-                      <tr>
-                        <th className="left"><b>Mã sản phẩm</b></th>
-                        <th className="left"><b>Số lượng</b></th>
-                        <th className="right"><b>Giá</b></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
+              </div>
 
-                      </tr>
-                    </tbody>
-                  </table>
-                  <p><b>Thông tin thanh toán</b></p>
 
-                  <p><b>Ghi chú</b></p>
-                  <p>{fulfillment.shipping_notes}</p>
+              <div style={{ width: '40%' }}>
+                <div className="box">
+                  <div className="box-header">
+                    <h3>
+                      Thông tin đơn hàng
+                    </h3>
+                  </div>
+                  <div className="box-content">
+                    <p><b>Mã đơn hàng</b></p>
+                    <p>{fulfillment.order_number}</p>
+                    <p><b>Ngày đặt hàng</b></p>
+                    <p>{date2datestr(new Date(fulfillment.confirmed_at))}</p>
+                    <p><b>Phương thức thanh toán</b></p>
+                    <p>{fulfillment.gateway}</p>
+                    <p><b>Hình thức vận chuyển</b></p>
+                    <p></p>
+                  </div>
+                </div>
+
+                <div className="box">
+                  <div className="box-header">
+                    <h3>
+                      Thông tin mua hàng
+                    </h3>
+                  </div>
+                  <div className="box-content">
+                    <p><b>{receiver}</b></p>
+                    <p>{fulfillment.shipping_notes}</p>
+                    <p>Điện thoại: {fulfillment.shipping_phone}</p>
+                  </div>
                 </div>
               </div>
             </div>
 
+            <p>Nếu bạn có thắc mắc, vui lòng liên hệ chúng tôi qua email nk2.kma8c@gmail.com hoặc 0822882869</p>
 
-            <div style={{ width: '40%' }}>
-              <div className="box">
-                <div className="box-header">
-                  <h3>
-                    Thông tin đơn hàng
-                  </h3>
-                </div>
-                <div className="box-content">
-                  <p><b>Mã đơn hàng</b></p>
-                  <p>{fulfillment.order_number}</p>
-                  <p><b>Ngày đặt hàng</b></p>
-                  <p>{fulfillment.order_number}</p>
-                  <p><b>Phương thức thanh toán</b></p>
-                  <p>{fulfillment.gateway}</p>
-                  <p><b>Hình thức vận chuyển</b></p>
-                  <p></p>
-                </div>
-              </div>
-
-              <div className="box">
-                <div className="box-header">
-                  <h3>
-                    Thông tin mua hàng
-                  </h3>
-                </div>
-                <div className="box-content">
-                  <p><b>{receiver}</b></p>
-                  <p>{fulfillment.shipping_notes}</p>
-                  <p>Điện thoại: {fulfillment.shipping_phone}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <p>Nếu bạn có thắc mắc, vui lòng liên hệ chúng tôi qua email nk2.kma8c@gmail.com hoặc 0822882869</p>
-
-        </HaravanBill>
+          </HaravanBill>
+        </div>
 
         <div className="right" style={{ marginTop: 5 }}>
           <button className="modal-btn blue" onClick={onPrintBtnClicked}

@@ -13,7 +13,7 @@ import { useTable } from "react-table";
 import Dropdown from "react-dropdown";
 import ReactLoading from 'react-loading';
 import { Box } from "./productPopup.style";
-import { date2dtstr } from "../../service/util/utils.client";
+import { date2datetimestr } from "../../service/util/utils.client";
 
 function Table({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
@@ -195,7 +195,7 @@ export default function ProductPopUp({ open, onClose }) {
       Header: "TG xử lý",
       accessor: "process_time",
       Cell: ({ cell }) => {
-        return <>{cell.value ? date2dtstr(new Date(cell.value)) : ""}</>
+        return <>{cell.value ? date2datetimestr(new Date(cell.value)) : ""}</>
       }
     }
   ];
