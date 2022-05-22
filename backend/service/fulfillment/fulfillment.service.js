@@ -78,6 +78,7 @@ class FulfillmentService extends IService {
               machine_code: 1,
             },
             customer: "$order.customer",
+            gateway: "$order.gateway",
             tracking_number: 1,
             status: 1,
             shipping_address: 1,

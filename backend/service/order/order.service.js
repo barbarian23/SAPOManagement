@@ -80,7 +80,11 @@ class OrderService extends IService {
       }
 
       if (status) {
-        andQueries.push({ status: status });
+        if(status === 'PRINTED'){
+          andQueries.push({ is_printed: true });
+        }else{
+          andQueries.push({ status: status });
+        }
       }
 
       if (andQueries.length > 0) {

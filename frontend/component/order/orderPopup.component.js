@@ -1,14 +1,14 @@
 import React, { useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  HIDE_ORDER_POPUP,
+  SET_IS_PRINTED,
 } from "../../action/order/order.action";
 import Modal from "react-modal";
 import { useTable } from "react-table";
 import Barcode from "react-barcode";
 import QRCode from "react-qr-code";
 import { useReactToPrint } from 'react-to-print';
-import { Box, Fulfillment } from './orderPopup.style';
+import { Box, Fulfillment, HaravanBill } from './orderPopup.style';
 // import { int2money } from '../../service/util/utils.client';
 
 
@@ -55,7 +55,7 @@ function Table({ columns, data }) {
 export default function OrderPopUp({ open, onClose }) {
   let { fulfillment } = useSelector(state => state.order);
   let dispatch = useDispatch();
-  const componentRef = useRef();
+  const componentRef = useRef(null);
 
   const modalStyle = {
     content: {
@@ -72,6 +72,8 @@ export default function OrderPopUp({ open, onClose }) {
 
   const receiver = (fulfillment.last_name ? fulfillment.last_name : '')
     + (fulfillment.first_name ? (' ' + fulfillment.first_name) : '');
+
+  const customer = fulfillment.customer;
 
   const address = fulfillment.customer.default_address;
 
@@ -99,7 +101,17 @@ export default function OrderPopUp({ open, onClose }) {
 
   const onPrintBtnClicked = useReactToPrint({
     content: () => componentRef.current,
+    onAfterPrint: () => {
+      dispatch({
+        type: SET_IS_PRINTED,
+        value: {
+          isPrinted: true,
+          orderNumber: fulfillment.order_number,
+        }
+      });
+    }
   });
+
 
   return (
     <Modal
@@ -149,7 +161,7 @@ export default function OrderPopUp({ open, onClose }) {
                 <td>Đ/C:</td>
                 <td colSpan={3}>
                   <p><b>{address ? address.address1 : ''}</b></p>
-                  <p><b>{address.ward ? `${address.ward},` : ''} {address.district ? `${address.district},` : ''} {address.province   ? address.province : ''}</b></p>
+                  <p><b>{address.ward ? `${address.ward},` : ''} {address.district ? `${address.district},` : ''} {address.province ? address.province : ''}</b></p>
                 </td>
               </tr>
               <tr>
@@ -184,6 +196,105 @@ export default function OrderPopUp({ open, onClose }) {
           </div>
         </Fulfillment>
 
+        <HaravanBill>
+          <div style={{ minHeight: 30 }}>
+            <div className="title"><h3>EPeBen - Đẹp Để Nhớ</h3></div>
+            <div className="order-date">
+              <p>Ngày đặt hàng: </p>
+            </div>
+          </div>
+
+          <div style={{ minHeight: 100 }}>
+            <div className="bill-info">
+              <p><b>Địa chỉ</b>: {address ? address.address1 : ''}</p>
+              <p><b>Điện thoại</b>: {fulfillment.shipping_phone}</p>
+              <p><b>Website</b>: https://epeben.com</p>
+              <p><b>Email</b>: {customer.email}</p>
+            </div>
+
+            <div className="barcode">
+              {fulfillment.tracking_number
+                ? <>
+                  <Barcode
+                    value={fulfillment.tracking_number}
+                    height={75}
+                    fontSize={14}
+                  />
+                </>
+                : null}
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', minHeight: 100, marginTop: 15 }}>
+            <div style={{ width: '60%' }}>
+              <div className="box" >
+                <div className="box-header">
+                  <h3>
+                    Chi tiết hóa đơn
+                  </h3>
+                </div>
+                <div className="box-content">
+                  <table className="bill-table">
+                    <thead>
+                      <tr>
+                        <th className="left"><b>Mã sản phẩm</b></th>
+                        <th className="left"><b>Số lượng</b></th>
+                        <th className="right"><b>Giá</b></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p><b>Thông tin thanh toán</b></p>
+
+                  <p><b>Ghi chú</b></p>
+                  <p>{fulfillment.shipping_notes}</p>
+                </div>
+              </div>
+            </div>
+
+
+            <div style={{ width: '40%' }}>
+              <div className="box">
+                <div className="box-header">
+                  <h3>
+                    Thông tin đơn hàng
+                  </h3>
+                </div>
+                <div className="box-content">
+                  <p><b>Mã đơn hàng</b></p>
+                  <p>{fulfillment.order_number}</p>
+                  <p><b>Ngày đặt hàng</b></p>
+                  <p>{fulfillment.order_number}</p>
+                  <p><b>Phương thức thanh toán</b></p>
+                  <p>{fulfillment.gateway}</p>
+                  <p><b>Hình thức vận chuyển</b></p>
+                  <p></p>
+                </div>
+              </div>
+
+              <div className="box">
+                <div className="box-header">
+                  <h3>
+                    Thông tin mua hàng
+                  </h3>
+                </div>
+                <div className="box-content">
+                  <p><b>{receiver}</b></p>
+                  <p>{fulfillment.shipping_notes}</p>
+                  <p>Điện thoại: {fulfillment.shipping_phone}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p>Nếu bạn có thắc mắc, vui lòng liên hệ chúng tôi qua email nk2.kma8c@gmail.com hoặc 0822882869</p>
+
+        </HaravanBill>
+
         <div className="right" style={{ marginTop: 5 }}>
           <button className="modal-btn blue" onClick={onPrintBtnClicked}
           >
@@ -193,6 +304,7 @@ export default function OrderPopUp({ open, onClose }) {
             THOÁT
           </button>
         </div>
+
       </Box>
     </Modal>
   );

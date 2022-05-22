@@ -136,3 +136,82 @@ export const Fulfillment = styled.div`
     }
   }
 `
+
+export const HaravanBill = styled.div`
+  margin-top: 50px;
+  border-top: 1px solid black;
+  
+  .title{
+    float: left;
+    h3{
+      margin: 5px 0px;
+    }
+  }
+
+  .order-date{
+    float: right;
+
+    p{
+      margin: 5px 0px;
+    }
+  }
+
+  .bill-info{
+    float: left;
+    width: 70%;
+
+    p{
+      margin: 5px 0px;
+    }
+  }
+
+  .barcode{
+    float: right;
+    width: 30%;
+  }
+
+  .box{
+    padding: 0px 5px;
+    min-height: 100px;
+
+  }
+
+  .box-header{
+    min-height: 25px;
+    border-bottom: 1px solid #0975BD;
+    
+    h3{
+      margin: 2px 0px;
+    }
+  }
+
+  .box-content{
+    margin-top: 5px;
+    padding: 5px;
+    border: 2px solid #EAEAEA;
+
+    p{
+      margin: 5px 0px;
+    }
+  }
+  
+  .left{
+    float: left;
+  }
+
+  .right{
+    float: right;
+  }
+
+  .bill-table{
+    width: 100%;
+    
+    th{
+
+    }   
+
+    tbody > tr {
+      border: 2px solid #EAEAEA;
+    }
+  }
+`
