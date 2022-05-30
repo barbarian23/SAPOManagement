@@ -116,6 +116,14 @@ table {
   margin-left: 10px;
 }
 
+.switch-btn{
+
+  p{
+    margin: 0px;
+    font-weight: 700;
+  }
+}
+
 .pagging-box {
   height: 46px;
   background-color: #fafafa;

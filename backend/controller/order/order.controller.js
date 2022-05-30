@@ -57,6 +57,33 @@ class OrderController extends IController {
             }
       }
 
+      async setStatus(req, res, next) {
+            try {
+                  const { status, orderNumber } = req.query;
+                  let _status = status ? status : '';
+                  let _orderNumber = orderNumber ? orderNumber : '';
+                  if (_orderNumber) {
+                        if (_status === 'DONE') {
+                              await this.service.setStatusDone(_orderNumber);
+                              responceJson(res, 200, {
+                                    status: 'DONE', 
+                              });
+
+                        } else {
+                              await this.service.setStatusNot(_orderNumber);
+                              responceJson(res, 200, {
+                                    status: 'NOT', 
+                              });
+                        }
+                        
+                  }
+
+            } catch (e) {
+                  responceJson(res, 400, { error: e });
+                  next(e);
+            }
+      }
+
       async searchLineItems(req, res, next) {
             try {
                   const { page, pageSize, keyword, sortBy, startDate, endDate, status } = req.query;

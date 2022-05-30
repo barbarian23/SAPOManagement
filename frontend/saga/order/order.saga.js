@@ -18,8 +18,10 @@ import {
     STOP_LOADING_POPUP_TABLE_DATA,
     SET_IS_PRINTED,
     SET_IS_PRINTED_SUCCESS,
+    SET_STATUS_SUCCESS,
+    SET_STATUS,
 } from "../../action/order/order.action";
-import { getListOrders, setPrinted } from '../../service/api/order.api';
+import { getListOrders, setPrinted, setStatus } from '../../service/api/order.api';
 import { getDetailByID } from '../../service/api/fulfillment.api';
 
 function* getListOrdersSaga({ value }) {
@@ -84,6 +86,30 @@ function* setPrintedSaga({ value }) {
     }
 }
 
+function* setStatusSaga({ value }) {
+    console.log(value);
+    const { status, orderNumber } = value;
+    try {
+        const response = yield call(setStatus, status, orderNumber);
+        if (response.status === 200) {
+            const { code, message, data } = response.data;
+            if (code == 200) {
+                console.log(message);
+                yield put({
+                    type: SET_STATUS_SUCCESS,
+                    value: data
+                });
+            } else {
+                console.log(message);
+            }
+        } else {
+            console.log('API error');
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 function* getFulfillmentDetail({ value }) {
     const state = yield select((state) => state.order);
     const { selectedFulfillmentID } = state;
@@ -134,6 +160,8 @@ export const orderSaga = function* () {
 
     yield takeLatest(SET_IS_PRINTED, setPrintedSaga);
     yield takeLatest(SET_IS_PRINTED_SUCCESS, getListOrdersSaga);
+    yield takeLatest(SET_STATUS, setStatusSaga);
+    yield takeLatest(SET_STATUS_SUCCESS, getListOrdersSaga);
 
     yield takeLatest(GET_FULFILLMENT_DETAIL, getFulfillmentDetail);
 }

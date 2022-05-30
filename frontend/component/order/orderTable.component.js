@@ -13,6 +13,7 @@ import {
   SELECT_FULFILLMENT,
   GET_FULFILLMENT_DETAIL,
   SET_IS_PRINTED,
+  SET_STATUS,
 } from "../../action/order/order.action";
 import { useTable } from "react-table";
 import Dropdown from "react-dropdown";
@@ -134,6 +135,16 @@ export default function OrderTable({ data }) {
 
   }
 
+  const onGoToPTranferPageClicked = (order) => {
+    dispatch({
+      type: SET_STATUS,
+      value: {
+        status: order.status === "DONE" ? "NOT" : "DONE",
+        orderNumber: order.order_number,
+      }
+    });
+  }
+
   // const onDecreasePageClicked = () => {
   //   if (page > 1) {
   //     dispatch({ type: PAGE_CHANGE, value: page - 1 });
@@ -189,7 +200,7 @@ export default function OrderTable({ data }) {
       Cell: ({ cell }) => {
         let order = cell.row.original;
         if (order.status == "DONE") {
-          if(order.is_printed) {
+          if (order.is_printed) {
             return <p className="status-bag green">Đã in hóa đơn</p>
           }
           return <p className="status-bag green">Đã xử lý</p>
@@ -208,8 +219,8 @@ export default function OrderTable({ data }) {
       accessor: "action",
       Cell: ({ cell }) => {
         let order = cell.row.original;
-        if (order.status == "DONE") {
-          if (order.fulfillment_status == "success") {
+        if (order.status === "DONE") {
+          if (order.fulfillment_status === "success") {
             return <div style={{ display: 'inline-flex' }}>
               {!order.is_printed
                 ? <button
@@ -232,13 +243,36 @@ export default function OrderTable({ data }) {
               </span>
             </div>
           } else {
-            return <button
-              className="btn blue"
-              onClick={() => onGotoBtnClicked(order)}
-            >
-              Đi đến trang giao vận
-            </button>
+            return <div style={{ display: 'inline-flex' }}>
+              <button
+                className="btn blue"
+                onClick={() => onGotoBtnClicked(order)}
+              >
+                Đi đến trang giao vận
+              </button>
+
+              <span
+                title={"Đi đến trang giao vận"}
+              >
+                <Switch
+                  onChange={() => onGoToPTranferPageClicked(order)}
+                  checked={order.status === "DONE"}
+                  height={25}
+                  className="print-switch"
+                />
+              </span>
+            </div>
           }
+        } else {
+          return <div className="switch-btn">
+            <Switch
+              onChange={() => onGoToPTranferPageClicked(order)}
+              checked={order.status === 'DONE'}
+              height={25}
+              className="print-switch"
+            />
+            <p>Đi đến trang giao vận</p>
+          </div>
         }
 
         return null;
